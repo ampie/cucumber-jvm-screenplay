@@ -103,6 +103,7 @@ public class FormattingActor implements Actor {
                     logEmbeddingsAndResult(childStepInfo, new Result(Result.PASSED, errorTally.stopStopWatch(), null));
                 }
             } catch (Throwable t) {
+                t.printStackTrace();
                 logEmbeddingsAndResult(childStepInfo, errorTally.respondTo(t));
             }
         }

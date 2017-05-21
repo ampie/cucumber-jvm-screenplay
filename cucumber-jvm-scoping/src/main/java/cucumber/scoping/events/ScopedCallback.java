@@ -16,6 +16,7 @@ public class ScopedCallback {
     private String scopeNamePattern;
     private int level;
     private Object target;
+    private Class<?> type;
 
     public ScopedCallback(Object target, Method method, SubscribeToScope b) {
         this.target = target;
@@ -23,6 +24,19 @@ public class ScopedCallback {
         timing = b.scopePhase();
         scopeNamePattern = b.namePattern();
         this.level = b.level();
+        type=mostSpecific(method,b.scopeType());
+    }
+
+    private Class<?> mostSpecific(Method method, Class<?> aClass) {
+        if(method.getParameterTypes().length==0){
+            return aClass;
+        }else{
+            if(aClass.isAssignableFrom(method.getParameterTypes()[0])){
+                return method.getParameterTypes()[0];
+            }else{
+                return aClass;
+            }
+        }
     }
 
 
@@ -51,12 +65,12 @@ public class ScopedCallback {
     }
 
     public boolean isMatch(ScopeEvent event) {
-        return this.timing == event.getScopePhase() && levelsMatch(event.getScope().getLevel()) &&
+        return type.isInstance(event.getScope()) &&  this.timing == event.getScopePhase() && levelsMatch(event.getScope().getLevel()) &&
                 namesMatch(event.getScope().getName());
     }
 
     private boolean levelsMatch(int levelToMatch) {
-        return levelToMatch == -1 || levelToMatch == level;
+        return level == -1 || levelToMatch == level;
     }
 
     private boolean namesMatch(String nameToMatch) {

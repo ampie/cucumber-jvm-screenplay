@@ -14,6 +14,7 @@ import static cucumber.scoping.IdGenerator.fromName;
 ;
 
 public class UserEventCallback {
+    private final Class<?> type;
     private Method method;
     private UserInvolvement timing;
     private String scopeNamePattern;
@@ -26,8 +27,20 @@ public class UserEventCallback {
         timing = b.involvement();
         scopeNamePattern = b.namePattern();
         this.level = b.level();
+        type=mostSpecific(method,b.scopeType());
     }
 
+    private Class<?> mostSpecific(Method method, Class<?> aClass) {
+        if(method.getParameterTypes().length==0){
+            return aClass;
+        }else{
+            if(aClass.isAssignableFrom(method.getParameterTypes()[0])){
+                return method.getParameterTypes()[0];
+            }else{
+                return aClass;
+            }
+        }
+    }
 
     public void execute(UserInScope scope, UserInvolvement phase) {
         try {
@@ -54,12 +67,12 @@ public class UserEventCallback {
     }
 
     public boolean isMatch(UserEvent event) {
-        return this.timing == event.getInvolvement() && levelsMatch(event.getUserInScope().getScope().getLevel()) &&
+       return type.isInstance(event.getUserInScope()) && this.timing == event.getInvolvement() && levelsMatch(event.getUserInScope().getScope().getLevel()) &&
                 namesMatch(event.getUserInScope().getName());
     }
 
     private boolean levelsMatch(int levelToMatch) {
-        return levelToMatch == -1 || levelToMatch == level;
+        return level == -1 || levelToMatch == level;
     }
 
     private boolean namesMatch(String nameToMatch) {

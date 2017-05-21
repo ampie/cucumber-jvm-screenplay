@@ -16,16 +16,17 @@ import java.nio.file.Path;
 
 public class GlobalScope extends UserTrackingScope implements Performance {
     private final ScopeEventBus scopeEventBus;
-    private final Path resourceRoot
-            ;
+    private final Path resourceRoot;
     private CastingDirector castingDirector;
     private Cast cast;
-    public GlobalScope(String name, Path resourceRoot, PersonaClient personaClient, ScopeEventBus scopeEventBus){
-        super(null,name);
-        this.castingDirector=new ScopedCastingDirector(personaClient, resourceRoot);
-        this.cast=new Cast(castingDirector);
+
+    public GlobalScope(String name, Path resourceRoot, PersonaClient personaClient, ScopeEventBus scopeEventBus) {
+        super(null, name);
+        this.castingDirector = new ScopedCastingDirector(personaClient,resourceRoot);
+        this.cast = new Cast(castingDirector);
         this.scopeEventBus = scopeEventBus;
-        this.resourceRoot=resourceRoot;
+        this.resourceRoot = resourceRoot;
+        start();
     }
 
     public Path getResourceRoot() {
@@ -46,10 +47,12 @@ public class GlobalScope extends UserTrackingScope implements Performance {
             return null;
         }
     }
-    public void broadcast(ScopeEvent event){
+
+    public void broadcast(ScopeEvent event) {
         scopeEventBus.broadcast(event);
     }
-    public void broadcast(UserEvent event){
+
+    public void broadcast(UserEvent event) {
         scopeEventBus.broadcast(event);
     }
 

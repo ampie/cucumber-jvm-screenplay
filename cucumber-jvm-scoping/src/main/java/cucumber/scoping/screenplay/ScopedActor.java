@@ -21,6 +21,10 @@ public class ScopedActor extends FormattingActor {
         this.characterType = characterType;
     }
 
+    public Persona<?> getPersona() {
+        return persona;
+    }
+
     @Override
     public <T> T recall(String name) {
         T result = currentRole.recall(name);

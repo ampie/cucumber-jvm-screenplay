@@ -1,4 +1,5 @@
 description = 'Scope Management for Cucumber'
+apply plugin: 'groovy'
 dependencies {
     compile 'info.cukes:cucumber-java:1.2.6-SNAPSHOT'
     compile project (':cucumber-jvm-screenplay')

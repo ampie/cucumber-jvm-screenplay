@@ -21,20 +21,20 @@ public class ScopedCastingDirector implements CastingDirector {
     @Override
     public Actor recruitActor(String name) {
         try {
-            return new ScopedActor(name, personaClient.preparePersona(getPersonaFile(name)));
+            return new ScopedActor(name, personaClient.preparePersona(name, getPersonaFile(name)));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
     private File getPersonaFile(String name) {
-        return resourceRoot.resolveSibling(IdGenerator.fromName(name)).resolve("persona.json").toFile();
+        return resourceRoot.resolve(IdGenerator.fromName(name)).resolve("persona.json").toFile();
     }
 
     @Override
     public Actor interviewActor(String name) {
         try {
-            return new ScopedActor(name, personaClient.installPersona(getPersonaFile(name)));
+            return new ScopedActor(name, personaClient.installPersona(name, getPersonaFile(name)));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

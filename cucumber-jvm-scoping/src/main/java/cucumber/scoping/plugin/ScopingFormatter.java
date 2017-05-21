@@ -1,21 +1,22 @@
 package cucumber.scoping.plugin;
 
+import cucumber.api.java8.GlueBase;
 import cucumber.runtime.StepDefinitionMatch;
 import cucumber.scoping.*;
-import cucumber.scoping.events.ScopeEventBus;
 import cucumber.screenplay.actors.OnStage;
 import cucumber.screenplay.formatter.ScreenPlayFormatter;
 import gherkin.formatter.model.*;
 
 
-public class ScopingFormatter extends ScreenPlayFormatter {
-    protected ScopeEventBus scopeCallbackRegistry;
+public class ScopingFormatter extends ScreenPlayFormatter implements GlueBase {
     private String currentStep;
     private boolean hasRunRootScope;
     private String currentUri;
+    private String featureName;
 
     public ScopingFormatter(Appendable out) {
         super(out);
+
     }
 
     @Override
@@ -27,13 +28,22 @@ public class ScopingFormatter extends ScreenPlayFormatter {
     @Override
     public void feature(Feature f) {
         super.feature(f);
-        scenarioContainer(f.getName());
+        featureName = f.getName();
     }
 
     @Override
     public void startOfScenarioLifeCycle(Scenario s) {
-        super.startOfScenarioLifeCycle(s);
-        getInnerMostActive(FunctionalScope.class).startScenario(s.getName());
+        try {
+
+            super.startOfScenarioLifeCycle(s);
+            if (featureName != null) {
+                scenarioContainer(featureName);
+                featureName = null;
+            }
+            getInnerMostActive(FunctionalScope.class).startScenario(s.getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -64,7 +74,8 @@ public class ScopingFormatter extends ScreenPlayFormatter {
     public void childResult(Result result) {
         super.childResult(result);
         StepScope step = getInnerMostActive(StepScope.class);
-        getInnerMostActive(StepScope.class).completeChildStep(step.getName());
+        VerificationScope containingScope = getInnerMostActive(StepScope.class).getContainingScope();
+        ((StepScope) containingScope).completeChildStep(step.getName());
     }
 
     @Override
@@ -113,6 +124,9 @@ public class ScopingFormatter extends ScreenPlayFormatter {
             String currentName = path[i];
             if (scope instanceof FunctionalScope) {
                 VerificationScope functionalRunScope = ((FunctionalScope) scope).startNestedScope(currentName);
+                scope = functionalRunScope;
+            } else if (scope instanceof GlobalScope) {
+                VerificationScope functionalRunScope = ((GlobalScope) scope).startFunctionalScope(currentName);
                 scope = functionalRunScope;
             }
         }

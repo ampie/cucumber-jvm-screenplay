@@ -40,14 +40,16 @@ public class VerificationScope {
     }
 
     public <T> T getInnerMostActive(Class<T> ofType) {
+        T result = null;
         if (!isActive()) {
             return null;
         } else if (hasActiveChild) {
-            return getActiveNestedScope().getInnerMostActive(ofType);
-        } else if(ofType.isInstance(this)){
+            result = getActiveNestedScope().getInnerMostActive(ofType);
+        }
+        if(result==null &&  ofType.isInstance(this)){
             return (T)this;
         }else{
-            return null;
+            return result;
         }
     }
     public <T> T getNearestContaining(Class<T> type){
@@ -104,6 +106,9 @@ public class VerificationScope {
     }
 
     public VerificationScope completeNestedScope(String childName) {
+        if(getActiveNestedScope()==null){
+            System.out.printf("");
+        }
         if (childName.equals(getActiveNestedScope().getName())) {
             VerificationScope scope = getActiveNestedScope();
             scope.complete();

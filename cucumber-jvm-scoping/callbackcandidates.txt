@@ -1,0 +1,15 @@
+start scopePath on Wiremock
+end ScopePath on Wiremock
+create filePath on ResourcesRoot
+load recordings
+save recordings
+log exchanges to JSON
+log Screenshots to JSON
+
+state candidates:
+useJournalMode
+proxyUnmappedEndpoints
+correlationSTate
+requestsToRecordOrPlayback
+
+NOT validationRules - handle them generically

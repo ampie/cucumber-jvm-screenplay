@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cucumber.screenplay.formatter.WhenAnsweringQuestionsSuccessfully" tests="1" skipped="0" failures="0" errors="0" timestamp="2017-05-21T12:51:17" hostname="ampie-dvt-laptop" time="0.57">
+  <properties/>
+  <testcase name="the tasks should reflect as child steps to the steps from which they were executed" classname="cucumber.screenplay.formatter.WhenAnsweringQuestionsSuccessfully" time="0.57"/>
+  <system-out><![CDATA[
+1 Scenarios (?[32m1 passed?[0m)
+1 Steps (?[32m1 passed?[0m)
+0m0.000s
+
+[
+  {
+    "line": 1,
+    "elements": [
+      {
+        "line": 4,
+        "name": "Two Tasks Successfull",
+        "description": "",
+        "id": "basic-screen-flow;two-tasks-successfull",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "duration": 1234,
+              "status": "passed"
+            },
+            "children": [
+              {
+                "result": {
+                  "duration": 9999,
+                  "status": "passed"
+                },
+                "name": "Then is zero a number",
+                "match": {
+                  "location": "BooleanQuestion Boolean answeredBy"
+                },
+                "keyword": "Should"
+              },
+              {
+                "result": {
+                  "duration": 9999,
+                  "status": "passed"
+                },
+                "name": "Then the text to expect  should be \"expect this text\"",
+                "match": {
+                  "location": "StringQuestion String answeredBy"
+                },
+                "keyword": "Should"
+              }
+            ],
+            "line": 5,
+            "name": "two questions are answered successfully",
+            "match": {
+              "location": "QuestionSteps.thenTwoQuestionsAnsweredSuccessully()"
+            },
+            "keyword": "Then "
+          }
+        ]
+      }
+    ],
+    "name": "Basic Screen Flow",
+    "description": "As a User I would like to flow through the screen so that interesting things can happen",
+    "id": "basic-screen-flow",
+    "keyword": "Feature",
+    "uri": "cucumber/screenplay/TwoQuestionsAnsweredSuccessfully.feature"
+  }
+]
+]]></system-out>
+  <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+]]></system-err>
+</testsuite>

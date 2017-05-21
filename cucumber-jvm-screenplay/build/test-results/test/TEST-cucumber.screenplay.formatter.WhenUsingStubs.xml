@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cucumber.screenplay.formatter.WhenUsingStubs" tests="1" skipped="0" failures="0" errors="0" timestamp="2017-05-21T12:51:18" hostname="ampie-dvt-laptop" time="0.04">
+  <properties/>
+  <testcase name="the stubs should reflect as child steps to the steps from which they were configured" classname="cucumber.screenplay.formatter.WhenUsingStubs" time="0.04"/>
+  <system-out><![CDATA[
+1 Scenarios (?[32m1 passed?[0m)
+1 Steps (?[32m1 passed?[0m)
+0m0.000s
+
+[
+  {
+    "line": 1,
+    "elements": [
+      {
+        "line": 4,
+        "name": "Two Tasks Successfull",
+        "description": "",
+        "id": "basic-screen-flow;two-tasks-successfull",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "duration": 1234,
+              "status": "passed"
+            },
+            "children": [
+              {
+                "embeddings": [
+                  {
+                    "data": "TW9jayBkb3duc3RyZWFtU3lzdGVtLmRvU3R1ZmYoMTApKS50aGVuUmV0dXJuKCJKb2huIFNtaXRoIGRpZCBzdHVmZiIp",
+                    "mime_type": "text/plain"
+                  }
+                ],
+                "result": {
+                  "duration": 9999,
+                  "status": "passed"
+                },
+                "name": "DownstreamSystem.doStuff()",
+                "match": {
+                  "location": " void performOnStage"
+                },
+                "keyword": "Allow"
+              }
+            ],
+            "line": 5,
+            "name": "two stubs are configured successfully",
+            "match": {
+              "location": "MockingSteps.thenTwoQuestionsAnsweredSuccessully()"
+            },
+            "keyword": "When "
+          }
+        ]
+      }
+    ],
+    "name": "Basic Screen Flow",
+    "description": "As a User I would like to flow through the screen so that interesting things can happen",
+    "id": "basic-screen-flow",
+    "keyword": "Feature",
+    "uri": "cucumber/screenplay/TwoStubsConfiguredSuccessfully.feature"
+  }
+]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

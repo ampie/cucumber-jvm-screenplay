@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class cucumber.screenplay.formatter.WhenActorTasksFail</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class cucumber.screenplay.formatter.WhenActorTasksFail</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/cucumber.screenplay.formatter.html">cucumber.screenplay.formatter</a> &gt; WhenActorTasksFail</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.051s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">the tasks up to the failing task should reflect as child steps, and subsequent tasks should reflect as skipped</td>
+<td>0.051s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>
+?[31mFailed scenarios:?[0m
+?[31mcucumber/screenplay/OneTaskFailedOneImplemented.feature:4 ?[0m# Scenario: Flow through the screens
+
+1 Scenarios (?[31m1 failed?[0m)
+1 Steps (?[31m1 failed?[0m)
+0m0.000s
+
+java.lang.RuntimeException
+	at cucumber.screenplay.TaskSteps.johnSmithPerformsOneFailingTaskAndOneImplementedTask(TaskSteps.java:82)
+	at ✽.Given John Smith performs one failing task and one implemented task(cucumber/screenplay/OneTaskFailedOneImplemented.feature:5)
+
+[
+  {
+    &quot;line&quot;: 1,
+    &quot;elements&quot;: [
+      {
+        &quot;line&quot;: 4,
+        &quot;name&quot;: &quot;Flow through the screens&quot;,
+        &quot;description&quot;: &quot;&quot;,
+        &quot;id&quot;: &quot;basic-screen-flow;flow-through-the-screens&quot;,
+        &quot;type&quot;: &quot;scenario&quot;,
+        &quot;keyword&quot;: &quot;Scenario&quot;,
+        &quot;steps&quot;: [
+          {
+            &quot;result&quot;: {
+              &quot;duration&quot;: 1234,
+              &quot;error_message&quot;: &quot;java.lang.RuntimeException\n\tat cucumber.screenplay.TaskSteps.johnSmithPerformsOneFailingTaskAndOneImplementedTask(TaskSteps.java:82)\n\tat ✽.Given John Smith performs one failing task and one implemented task(cucumber/screenplay/OneTaskFailedOneImplemented.feature:5)\n&quot;,
+              &quot;status&quot;: &quot;failed&quot;
+            },
+            &quot;children&quot;: [
+              {
+                &quot;result&quot;: {
+                  &quot;duration&quot;: 9999,
+                  &quot;error_message&quot;: &quot;java.lang.RuntimeException\n\tat cucumber.screenplay.TaskSteps.johnSmithPerformsOneFailingTaskAndOneImplementedTask(TaskSteps.java:82)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat cucumber.runtime.Utils$1.call(Utils.java:40)\n\tat cucumber.runtime.Timeout.timeout(Timeout.java:16)\n\tat cucumber.runtime.Utils.invoke(Utils.java:34)\n\tat cucumber.runtime.java.JavaStepDefinition.execute(JavaStepDefinition.java:38)\n\tat cucumber.runtime.StepDefinitionMatch.runStep(StepDefinitionMatch.java:37)\n\tat cucumber.runtime.Runtime.runStep(Runtime.java:300)\n\tat cucumber.runtime.model.StepContainer.runStep(StepContainer.java:44)\n\tat cucumber.runtime.model.StepContainer.runSteps(StepContainer.java:39)\n\tat cucumber.runtime.model.CucumberScenario.run(CucumberScenario.java:44)\n\tat cucumber.runtime.model.CucumberFeature.run(CucumberFeature.java:165)\n\tat cucumber.runtime.Runtime.run(Runtime.java:122)\n\tat cucumber.runtime.Runtime$run.call(Unknown Source)\n\tat cucumber.screenplay.formatter.WhenPerformingChildSteps.runFeaturesWithScreenplayPlugin(WhenPerformingChildSteps.groovy:30)\n\tat cucumber.screenplay.formatter.WhenPerformingChildSteps$runFeaturesWithScreenplayPlugin.callCurrent(Unknown Source)\n\tat org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallCurrent(CallSiteArray.java:52)\n\tat org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:154)\n\tat org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:166)\n\tat cucumber.screenplay.formatter.WhenActorTasksFail.$spock_feature_1_0(WhenActorTasksFail.groovy:13)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.spockframework.util.ReflectionUtil.invokeMethod(ReflectionUtil.java:138)\n\tat org.spockframework.runtime.BaseSpecRunner.invokeRaw(BaseSpecRunner.java:330)\n\tat org.spockframework.runtime.BaseSpecRunner.invoke(BaseSpecRunner.java:311)\n\tat org.spockframework.runtime.BaseSpecRunner.invokeFeatureMethod(BaseSpecRunner.java:285)\n\tat org.spockframework.runtime.BaseSpecRunner.doRunIteration(BaseSpecRunner.java:256)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.spockframework.util.ReflectionUtil.invokeMethod(ReflectionUtil.java:138)\n\tat org.spockframework.runtime.BaseSpecRunner.invokeRaw(BaseSpecRunner.java:330)\n\tat org.spockframework.runtime.BaseSpecRunner.invoke(BaseSpecRunner.java:311)\n\tat org.spockframework.runtime.BaseSpecRunner.runIteration(BaseSpecRunner.java:223)\n\tat org.spockframework.runtime.BaseSpecRunner.initializeAndRunIteration(BaseSpecRunner.java:214)\n\tat org.spockframework.runtime.BaseSpecRunner.runSimpleFeature(BaseSpecRunner.java:205)\n\tat org.spockframework.runtime.BaseSpecRunner.doRunFeature(BaseSpecRunner.java:199)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.spockframework.util.ReflectionUtil.invokeMethod(ReflectionUtil.java:138)\n\tat org.spockframework.runtime.BaseSpecRunner.invokeRaw(BaseSpecRunner.java:330)\n\tat org.spockframework.runtime.BaseSpecRunner.invoke(BaseSpecRunner.java:311)\n\tat org.spockframework.runtime.BaseSpecRunner.runFeature(BaseSpecRunner.java:175)\n\tat org.spockframework.runtime.BaseSpecRunner.runFeatures(BaseSpecRunner.java:152)\n\tat org.spockframework.runtime.BaseSpecRunner.doRunSpec(BaseSpecRunner.java:112)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.spockframework.util.ReflectionUtil.invokeMethod(ReflectionUtil.java:138)\n\tat org.spockframework.runtime.BaseSpecRunner.invokeRaw(BaseSpecRunner.java:330)\n\tat org.spockframework.runtime.BaseSpecRunner.invoke(BaseSpecRunner.java:311)\n\tat org.spockframework.runtime.BaseSpecRunner.runSpec(BaseSpecRunner.java:91)\n\tat org.spockframework.runtime.BaseSpecRunner.run(BaseSpecRunner.java:82)\n\tat org.spockframework.runtime.Sputnik.run(Sputnik.java:63)\n\tat org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecuter.runTestClass(JUnitTestClassExecuter.java:114)\n\tat org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecuter.execute(JUnitTestClassExecuter.java:57)\n\tat org.gradle.api.internal.tasks.testing.junit.JUnitTestClassProcessor.processTestClass(JUnitTestClassProcessor.java:66)\n\tat org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:51)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:35)\n\tat org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)\n\tat org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:32)\n\tat org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:93)\n\tat com.sun.proxy.$Proxy2.processTestClass(Unknown Source)\n\tat org.gradle.api.internal.tasks.testing.worker.TestWorker.processTestClass(TestWorker.java:109)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:35)\n\tat org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)\n\tat org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:147)\n\tat org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:129)\n\tat org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:404)\n\tat org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:63)\n\tat org.gradle.internal.concurrent.StoppableExecutorImpl$1.run(StoppableExecutorImpl.java:46)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\n\tat java.lang.Thread.run(Thread.java:745)\n&quot;,
+                  &quot;status&quot;: &quot;failed&quot;
+                },
+                &quot;name&quot;: &quot;enter the userName \u0027john@gmail.com\u0027 and password \u0027Password123\u0027&quot;,
+                &quot;match&quot;: {
+                  &quot;arguments&quot;: [
+                    {
+                      &quot;val&quot;: &quot;john@gmail.com&quot;
+                    },
+                    {
+                      &quot;val&quot;: &quot;Password123&quot;
+                    }
+                  ],
+                  &quot;location&quot;: &quot;EnterCredentials Actor performAs&quot;
+                },
+                &quot;keyword&quot;: &quot;Was able to&quot;
+              },
+              {
+                &quot;result&quot;: {
+                  &quot;status&quot;: &quot;skipped&quot;
+                },
+                &quot;name&quot;: &quot;enter the userName \u0027john@gmail.com\u0027 and password \u0027Password123\u0027&quot;,
+                &quot;match&quot;: {
+                  &quot;arguments&quot;: [
+                    {
+                      &quot;val&quot;: &quot;john@gmail.com&quot;
+                    },
+                    {
+                      &quot;val&quot;: &quot;Password123&quot;
+                    }
+                  ],
+                  &quot;location&quot;: &quot;EnterCredentials Actor performAs&quot;
+                },
+                &quot;keyword&quot;: &quot;Was able to&quot;
+              }
+            ],
+            &quot;line&quot;: 5,
+            &quot;name&quot;: &quot;John Smith performs one failing task and one implemented task&quot;,
+            &quot;match&quot;: {
+              &quot;location&quot;: &quot;TaskSteps.johnSmithPerformsOneFailingTaskAndOneImplementedTask()&quot;
+            },
+            &quot;keyword&quot;: &quot;Given &quot;
+          }
+        ]
+      }
+    ],
+    &quot;name&quot;: &quot;Basic Screen Flow&quot;,
+    &quot;description&quot;: &quot;As a User I would like to flow through the screen so that interesting things can happen&quot;,
+    &quot;id&quot;: &quot;basic-screen-flow&quot;,
+    &quot;keyword&quot;: &quot;Feature&quot;,
+    &quot;uri&quot;: &quot;cucumber/screenplay/OneTaskFailedOneImplemented.feature&quot;
+  }
+]
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 3.5</a> at May 21, 2017 2:51:18 PM</p>
+</div>
+</div>
+</body>
+</html>

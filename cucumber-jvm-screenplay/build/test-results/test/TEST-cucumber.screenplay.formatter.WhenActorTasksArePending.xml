@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="cucumber.screenplay.formatter.WhenActorTasksArePending" tests="1" skipped="0" failures="0" errors="0" timestamp="2017-05-21T12:51:18" hostname="ampie-dvt-laptop" time="0.042">
+  <properties/>
+  <testcase name="the pending task should reflect as undefined, but subsequent tasks should still reflect as child steps" classname="cucumber.screenplay.formatter.WhenActorTasksArePending" time="0.042"/>
+  <system-out><![CDATA[
+1 Scenarios (?[33m1 pending?[0m)
+1 Steps (?[33m1 pending?[0m)
+0m0.000s
+
+cucumber.api.PendingException: TODO: implement me
+	at cucumber.screenplay.formatter.StepErrorTally.reportAnyErrors(StepErrorTally.java:48)
+	at cucumber.screenplay.formatter.FormattingActor.performSteps(FormattingActor.java:109)
+	at cucumber.screenplay.formatter.FormattingActor.perform(FormattingActor.java:69)
+	at cucumber.screenplay.formatter.FormattingActor.wasAbleTo(FormattingActor.java:55)
+	at cucumber.screenplay.TaskSteps.johnSmithPerformsOnePendingAndOneImplementedTask(TaskSteps.java:66)
+	at ✽.Given John Smith performs one pending and one implemented task(cucumber/screenplay/OneTaskPendingOneImplemented.feature:5)
+
+[
+  {
+    "line": 1,
+    "elements": [
+      {
+        "line": 4,
+        "name": "Flow through the screens",
+        "description": "",
+        "id": "basic-screen-flow;flow-through-the-screens",
+        "type": "scenario",
+        "keyword": "Scenario",
+        "steps": [
+          {
+            "result": {
+              "duration": 1234,
+              "error_message": "cucumber.api.PendingException: TODO: implement me\n\tat cucumber.screenplay.formatter.StepErrorTally.reportAnyErrors(StepErrorTally.java:48)\n\tat cucumber.screenplay.formatter.FormattingActor.performSteps(FormattingActor.java:109)\n\tat cucumber.screenplay.formatter.FormattingActor.perform(FormattingActor.java:69)\n\tat cucumber.screenplay.formatter.FormattingActor.wasAbleTo(FormattingActor.java:55)\n\tat cucumber.screenplay.TaskSteps.johnSmithPerformsOnePendingAndOneImplementedTask(TaskSteps.java:66)\n\tat ✽.Given John Smith performs one pending and one implemented task(cucumber/screenplay/OneTaskPendingOneImplemented.feature:5)\n",
+              "status": "pending"
+            },
+            "children": [
+              {
+                "result": {
+                  "duration": 9999,
+                  "status": "pending"
+                },
+                "name": "submit the credentials",
+                "match": {
+                  "location": "Submit Actor performAs"
+                },
+                "keyword": "Was able to"
+              },
+              {
+                "result": {
+                  "duration": 9999,
+                  "status": "passed"
+                },
+                "name": "successfully submit the credentials",
+                "match": {
+                  "location": " Actor performAs"
+                },
+                "keyword": "Was able to"
+              }
+            ],
+            "line": 5,
+            "name": "John Smith performs one pending and one implemented task",
+            "match": {
+              "location": "TaskSteps.johnSmithPerformsOnePendingAndOneImplementedTask()"
+            },
+            "keyword": "Given "
+          }
+        ]
+      }
+    ],
+    "name": "Basic Screen Flow",
+    "description": "As a User I would like to flow through the screen so that interesting things can happen",
+    "id": "basic-screen-flow",
+    "keyword": "Feature",
+    "uri": "cucumber/screenplay/OneTaskPendingOneImplemented.feature"
+  }
+]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

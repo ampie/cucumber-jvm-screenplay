@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>info.cukes</groupId>
+  <artifactId>cucumber-jvm-wiremock</artifactId>
+  <version>0.0.1</version>
+  <dependencies>
+    <dependency>
+      <groupId>info.cukes</groupId>
+      <artifactId>cucumber-jvm-scoping</artifactId>
+      <version>0.0.1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>info.cukes</groupId>
+      <artifactId>cucumber-jvm-screenplay</artifactId>
+      <version>0.0.1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.ampie</groupId>
+      <artifactId>scoped-wiremock-client</artifactId>
+      <version>0.0.1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.jknack</groupId>
+      <artifactId>handlebars</artifactId>
+      <version>4.0.6</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.5</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+  <name>cucumber-jvm-ideas</name>
+  <description>null</description>
+  <url>https://github.com/ampie/cucumber-jvm-screenplay</url>
+  <scm>
+    <url>scm:git:git@github.com:ampie/cucumber-jbm-screenplay.git</url>
+    <connection>scm:git:git@github.com:ampie/cucumber-jbm-screenplay.git</connection>
+    <developerConnection>scm:git:git@github.com:ampie/cucumber-jbm-screenplay.git</developerConnection>
+  </scm>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/license/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>ampie</id>
+      <name>Ampie Barnard</name>
+      <email>ampie.private@gmail.com</email>
+    </developer>
+  </developers>
+</project>

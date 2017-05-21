@@ -1,0 +1,9 @@
+description = 'Wiremock Support Integrated into Scoped Lifecycles'
+dependencies {
+    compile project (':cucumber-jvm-scoping')
+    compile project (':cucumber-jvm-screenplay')
+    compile 'com.github.ampie:scoped-wiremock-client:0.0.1'
+    compile 'com.github.jknack:handlebars:4.0.6'
+    compileOnly 'com.github.tomakehurst:wiremock:2.6.0'
+    compile 'commons-io:commons-io:2.5'
+}

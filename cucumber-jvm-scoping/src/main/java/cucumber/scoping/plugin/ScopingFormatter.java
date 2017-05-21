@@ -8,13 +8,13 @@ import cucumber.screenplay.formatter.ScreenPlayFormatter;
 import gherkin.formatter.model.*;
 
 
-public class CucumberCallbacks extends ScreenPlayFormatter {
+public class ScopingFormatter extends ScreenPlayFormatter {
     protected ScopeEventBus scopeCallbackRegistry;
     private String currentStep;
     private boolean hasRunRootScope;
     private String currentUri;
 
-    public CucumberCallbacks(Appendable out) {
+    public ScopingFormatter(Appendable out) {
         super(out);
     }
 

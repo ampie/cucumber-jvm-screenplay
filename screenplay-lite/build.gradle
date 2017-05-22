@@ -1,0 +1,6 @@
+description = 'Screenplay Lite - a lightweight library to support the ScreenPlay pattern'
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.1'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'org.hamcrest:hamcrest-library:1.3'
+}

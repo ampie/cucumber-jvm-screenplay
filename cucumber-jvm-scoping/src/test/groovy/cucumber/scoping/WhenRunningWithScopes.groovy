@@ -11,7 +11,7 @@ import cucumber.scoping.annotations.ScopePhase
 import cucumber.scoping.annotations.UserInvolvement
 import cucumber.scoping.glue.StepDefs
 import cucumber.scoping.plugin.ScopingFormatter
-import cucumber.screenplay.formatter.FormattingActor
+import cucumber.screenplay.formatter.BaseActor
 import groovy.json.JsonSlurper
 import spock.lang.Specification
 
@@ -21,14 +21,14 @@ import static java.util.Arrays.asList
 class WhenRunningWithScopes  extends Specification{
     def 'the correct event should be fired in a predictable  sequence'() {
         given:
-        FormattingActor.useStopWatch(new StopWatch.Stub(9999))
+        BaseActor.useStopWatch(new StopWatch.Stub(9999))
         when:
         def report = runFeaturesWithScreenplayPlugin(asList("classpath:cucumber/scoping/ScopedStuff.feature"));
         then:
         report.size() == 1
         report[0].elements.size() == 2
         report[0].elements[0].steps.size() == 1
-        StepDefs.SCOPE_CALLBACKS.keySet().size()==7
+        StepDefs.SCOPE_CALLBACKS.keySet().size()==5
         StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][0] == ScopePhase.BEFORE_START
         StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][1] == ScopePhase.AFTER_START
         StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][2] == ScopePhase.BEFORE_COMPLETE
@@ -36,9 +36,12 @@ class WhenRunningWithScopes  extends Specification{
         StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping'].size() == 4
         StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping'][0] == ScopePhase.BEFORE_START
         StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else'][0] == ScopePhase.BEFORE_START
-        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][0] == UserInvolvement.BEFORE_ENTER
-        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][1] == UserInvolvement.AFTER_ENTER
-
+        StepDefs.USER_CALLBACKS.keySet().size()==5
+        StepDefs.USER_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][0] == UserInvolvement.BEFORE_ENTER
+        StepDefs.USER_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][1] == UserInvolvement.AFTER_ENTER
+        StepDefs.VARIABLE_AFTER_COMPLETE.keySet().size()==5
+        StepDefs.VARIABLE_AFTER_START['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else']==4
+        StepDefs.VARIABLE_AFTER_COMPLETE['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else']==3
         println( StepDefs.SCOPE_CALLBACKS.keySet())
 
     }

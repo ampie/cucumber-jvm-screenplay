@@ -7,16 +7,13 @@ import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.scoping.GlobalScope;
+import cucumber.scoping.events.InstanceGetter;
 import cucumber.scoping.events.ScopeEventBus;
-import cucumber.scoping.persona.CharacterType;
-import cucumber.scoping.persona.Persona;
-import cucumber.scoping.persona.PersonaClient;
 import cucumber.scoping.persona.local.LocalPersonaClient;
+import cucumber.scoping.screenplay.ScopedCastingDirector;
 import cucumber.screenplay.actors.OnStage;
 import cucumber.screenplay.util.Fields;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,10 +27,15 @@ public class GlobalScopeBuilder implements GlueBase {
     public GlobalScopeBuilder() {
         if (!(OnStage.performance() instanceof GlobalScope)) {
             Map<String, Object> backendState = Fields.of(JavaBackend.INSTANCE.get()).asMap();
-            ObjectFactory objectFactory = (ObjectFactory) backendState.get("objectFactory");
+            final ObjectFactory objectFactory = (ObjectFactory) backendState.get("objectFactory");
             RuntimeGlue glue = (RuntimeGlue) backendState.get("glue");
             ClassFinder classFinder = (ClassFinder) backendState.get("classFinder");
-            ScopeEventBus scopeEventBus = new ScopeEventBus(objectFactory, 0);
+            ScopeEventBus scopeEventBus = new ScopeEventBus(new InstanceGetter() {
+                @Override
+                public <T> T getInstance(Class<T> type) {
+                    return objectFactory.getInstance(type);
+                }
+            }, 0);
             Set<Class<?>> classes = new HashSet<>();
             Map<String, StepDefinition> stepDefs = (Map<String, StepDefinition>) Fields.of(glue).asMap().get("stepDefinitionsByPattern");
             for (StepDefinition sd : stepDefs.values()) {
@@ -52,7 +54,7 @@ public class GlobalScopeBuilder implements GlueBase {
             }
             scopeEventBus.scanClasses(classes);
             Path resourceRoot = Paths.get("src/test/resources");
-            OnStage.present(new GlobalScope("RunAll", resourceRoot, new LocalPersonaClient(), scopeEventBus));
+            OnStage.present(new GlobalScope("RunAll", resourceRoot, new ScopedCastingDirector(new LocalPersonaClient(), resourceRoot), scopeEventBus));
         }
 
     }

@@ -8,7 +8,7 @@ import static java.util.Arrays.asList
 class WhenPerformingActorTasksFromWithinActorTasks extends WhenPerformingChildSteps {
     def 'the nested task and its content should be available under the outer task'() {
         given:
-        FormattingActor.useStopWatch(new StopWatch.Stub(9999))
+        BaseActor.useStopWatch(new StopWatch.Stub(9999))
         when:
         def report = runFeaturesWithScreenplayPlugin(asList("classpath:cucumber/screenplay/OneTaskFromWithinAnotherTask.feature"));
         then:

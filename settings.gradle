@@ -4,8 +4,13 @@ rootProject.name = 'cucumber-jvm-ideas'
 include ':cucumber-jvm-screenplay'
 include ':cucumber-jvm-scoping'
 include ':cucumber-jvm-wiremock'
+include ':screenplay-lite'
+include ':scoped-verification'
+include ':wiremock-screenplay'
 
+project(':wiremock-screenplay').projectDir = "$rootDir/wiremock-screenplay" as File
+project(':scoped-verification').projectDir = "$rootDir/scoped-verification" as File
+project(':screenplay-lite').projectDir = "$rootDir/screenplay-lite" as File
 project(':cucumber-jvm-wiremock').projectDir = "$rootDir/cucumber-jvm-wiremock" as File
-
 project(':cucumber-jvm-screenplay').projectDir = "$rootDir/cucumber-jvm-screenplay" as File
 project(':cucumber-jvm-scoping').projectDir = "$rootDir/cucumber-jvm-scoping" as File

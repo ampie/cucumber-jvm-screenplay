@@ -9,7 +9,7 @@ import static java.util.Arrays.asList
 class WhenUsingStubs extends WhenPerformingChildSteps {
     def 'the stubs should reflect as child steps to the steps from which they were configured'() {
         given:
-        FormattingActor.useStopWatch(new StopWatch.Stub(9999))
+        BaseActor.useStopWatch(new StopWatch.Stub(9999))
         when:
         def report = runFeaturesWithScreenplayPlugin(asList("classpath:cucumber/screenplay/TwoStubsConfiguredSuccessfully.feature"));
         then:

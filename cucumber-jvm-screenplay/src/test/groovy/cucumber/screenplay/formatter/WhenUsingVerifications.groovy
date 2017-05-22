@@ -1,7 +1,6 @@
 package cucumber.screenplay.formatter
 
 import cucumber.runtime.StopWatch
-import gherkin.deps.net.iharder.Base64
 
 import static java.util.Arrays.asList
 
@@ -9,7 +8,7 @@ import static java.util.Arrays.asList
 class WhenUsingVerifications extends WhenPerformingChildSteps {
     def 'the verifications should reflect as child steps to the steps from which they were performed'() {
         given:
-        FormattingActor.useStopWatch(new StopWatch.Stub(9999))
+        BaseActor.useStopWatch(new StopWatch.Stub(9999))
         when:
         def report = runFeaturesWithScreenplayPlugin(asList("classpath:cucumber/screenplay/TwoVerifications.feature"));
         then:

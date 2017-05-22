@@ -8,7 +8,7 @@ import static java.util.Arrays.asList
 class WhenActorTasksFail extends WhenPerformingChildSteps {
     def 'the tasks up to the failing task should reflect as child steps, and subsequent tasks should reflect as skipped'() {
         given:
-        FormattingActor.useStopWatch(new StopWatch.Stub(9999))
+        BaseActor.useStopWatch(new StopWatch.Stub(9999))
         when:
         def report = runFeaturesWithScreenplayPlugin(asList("classpath:cucumber/screenplay/OneTaskFailedOneImplemented.feature"));
         then:

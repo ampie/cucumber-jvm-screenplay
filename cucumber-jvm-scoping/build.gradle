@@ -1,15 +1,9 @@
 description = 'Scope Management for Cucumber'
 apply plugin: 'groovy'
 dependencies {
-    compile 'info.cukes:cucumber-java:1.2.6-SNAPSHOT'
     compile project (':cucumber-jvm-screenplay')
-    compile 'org.hamcrest:hamcrest-library:1.3'
-    compile 'org.slf4j:slf4j-api:1.7.1'
-    compile 'org.apache.commons:commons-lang3:3.4'
-//    compile 'com.google.guava:guava:21.0'
-    compile 'junit:junit:4.12'
-    testCompile 'com.google.code.gson:gson:2.7'
-    testCompile 'org.mockito:mockito-all:1.10.19'
+    compile project (':scoped-verification')
+
     testCompile 'org.codehaus.groovy:groovy-all:2.4.4'
     testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
         exclude group: "junit"

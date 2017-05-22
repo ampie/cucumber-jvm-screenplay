@@ -4,6 +4,7 @@ import cucumber.scoping.IdGenerator;
 import cucumber.scoping.persona.PersonaClient;
 import cucumber.screenplay.Actor;
 import cucumber.screenplay.actors.CastingDirector;
+import cucumber.screenplay.formatter.CucumberChildStepInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +22,17 @@ public class ScopedCastingDirector implements CastingDirector {
     @Override
     public Actor recruitActor(String name) {
         try {
+            if(hasNoPersona(name)){
+                return new ScopedActor(name,null);
+            }
             return new ScopedActor(name, personaClient.preparePersona(name, getPersonaFile(name)));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public boolean hasNoPersona(String name) {
+        return name.equals("everybody") || name.equals("guest");
     }
 
     private File getPersonaFile(String name) {
@@ -32,8 +40,11 @@ public class ScopedCastingDirector implements CastingDirector {
     }
 
     @Override
-    public Actor interviewActor(String name) {
+    public ScopedActor interviewActor(String name) {
         try {
+            if(hasNoPersona(name)){
+                return new ScopedActor(name,null);
+            }
             return new ScopedActor(name, personaClient.installPersona(name, getPersonaFile(name)));
         } catch (IOException e) {
             throw new IllegalStateException(e);

@@ -1,9 +1,7 @@
 package cucumber.screenplay.formatter;
 
-import cucumber.api.PendingException;
-import cucumber.runtime.StopWatch;
 import cucumber.screenplay.ScreenPlayException;
-import gherkin.formatter.model.Result;
+import cucumber.screenplay.internal.StopWatch;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -11,7 +9,14 @@ import java.util.Collection;
 import java.util.List;
 
 public class StepErrorTally {
-
+    private static Class<? extends RuntimeException> pendingExceptionType;
+    static{
+        try{
+            pendingExceptionType= (Class<? extends RuntimeException>) Class.forName("cucumber.api.PendingException");
+        }catch(Exception e){
+            e.printStackTrace();;
+        }
+    }
     
     private final StopWatch stopWatch;
     private List<Throwable> throwables = new ArrayList<>();
@@ -31,7 +36,7 @@ public class StepErrorTally {
                 throwSummaryExceptionFrom(throwables);
             } else if (allPending(throwables)) {
                 //TODO summary exception here too?
-                throw (PendingException) throwables.get(0);
+                throw (RuntimeException) throwables.get(0);
             } else {
                 throw new ScreenPlayException(extractMessagesFrom(throwables), throwables.get(0));
             }
@@ -45,7 +50,11 @@ public class StepErrorTally {
             }
         } else if (pending) {
             //TODO more info - what exactly is pending?
-            throw new PendingException();
+            try {
+                throw pendingExceptionType.newInstance();
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalStateException(e);
+            }
         }
     }
 
@@ -72,15 +81,6 @@ public class StepErrorTally {
         return errorMessages;
     }
 
-    public Result respondTo(Throwable t) {
-        throwables.add(t);
-        if (indicatesPending(t)) {
-            this.pending = true;
-            return new Result("pending", stopWatch.stop(), t, null);
-        }
-        return new Result(Result.FAILED, stopWatch.stop(), t, null);
-    }
-
     private boolean allAssertionFailures(Collection<Throwable> throwables) {
         for (Throwable throwable : throwables) {
             if (!indicatesAssertionFailed(throwable)) {
@@ -99,8 +99,8 @@ public class StepErrorTally {
         return throwables.size() > 0;
     }
 
-    private boolean indicatesPending(Throwable t) {
-        return t instanceof PendingException;
+    public boolean indicatesPending(Throwable t) {
+        return pendingExceptionType.isInstance(t);
     }
 
     private boolean indicatesAssertionFailed(Throwable t) {
@@ -119,5 +119,12 @@ public class StepErrorTally {
 
     public long stopStopWatch() {
         return stopWatch.stop();
+    }
+
+    public void addThrowable(Throwable t) {
+        throwables.add(t);
+        if (indicatesPending(t)) {
+            this.pending = true;
+        }
     }
 }

@@ -1,7 +1,6 @@
 package cucumber.screenplay.formatter;
 
 import cucumber.screenplay.Actor;
-import cucumber.screenplay.ActorOnStage;
 import cucumber.screenplay.actors.CastingDirector;
 
 public class FormattingCastingDirector implements CastingDirector {

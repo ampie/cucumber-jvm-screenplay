@@ -2,7 +2,6 @@ package cucumber.screenplay;
 
 import cucumber.api.java.en.Then;
 import cucumber.screenplay.annotations.Subject;
-import cucumber.screenplay.formatter.FormattingActor;
 
 import static cucumber.screenplay.ScreenplayPhrases.actorNamed;
 import static cucumber.screenplay.ScreenplayPhrases.seeThat;

@@ -39,6 +39,6 @@ public class FormattingPerformance implements Performance {
 
     @Override
     public ActorOnStage enter(Actor actor) {
-        return new FormattingActorOnStage((FormattingActor) actor);
+        return new BaseActorOnStage((FormattingActor) actor);
     }
 }

@@ -1,0 +1,4 @@
+description = 'Scoped verification - a library to scope your verification code'
+dependencies {
+    compile project(':screenplay-lite')
+}

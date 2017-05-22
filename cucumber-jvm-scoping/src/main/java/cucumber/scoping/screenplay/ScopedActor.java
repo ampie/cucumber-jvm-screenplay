@@ -2,6 +2,7 @@ package cucumber.scoping.screenplay;
 
 import cucumber.scoping.persona.CharacterType;
 import cucumber.scoping.persona.Persona;
+import cucumber.screenplay.formatter.CucumberChildStepInfo;
 import cucumber.screenplay.formatter.FormattingActor;
 
 
@@ -39,4 +40,6 @@ public class ScopedActor extends FormattingActor {
     public <T> T recall(Class<T> clzz) {
         return recall(clzz.getName());
     }
+
+
 }

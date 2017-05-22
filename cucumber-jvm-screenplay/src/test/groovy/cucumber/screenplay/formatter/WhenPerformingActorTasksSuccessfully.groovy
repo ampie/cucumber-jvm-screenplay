@@ -10,7 +10,7 @@ import static java.util.Arrays.asList
 class WhenPerformingActorTasksSuccessfully extends WhenPerformingChildSteps {
     def 'the tasks should reflect as child steps to the steps from which they were executed'() {
         given:
-        FormattingActor.useStopWatch(new StopWatch.Stub(9999))
+        BaseActor.useStopWatch(new StopWatch.Stub(9999))
         when:
         def report = runFeaturesWithScreenplayPlugin(asList("classpath:cucumber/screenplay/TwoTasksSuccessfully.feature"));
         then:

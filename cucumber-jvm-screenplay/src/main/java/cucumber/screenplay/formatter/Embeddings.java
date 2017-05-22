@@ -10,7 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
+//TODO migrate to screenplay-lite
 public class Embeddings {
     public static List<Pair<String, byte[]>> producedBy(Object o) {
         List<Pair<String, byte[]>> result = new ArrayList<>();

@@ -1,13 +1,14 @@
 package cucumber.screenplay.formatter
 
-import cucumber.runtime.StopWatch
+import cucumber.screenplay.StopWatchStub
+import cucumber.screenplay.internal.BaseActor
 
 import static java.util.Arrays.asList
 
 class WhenActorTasksArePending extends WhenPerformingChildSteps {
     def 'the pending task should reflect as undefined, but subsequent tasks should still reflect as child steps'() {
         given:
-        BaseActor.useStopWatch(new StopWatch.Stub(9999))
+        BaseActor.useStopWatch(new StopWatchStub(9999))
         when:
         def report = runFeaturesWithScreenplayPlugin(asList("classpath:cucumber/screenplay/OneTaskPendingOneImplemented.feature"));
         then:

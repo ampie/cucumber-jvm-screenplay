@@ -44,6 +44,7 @@ public abstract class UserTrackingScope extends VerificationScope implements Mem
             usersInScope.put(id, userInScope);
             userInScope.enter();
         }
+        currentUserInScopeId=id;
         return (T) userInScope;
     }
 

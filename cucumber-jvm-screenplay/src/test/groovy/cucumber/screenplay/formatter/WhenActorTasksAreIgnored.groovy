@@ -1,6 +1,7 @@
 package cucumber.screenplay.formatter
 
-import cucumber.runtime.StopWatch
+import cucumber.screenplay.StopWatchStub
+import cucumber.screenplay.internal.BaseActor
 
 import static java.util.Arrays.asList
 
@@ -8,7 +9,7 @@ import static java.util.Arrays.asList
 class WhenActorTasksAreIgnored extends WhenPerformingChildSteps {
     def 'the ignored task should reflect as skipped, but subsequent tasks should still reflect their correct status'() {
         given:
-        BaseActor.useStopWatch(new StopWatch.Stub(9999))
+        BaseActor.useStopWatch(new StopWatchStub(9999))
         when:
         def report = runFeaturesWithScreenplayPlugin(asList("classpath:cucumber/screenplay/OneTaskIgnoredOneImplemented.feature"));
         then:

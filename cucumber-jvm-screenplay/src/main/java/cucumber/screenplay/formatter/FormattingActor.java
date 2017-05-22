@@ -1,5 +1,7 @@
 package cucumber.screenplay.formatter;
 
+import cucumber.screenplay.internal.BaseActor;
+import cucumber.screenplay.internal.StepErrorTally;
 import gherkin.formatter.model.Result;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -18,15 +20,18 @@ public class FormattingActor extends BaseActor<CucumberChildStepInfo> {
     }
 
 
-
     protected void logChildStepStart(CucumberChildStepInfo childStepInfo) {
-        getFormatter().childStep(childStepInfo.getStep(), childStepInfo.getMatch());
+        if (getFormatter() != null) {
+            getFormatter().childStep(childStepInfo.getStep(), childStepInfo.getMatch());
+        }
     }
 
 
     protected void logEmbeddingsAndResult(CucumberChildStepInfo childStepInfo, Result skipped) {
-        logEmbeddings(childStepInfo);
-        getFormatter().childResult(skipped);
+        if (getFormatter() != null) {
+            logEmbeddings(childStepInfo);
+            getFormatter().childResult(skipped);
+        }
     }
 
     private void logEmbeddings(CucumberChildStepInfo csi) {
@@ -36,15 +41,21 @@ public class FormattingActor extends BaseActor<CucumberChildStepInfo> {
     }
 
     public void logChildStepResult(StepErrorTally errorTally, CucumberChildStepInfo childStepInfo) {
-        logEmbeddingsAndResult(childStepInfo, new Result(Result.PASSED, errorTally.stopStopWatch(), null));
+        if (getFormatter() != null) {
+            logEmbeddingsAndResult(childStepInfo, new Result(Result.PASSED, errorTally.stopStopWatch(), null));
+        }
     }
 
     public void logChildStepPending(StepErrorTally errorTally, CucumberChildStepInfo childStepInfo) {
-        logEmbeddingsAndResult(childStepInfo, new Result("pending", errorTally.stopStopWatch(), null));
+        if (getFormatter() != null) {
+            logEmbeddingsAndResult(childStepInfo, new Result("pending", errorTally.stopStopWatch(), null));
+        }
     }
 
     public void logChildStepSkipped(CucumberChildStepInfo childStepInfo) {
-        logEmbeddingsAndResult(childStepInfo, Result.SKIPPED);
+        if (getFormatter() != null) {
+            logEmbeddingsAndResult(childStepInfo, Result.SKIPPED);
+        }
     }
 
     @Override

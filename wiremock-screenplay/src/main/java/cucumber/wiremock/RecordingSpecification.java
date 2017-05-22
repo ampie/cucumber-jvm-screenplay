@@ -51,8 +51,8 @@ public class RecordingSpecification {
         return this;
     }
 
-    public RecordingSpecification mapsToJournalDirectory(String journalDirectory) {
-        this.recordingDirectory = journalDirectory;
+    public RecordingSpecification mapsToJournalDirectory(String journalDirectoryOverride) {
+        this.recordingDirectory = journalDirectoryOverride;
         recordToCurrentResourceDir = false;
         enforceJournalModeInScope = true;
         return this;
@@ -65,5 +65,11 @@ public class RecordingSpecification {
 
     public String getRecordingDirectory() {
         return recordingDirectory;
+    }
+
+    public RecordingSpecification mapsToJournalDirectory() {
+        recordToCurrentResourceDir = true;
+        enforceJournalModeInScope = true;
+        return this;
     }
 }

@@ -1,6 +1,7 @@
 package cucumber.screenplay.formatter
 
-import cucumber.runtime.StopWatch
+import cucumber.screenplay.StopWatchStub
+import cucumber.screenplay.internal.BaseActor
 
 import static java.util.Arrays.asList
 
@@ -10,7 +11,7 @@ import static java.util.Arrays.asList
 class WhenAnsweringQuestionsSuccessfully extends WhenPerformingChildSteps {
     def 'the tasks should reflect as child steps to the steps from which they were executed'() {
         given:
-        BaseActor.useStopWatch(new StopWatch.Stub(9999))
+        BaseActor.useStopWatch(new StopWatchStub(9999))
         when:
         def report = runFeaturesWithScreenplayPlugin(asList("classpath:cucumber/screenplay/TwoQuestionsAnsweredSuccessfully.feature"));
         then:

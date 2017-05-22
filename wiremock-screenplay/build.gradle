@@ -1,8 +1,19 @@
 description = 'WireMock Screenplay'
+apply plugin: 'groovy'
 dependencies {
     compile project (':scoped-verification')
     compile 'com.github.ampie:scoped-wiremock-client:0.0.1'
     compile 'com.github.jknack:handlebars:4.0.6'
     compileOnly 'com.github.tomakehurst:wiremock:2.6.0'
     compile 'commons-io:commons-io:2.5'
+    testCompile project(':cucumber-jvm-scoping')
+    testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
+        exclude group: "junit"
+        exclude module: "groovy-all"
+    }
+    testCompile 'com.github.ampie:scoped-wiremock:0.0.1'
+    testCompile("com.github.goldin:spock-extensions:0.1.4") {
+        exclude module: "spock-core"
+        exclude module: "slf4j-api"
+    }
 }

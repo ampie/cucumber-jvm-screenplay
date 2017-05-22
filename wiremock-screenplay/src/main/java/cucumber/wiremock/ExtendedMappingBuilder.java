@@ -6,32 +6,12 @@ import cucumber.screenplay.DownstreamStub;
 
 
 public interface ExtendedMappingBuilder extends MappingBuilder, DownstreamStub {
-    ExtendedMappingBuilder withRequestBody(StringValuePattern... patterns);
-
-    ExtendedMappingBuilder recordingResponses();
-
-    ExtendedMappingBuilder recordingResponsesTo(String recordingDirectory);
-
     ExtendedMappingBuilder to(String urlInfo);
-
-    ExtendedMappingBuilder toAnyKnownExternalService();
 
     ExtendedMappingBuilder will(ResponseStrategy responseStrategy);
 
     ExtendedMappingBuilder to(ResponseStrategy responseStrategy);
 
-    ExtendedMappingBuilder to(String urlInfo, String pathSuffix);
-
-
-    void changeUrlToPattern();
-
-    ExtendedMappingBuilder mapsToJournalDirectory(String journalDirectory);
-
-    ExtendedMappingBuilder playingBackResponsesFrom(String recordingDirectory);
-
-    ExtendedMappingBuilder playingBackResponses();
-
-    boolean isToAllKnownExternalServices();
 
     void addChildBuilder(ExtendedMappingBuilder newBuilder);
 

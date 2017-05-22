@@ -65,7 +65,12 @@ public class GlobalScope extends UserTrackingScope implements Performance {
     }
 
     public ActorOnStage enter(Actor actor) {
-        return getInnerMostActive(UserTrackingScope.class).enter(actor);
+        UserTrackingScope userTrackingScope = getInnerMostActive(UserTrackingScope.class);
+        if(userTrackingScope==this){
+            return super.enter(actor);
+        }else {
+            return userTrackingScope.enter(actor);
+        }
     }
 
 

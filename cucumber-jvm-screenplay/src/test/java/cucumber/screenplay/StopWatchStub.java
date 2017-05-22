@@ -1,7 +1,7 @@
 package cucumber.screenplay;
 
-import cucumber.runtime.StopWatch;
 
+import cucumber.screenplay.internal.StopWatch;
 
 public class StopWatchStub implements StopWatch {
     private long expectedDuration;

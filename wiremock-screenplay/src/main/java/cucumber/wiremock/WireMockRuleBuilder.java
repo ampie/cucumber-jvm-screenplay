@@ -4,14 +4,11 @@ import com.github.tomakehurst.wiremock.client.BasicCredentials;
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.ScenarioMappingBuilder;
-import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-import cucumber.scoping.UserInScope;
 import cucumber.screenplay.ActorOnStage;
-
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,14 +28,6 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
     private Boolean persistent;
     private ResponseStrategy responseStrategy;
 
-    public WireMockRuleBuilder(String method) {
-        this.requestPatternBuilder = new ExtendedRequestPatternBuilder(RequestMethod.fromString(method));
-    }
-
-    public WireMockRuleBuilder(WireMockContext verificationContext, String method) {
-        this.requestPatternBuilder = new ExtendedRequestPatternBuilder(verificationContext, RequestMethod.fromString(method));
-    }
-
     public WireMockRuleBuilder(ExtendedRequestPatternBuilder requestPatternBuilder, ExtendedResponseDefinitionBuilder responseDefinitionBuilder, RecordingSpecification recordingSpecification) {
         this(requestPatternBuilder);
         if (responseDefinitionBuilder != null) {
@@ -51,14 +40,6 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
 
     public WireMockRuleBuilder(ExtendedRequestPatternBuilder requestPatternBuilder) {
         this.requestPatternBuilder = new ExtendedRequestPatternBuilder(requestPatternBuilder);
-    }
-
-    public boolean enforceJournalModeInScope() {
-        return getRecordingSpecification().enforceJournalModeInScope();
-    }
-
-    public boolean recordToCurrentResourceDir() {
-        return getRecordingSpecification().recordToCurrentResourceDir();
     }
 
 
@@ -108,13 +89,6 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
         throw new IllegalStateException("PostServeActions not supported");
     }
 
-    public WireMockRuleBuilder withRequestBody(StringValuePattern... bodyPattern) {
-        for (StringValuePattern stringValuePattern : bodyPattern) {
-            withRequestBody(stringValuePattern);
-        }
-        return this;
-    }
-
     @Override
     public WireMockRuleBuilder withHeader(String key, StringValuePattern headerPattern) {
         this.requestPatternBuilder.withHeader(key, headerPattern);
@@ -127,40 +101,8 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
         return this;
     }
 
-    @Override
-    public WireMockRuleBuilder recordingResponses() {
-        getRecordingSpecification().recordingResponses();
-        return this;
-    }
-
-    @Override
-    public WireMockRuleBuilder recordingResponsesTo(String recordingDirectory) {
-        getRecordingSpecification().recordingResponsesTo(recordingDirectory);
-        return this;
-    }
 
 
-    public WireMockRuleBuilder playingBackResponses() {
-        getRecordingSpecification().playbackResponses();
-        return this;
-    }
-
-    public WireMockRuleBuilder playingBackResponsesFrom(String recordingDirectory) {
-        getRecordingSpecification().playbackResponsesFrom(recordingDirectory);
-        return this;
-    }
-
-    public void changeUrlToPattern() {
-        this.requestPatternBuilder.changeUrlToPattern();
-    }
-
-
-    @Override
-    public WireMockRuleBuilder mapsToJournalDirectory(String journalDirectory) {
-        getRecordingSpecification().mapsToJournalDirectory(journalDirectory);
-        this.changeUrlToPattern();
-        return this;
-    }
 
     @Override
     public WireMockRuleBuilder to(String urlInfo) {
@@ -168,11 +110,6 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
         return this;
     }
 
-    @Override
-    public WireMockRuleBuilder toAnyKnownExternalService() {
-        this.requestPatternBuilder.toAnyKnownExternalService();
-        return this;
-    }
 
     @Override
     public ExtendedMappingBuilder will(ResponseStrategy responseStrategy) {
@@ -181,14 +118,8 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
 
     @Override
     public WireMockRuleBuilder to(ResponseStrategy responseStrategy) {
-        try {
-            this.responseStrategy = responseStrategy;
-            return this;
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        this.responseStrategy = responseStrategy;
+        return this;
     }
 
 
@@ -205,7 +136,10 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
                         String proxiedBaseUrl = url.getProtocol() + "://" + url.getAuthority();
                         newBuilder.getResponseDefinitionBuilder().proxiedFrom(proxiedBaseUrl);
                     }
-                    addChildBuilder(newBuilder.atPriority(getPriority()));
+                    newBuilder.atPriority(getPriority());
+                    newBuilder.getRequestPatternBuilder().toAnyKnownExternalService(false);
+                    newBuilder.getRequestPatternBuilder().buildWithin(verificationContext);
+                    addChildBuilder(newBuilder);
                 } catch (MalformedURLException e) {
                     System.out.println("Could not load knownExternalEndpoint '" + entry.getKey() + "'='" + entry.getValue() + "'");
                 }
@@ -219,12 +153,6 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
 
     }
 
-
-    @Override
-    public WireMockRuleBuilder to(String urlInfo, String pathSuffix) {
-        this.requestPatternBuilder.to(urlInfo, pathSuffix);
-        return this;
-    }
 
     @Override
     public WireMockRuleBuilder atPriority(Integer priority) {
@@ -245,20 +173,8 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
         return responseDefinitionBuilder;
     }
 
-    public JournalMode getJournalModeOverride() {
-        return getRecordingSpecification().getJournalModeOverride();
-    }
-
     public String getUrlInfo() {
         return this.requestPatternBuilder.getUrlInfo();
-    }
-
-    public String getRecordingDirectory() {
-        return getRecordingSpecification().getRecordingDirectory();
-    }
-
-    public boolean isToAllKnownExternalServices() {
-        return this.requestPatternBuilder.isToAllKnownExternalServices();
     }
 
     public void addChildBuilder(ExtendedMappingBuilder newBuilder) {
@@ -270,10 +186,6 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
             this.responseDefinitionBuilder = (ExtendedResponseDefinitionBuilder) responseDefBuilder;
         } else if (responseDefBuilder != null) {
             this.responseDefinitionBuilder = new ExtendedResponseDefinitionBuilder(responseDefBuilder);
-        }
-        if (this.responseDefinitionBuilder != null) {
-
-
         }
         return this;
     }
@@ -301,7 +213,7 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
 
     @Override
     public void performOnStage(ActorOnStage actorOnStage) {
-        WireMockContext verificationContext = new WireMockContext((UserInScope) actorOnStage);
+        WireMockContext verificationContext = new WireMockContext(actorOnStage);
         if (responseDefinitionBuilder == null) {
             try {
                 responseDefinitionBuilder = responseStrategy.applyTo(this, verificationContext);
@@ -311,6 +223,7 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
                 throw new RuntimeException(e);
             }
         }
+        getRequestPatternBuilder().buildWithin(verificationContext);
         //This may not have been created by one of the known ResponseStrategies, so let's just give it a default priority and assume the user wants this as a priority
         if (getPriority() == null && verificationContext != null) {
             atPriority(verificationContext.calculatePriority(1));

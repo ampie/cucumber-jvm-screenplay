@@ -1,6 +1,7 @@
 package cucumber.screenplay.formatter;
 
 import cucumber.screenplay.internal.ChildStepInfo;
+import cucumber.screenplay.internal.StepErrorTally;
 import cucumber.screenplay.util.Fields;
 import cucumber.screenplay.util.StringConverter;
 import gherkin.formatter.Argument;

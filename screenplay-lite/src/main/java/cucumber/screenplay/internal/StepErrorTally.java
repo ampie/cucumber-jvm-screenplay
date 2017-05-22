@@ -1,4 +1,4 @@
-package cucumber.screenplay.formatter;
+package cucumber.screenplay.internal;
 
 import cucumber.screenplay.ScreenPlayException;
 import cucumber.screenplay.internal.StopWatch;

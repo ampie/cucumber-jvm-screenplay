@@ -19,60 +19,7 @@ import static cucumber.wiremock.MimeTypeHelper.determineContentType;
 
 
 public class ResponseStrategies {
-    public static ResponseStrategy mapToJournalDirectory(final String journalDirectory) {
-        return new ResponseStrategy() {
-            public ExtendedResponseDefinitionBuilder applyTo(ExtendedMappingBuilder builder, WireMockContext scope) throws Exception {
-                builder.mapsToJournalDirectory(journalDirectory);
-                builder.atPriority(scope.calculatePriority(1));
-                return null;
-            }
-        };
-    }
 
-
-    public static ResponseStrategy playbackResponsesFrom(final String recordingDirectory) {
-        return new ResponseStrategy() {
-            public ExtendedResponseDefinitionBuilder applyTo(ExtendedMappingBuilder builder, WireMockContext scope) throws Exception {
-                builder.changeUrlToPattern();
-                builder.playingBackResponsesFrom(recordingDirectory);
-                builder.atPriority(scope.calculatePriority(2));
-                return null;
-            }
-        };
-    }
-
-    public static ResponseStrategy playbackResponses() {
-        return new ResponseStrategy() {
-            public ExtendedResponseDefinitionBuilder applyTo(ExtendedMappingBuilder builder, WireMockContext scope) throws Exception {
-                builder.changeUrlToPattern();
-                builder.playingBackResponses();
-                builder.atPriority(scope.calculatePriority(2));
-                return null;
-            }
-        };
-    }
-
-    public static ResponseStrategy recordResponsesTo(final String recordingDirectory) {
-        return new ResponseStrategy() {
-            public ExtendedResponseDefinitionBuilder applyTo(ExtendedMappingBuilder builder, WireMockContext scope) throws Exception {
-                builder.changeUrlToPattern();
-                builder.recordingResponsesTo(recordingDirectory);
-                builder.atPriority(scope.calculatePriority(2));
-                return null;
-            }
-        };
-    }
-
-    public static ResponseStrategy recordResponses() {
-        return new ResponseStrategy() {
-            public ExtendedResponseDefinitionBuilder applyTo(ExtendedMappingBuilder builder, WireMockContext scope) throws Exception {
-                builder.changeUrlToPattern();
-                builder.recordingResponses();
-                builder.atPriority(scope.calculatePriority(2));
-                return null;
-            }
-        };
-    }
 
     public static ResponseStrategy returnTheBody(final String body, final String contentType) {
         return new ResponseStrategy() {
@@ -161,67 +108,7 @@ public class ResponseStrategies {
 
     }
 
-    public static ResponseStrategy targetTheJaxrsApplication(String jaxrsApplicationRoot) {
-        return useTheLastTwoSegmentsAndTarget(jaxrsApplicationRoot);
-    }
-
-    public static ResponseStrategy targetTheServiceUnderTest() {
-        return new ResponseStrategy() {
-            public ExtendedResponseDefinitionBuilder applyTo(ExtendedMappingBuilder builder, WireMockContext scope) throws Exception {
-                builder.changeUrlToPattern();
-                builder.atPriority(scope.calculatePriority(4));
-                return aResponse().proxiedFrom(scope.getBaseUrlOfServiceUnderTest())
-                        .withTransformers("ProxyUrlTransformer").withTransformerParameter("segmentsToUse", 2).withTransformerParameter("useTrailingSegments", true);
-            }
-        };
-    }
-
-    public static ResponseStrategy useTheLastSegmentAndTarget(String baseUrl) {
-        return willTargetTheServiceUsingTheLastSegments(baseUrl, 1);
-    }
-
-    public static ResponseStrategy useTheLastTwoSegmentsAndTarget(String baseUrl) {
-        return willTargetTheServiceUsingTheLastSegments(baseUrl, 2);
-    }
-
-
-    public static ResponseStrategy useTheLastThreeSegmentsAndTarget(String baseUrl) {
-        return willTargetTheServiceUsingTheLastSegments(baseUrl, 3);
-    }
-
-    public static ResponseStrategy willTargetTheServiceUsingTheLastSegments(final String baseUrl, final int segments) {
-        return new ResponseStrategy() {
-            public ExtendedResponseDefinitionBuilder applyTo(ExtendedMappingBuilder builder, WireMockContext scope) throws Exception {
-                builder.changeUrlToPattern();
-                builder.atPriority(scope.calculatePriority(4));
-                return aResponse().proxiedFrom(baseUrl).withTransformers("ProxyUrlTransformer").withTransformerParameter("segmentsToUse", segments).withTransformerParameter("useTrailingSegments", true);
-            }
-        };
-    }
-
-    public static ResponseStrategy proxyTo(final String baseUrl) {
-        return new ResponseStrategy() {
-            public ExtendedResponseDefinitionBuilder applyTo(ExtendedMappingBuilder builder, WireMockContext scope) throws Exception {
-                builder.changeUrlToPattern();
-                builder.atPriority(scope.calculatePriority(5));
-                return aResponse().proxiedFrom(baseUrl);
-            }
-        };
-    }
-
     public static ExtendedResponseDefinitionBuilder aResponse() {
         return new ExtendedResponseDefinitionBuilder();
     }
-
-    public static ResponseStrategy beIntercepted() {
-        return new ResponseStrategy() {
-            public ExtendedResponseDefinitionBuilder applyTo(ExtendedMappingBuilder builder, WireMockContext scope) throws Exception {
-                builder.atPriority(scope.calculatePriority(5));
-                builder.changeUrlToPattern();
-                return aResponse().interceptedFromSource();
-            }
-        };
-
-    }
-
 }

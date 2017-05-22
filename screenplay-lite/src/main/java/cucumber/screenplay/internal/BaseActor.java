@@ -1,9 +1,6 @@
-package cucumber.screenplay.formatter;
+package cucumber.screenplay.internal;
 
 import cucumber.screenplay.*;
-import cucumber.screenplay.internal.ChildStepInfo;
-import cucumber.screenplay.internal.SimpleMemory;
-import cucumber.screenplay.internal.StopWatch;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

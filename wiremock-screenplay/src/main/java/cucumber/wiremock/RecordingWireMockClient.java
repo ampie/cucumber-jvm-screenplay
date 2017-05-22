@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.github.ampie.wiremock.common.Reflection.invoke;
 import static cucumber.wiremock.MimeTypeHelper.calculateExtension;
 
 
@@ -66,10 +65,12 @@ public class RecordingWireMockClient extends ScopedWireMock {
                 List<String> baseNames = extractMappingFileBaseNames(directoryRecordedTo);
                 Map<String, File> mappingFiles = mapFilesByBaseName(directoryRecordedTo, baseNames);
                 for (Map.Entry<String, File> mappingFile : mappingFiles.entrySet()) {
-                    WireMockRuleBuilder currentMapping = buildMapping(directoryRecordedTo, requestPattern, mappingFile);
-                    currentMapping.atPriority(priority);
-                    register(currentMapping);
-                    mappingBuilders.add(currentMapping);
+                    WireMockRuleBuilder currentMapping = buildMappingIfPossible(directoryRecordedTo, requestPattern, mappingFile);
+                    if (currentMapping != null) {
+                        currentMapping.atPriority(priority);
+                        register(currentMapping);
+                        mappingBuilders.add(currentMapping);
+                    }
                 }
             }
             return mappingBuilders;
@@ -129,7 +130,6 @@ public class RecordingWireMockClient extends ScopedWireMock {
     }
 
 
-
     private String buildBaseFileName(String requestedUrl, String sequenceNumber, String httpMethod) {
         String[] segments = requestedUrl.split("/");
         String serviceName = segments[segments.length - 2];
@@ -138,7 +138,7 @@ public class RecordingWireMockClient extends ScopedWireMock {
     }
 
 
-    private WireMockRuleBuilder buildMapping(File directoryRecordedTo, ExtendedRequestPatternBuilder requestPatternBuilder, Map.Entry<String, File> entry) throws IOException {
+    private WireMockRuleBuilder buildMappingIfPossible(File directoryRecordedTo, ExtendedRequestPatternBuilder requestPatternBuilder, Map.Entry<String, File> entry) throws IOException {
         String body = FileUtils.readFileToString(new File(directoryRecordedTo, entry.getValue().getName()));
         HttpHeaders headers = Json.read(FileUtils.readFileToString(new File(directoryRecordedTo, entry.getKey() + ".headers.json")), HttpHeaders.class);
         Pattern compile = Pattern.compile("(.*)_(GET|PUT|POST|DELETE|HEADE|PATCH)_(.*)_(\\d+)");
@@ -152,7 +152,7 @@ public class RecordingWireMockClient extends ScopedWireMock {
 
             return mappingBuilder.willReturn(WireMock.aResponse().withHeaders(headers).withBody(body).withStatus(calculateResponseCode(headers)));
         } else {
-            throw new IllegalArgumentException(entry.getKey() + " not a valid mapping filename");
+            return null;
         }
     }
 
@@ -161,7 +161,7 @@ public class RecordingWireMockClient extends ScopedWireMock {
             return headers.getHeader("requestedUrl").firstValue();
         }
         String urlRegex;
-        String prefix = requestPattern.calcUrlPatternOnceOnly().getExpected();
+        String prefix = requestPattern.getUrlPathPattern().getExpected();
         if (prefix.endsWith(".*")) {
             prefix = prefix.substring(0, prefix.length() - 2);
         }
@@ -184,10 +184,12 @@ public class RecordingWireMockClient extends ScopedWireMock {
         }
         return responseCode;
     }
-    public int count(ExtendedRequestPatternBuilder requestPatternBuilder){
+
+    public int count(ExtendedRequestPatternBuilder requestPatternBuilder) {
         Admin admin = (Admin) super.admin;
         return admin.countRequestsMatching(requestPatternBuilder.build()).getCount();
     }
+
     public void stopServerIfRunningLocally() {
         try {
             Reflection.invoke(admin, "stop");

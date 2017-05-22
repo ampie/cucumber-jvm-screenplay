@@ -11,7 +11,7 @@ import cucumber.scoping.annotations.ScopePhase
 import cucumber.scoping.annotations.UserInvolvement
 import cucumber.scoping.glue.StepDefs
 import cucumber.scoping.plugin.ScopingFormatter
-import cucumber.screenplay.formatter.BaseActor
+import cucumber.screenplay.internal.BaseActor
 import groovy.json.JsonSlurper
 import spock.lang.Specification
 

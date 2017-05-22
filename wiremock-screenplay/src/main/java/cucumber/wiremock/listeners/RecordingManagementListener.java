@@ -16,7 +16,7 @@ public class RecordingManagementListener {
     @SubscribeToScope(scopePhase = ScopePhase.BEFORE_COMPLETE)
     public void saveRecordings(UserTrackingScope scope) {
         for (RecordingMappingForUser m : getActiveRecordingOrPlaybackMappings(scope, JournalMode.RECORD)) {
-            if (scope.getUsersInScope().containsKey(m.getUserScopeId())) {
+            if (scope.getUsersInScope().containsKey(m.getUserInScopeId())) {
                 m.saveRecordings(scope);
             }
         }
@@ -40,9 +40,9 @@ public class RecordingManagementListener {
         return activeRecordings;
     }
 
-    public List<RecordingMappingForUser> getRecordingOrPlaybackMappings(UserInScope userInScope, JournalMode journalMode) {
+    private List<RecordingMappingForUser> getRecordingOrPlaybackMappings(UserInScope userInScope, JournalMode journalMode) {
         List<RecordingMappingForUser> result = new ArrayList<>();
-        List<RecordingMappingForUser> requestsToRecordOrPlayback = userInScope.recall("requestsToRecordOrPlayback");
+        List<RecordingMappingForUser> requestsToRecordOrPlayback = userInScope.recallImmediately("requestsToRecordOrPlayback");
         if (requestsToRecordOrPlayback != null) {
             for (RecordingMappingForUser r : requestsToRecordOrPlayback) {
                 if(r.getJournalModeOverride() == journalMode || (r.enforceJournalModeInScope() && getJournalModeInScope(userInScope) == journalMode)){

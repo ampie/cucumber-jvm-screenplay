@@ -4,8 +4,9 @@ import com.github.ampie.wiremock.common.HeaderName;
 import com.github.ampie.wiremock.common.Reflection;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.matching.*;
-import cucumber.scoping.UserInScope;
-import cucumber.screenplay.*;
+import cucumber.screenplay.ActorOnStage;
+import cucumber.screenplay.DownstreamStub;
+import cucumber.screenplay.DownstreamVerification;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 
@@ -15,8 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.ampie.wiremock.common.Reflection.getValue;
-import static com.github.ampie.wiremock.common.Reflection.setValue;
+//import cucumber.scoping.UserInScope;
 
 
 public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
@@ -24,13 +24,8 @@ public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
     private String pathSuffix;
     private boolean urlIsPattern = false;
     private boolean toAllKnownExternalServices = false;
-    private WireMockContext verificationContext;
     private UrlPattern urlPattern;
 
-    public ExtendedRequestPatternBuilder(WireMockContext verificationContext, RequestMethod method) {
-        super(method, null);
-        this.verificationContext = verificationContext;
-    }
 
     public ExtendedRequestPatternBuilder(ExtendedRequestPatternBuilder builder) {
         super();
@@ -38,15 +33,14 @@ public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
     }
 
     public ExtendedRequestPatternBuilder(RequestMethod requestMethod) {
-        super(requestMethod,null);
+        super(requestMethod, null);
     }
 
     private void copyFrom(ExtendedRequestPatternBuilder builder) {
         this.urlInfo = builder.urlInfo;
         this.pathSuffix = builder.pathSuffix;
         this.urlIsPattern = builder.urlIsPattern;
-        this.toAllKnownExternalServices = false;
-        this.verificationContext = builder.verificationContext;
+        this.toAllKnownExternalServices = builder.toAllKnownExternalServices;
         Reflection.setValue(this, "method", Reflection.getValue(builder, "method"));
         Reflection.setValue(this, "headers", new HashMap<>((Map<? extends String, ? extends MultiValuePattern>) Reflection.getValue(builder, "headers")));
         Reflection.setValue(this, "queryParams", new HashMap<>((Map<? extends String, ? extends MultiValuePattern>) Reflection.getValue(builder, "queryParams")));
@@ -56,7 +50,7 @@ public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
     }
 
     public ExtendedRequestPatternBuilder(ExtendedRequestPatternBuilder requestPatternBuilder, RequestMethod method) {
-        super(method,null);
+        super(method, null);
         copyFrom(requestPatternBuilder);
     }
 
@@ -65,6 +59,11 @@ public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
         toAllKnownExternalServices = true;
         urlInfo = ".*";
         return this;
+    }
+
+    @Override
+    public ExtendedRequestPatternBuilder withRequestBody(StringValuePattern valuePattern) {
+        return (ExtendedRequestPatternBuilder) super.withRequestBody(valuePattern);
     }
 
     public boolean isToAllKnownExternalServices() {
@@ -85,18 +84,15 @@ public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
         return to(urlInfo, null);
     }
 
-    public UrlPattern calcUrlPatternOnceOnly() {
-        if (urlPattern == null ) {
-            urlPattern=calculateUrlPattern();
-        }
+    public UrlPattern getUrlPathPattern() {
         return urlPattern;
     }
 
-    public UrlPattern calculateUrlPattern() {
+    private UrlPattern calculateUrlPattern(EndpointPropertyResolver verificationContext) {
         String path = this.urlInfo;
         if (isPropertyName(path)) {
             try {
-                URL uri = this.verificationContext.endpointUrlFor(path);
+                URL uri = verificationContext.endpointUrlFor(path);
                 path = uri.getPath();
             } catch (Exception e) {
                 System.out.println(e);
@@ -118,12 +114,6 @@ public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
     
     private boolean isPropertyName(String p) {
         return p.matches("[_a-zA-Z0-9\\.]+");
-    }
-
-    @Override
-    public RequestPattern build() {
-        Reflection.setValue(this, "url", calcUrlPatternOnceOnly());
-        return super.build();
     }
 
     public String getUrlInfo() {
@@ -152,9 +142,9 @@ public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
         return new DownstreamVerification() {
             @Override
             public void performOnStage(ActorOnStage actorOnStage) {
-                WireMockContext verificationContext = new WireMockContext((UserInScope) actorOnStage);
+                WireMockContext verificationContext = new WireMockContext(actorOnStage);
                 int count = verificationContext.count(ExtendedRequestPatternBuilder.this);
-                if(!countMatcher.matches(count)){
+                if (!countMatcher.matches(count)) {
                     StringDescription description = new StringDescription();
                     countMatcher.describeMismatch(count, description);
                     throw new AssertionError(description.toString());
@@ -163,7 +153,27 @@ public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
         };
     }
 
+    public void buildWithin(EndpointPropertyResolver verificationContext) {
+        if (urlPattern == null) {
+            urlPattern = calculateUrlPattern(verificationContext);
+        }
+        Reflection.setValue(this, "url", urlPattern);
+
+    }
+
     public DownstreamStub to(ResponseStrategy responseStrategy) {
         return will(responseStrategy);
+    }
+
+    public void toAnyKnownExternalService(boolean b) {
+        this.toAllKnownExternalServices = b;
+    }
+
+    public ExtendedRequestPatternBuilder withRequestBody(StringValuePattern... bodyPattern) {
+        for (StringValuePattern stringValuePattern : bodyPattern) {
+            withRequestBody(stringValuePattern);
+        }
+        return this;
+
     }
 }

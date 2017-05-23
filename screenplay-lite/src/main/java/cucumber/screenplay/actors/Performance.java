@@ -5,16 +5,16 @@ import cucumber.screenplay.Actor;
 import cucumber.screenplay.ActorOnStage;
 
 public interface Performance {
-    CastingDirector getCastingDirector();
 
     Cast getCast();
 
+    ActorOnStage shineSpotlightOn(Actor actor);
 
-    Actor shineSpotlightOn(String actorName);
-
-    Actor theActorInTheSpotlight();
+    ActorOnStage theActorInTheSpotlight();
 
     void drawTheCurtain();
 
     ActorOnStage enter(Actor actor);
+
+    void exit(Actor actor);
 }

@@ -7,7 +7,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.10.19'
-    testCompile 'org.codehaus.groovy:groovy-all:2.4.4'
+    testCompile 'org.codehaus.groovy:groovy-all:2.4.5'
     testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
         exclude group: "junit"
         exclude module: "groovy-all"

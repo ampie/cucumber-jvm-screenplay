@@ -1,5 +1,6 @@
 package cucumber.screenplay.internal;
 
+import cucumber.screenplay.PendingException;
 import cucumber.screenplay.ScreenPlayException;
 import cucumber.screenplay.internal.StopWatch;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +15,7 @@ public class StepErrorTally {
         try{
             pendingExceptionType= (Class<? extends RuntimeException>) Class.forName("cucumber.api.PendingException");
         }catch(Exception e){
-            e.printStackTrace();;
+            pendingExceptionType=PendingException.class;
         }
     }
     
@@ -103,7 +104,7 @@ public class StepErrorTally {
         return pendingExceptionType.isInstance(t);
     }
 
-    private boolean indicatesAssertionFailed(Throwable t) {
+    public boolean indicatesAssertionFailed(Throwable t) {
         return t instanceof AssertionError;
     }
 

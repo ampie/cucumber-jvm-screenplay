@@ -3,7 +3,9 @@ package cucumber.wiremock
 import com.github.ampie.wiremock.ScopedWireMockServer
 import com.github.tomakehurst.wiremock.common.Json
 import cucumber.scoping.GlobalScope
+import cucumber.screenplay.Actor
 import cucumber.screenplay.actors.OnStage
+import cucumber.wiremock.scoping.CorrelationPath
 import groovy.json.JsonSlurper
 
 import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT
@@ -15,18 +17,19 @@ import static cucumber.wiremock.ProxyStrategies.*
 class WhenBuildingProxyMappings extends WhenWorkingWithWireMock {
 
     def 'should create a simple proxy mapping'() throws Exception {
-        GlobalScope globalScope = buildGlobalScope("TestRun")
-
-        def i = 5
-        ScopedWireMockServer wireMockServer = initializeWireMock(globalScope, i)
         given:
+        GlobalScope globalScope = buildGlobalScope('TestRun',5)
+        ScopedWireMockServer wireMockServer = initializeWireMock(globalScope)
         OnStage.present(globalScope)
+
+
+        def johnSmith = actorNamed("John Smith")
         when:
-        forRequestsFrom(actorNamed("John Smith")).allow(
+        forRequestsFrom(johnSmith).allow(
                 a(PUT).to("/home/path").to(proxyTo("http://some.host.com/base"))
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.getCurrentUserInScope().getScopePath())
+        def mappings = wireMockServer.getMappingsInScope(CorrelationPath.of(globalScope.enter(johnSmith)))
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['urlPattern'] == '/home/path.*'
@@ -34,19 +37,20 @@ class WhenBuildingProxyMappings extends WhenWorkingWithWireMock {
         mapping['response']['proxyBaseUrl']== "http://some.host.com/base"
         mapping['priority'] == (MAX_LEVELS * PRIORITIES_PER_LEVEL) + 5
     }
-    def 'should create a simple proxy mapping to the original service if the target url looks like a property'() throws Exception {
-        GlobalScope globalScope = buildGlobalScope("TestRun")
+    def 'should create an intercepting proxy mapping that targets the original service'() throws Exception {
+        GlobalScope globalScope = buildGlobalScope('TestRun',5)
 
-        def i = 5
-        ScopedWireMockServer wireMockServer = initializeWireMock(globalScope, i)
+        ScopedWireMockServer wireMockServer = initializeWireMock(globalScope)
         given:
         OnStage.present(globalScope)
+
+        def johnSmith = actorNamed("John Smith")
         when:
-        forRequestsFrom(actorNamed("John Smith")).allow(
+        forRequestsFrom(johnSmith).allow(
                 a(PUT).to("some.property.name").to(beIntercepted())
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.getCurrentUserInScope().getScopePath())
+        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.enter(johnSmith).getScopePath())
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['urlPattern'] == '/resolved/endpoint.*'
@@ -55,18 +59,19 @@ class WhenBuildingProxyMappings extends WhenWorkingWithWireMock {
         mapping['priority'] == (MAX_LEVELS * PRIORITIES_PER_LEVEL) + 5
     }
     def 'should target the service under test'() throws Exception {
-        GlobalScope globalScope = buildGlobalScope("TestRun")
+        GlobalScope globalScope = buildGlobalScope('TestRun',5)
 
-        def i = 5
-        ScopedWireMockServer wireMockServer = initializeWireMock(globalScope, i)
+        ScopedWireMockServer wireMockServer = initializeWireMock(globalScope)
         given:
         OnStage.present(globalScope)
+
+        def johnSmith = actorNamed("John Smith")
         when:
-        forRequestsFrom(actorNamed("John Smith")).allow(
+        forRequestsFrom(johnSmith).allow(
                 a(PUT).to("some.property.name").to(target().theServiceUnderTest().using().theLast(5).segments())
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.getCurrentUserInScope().getScopePath())
+        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.enter(johnSmith).getScopePath())
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['urlPattern'] == '/resolved/endpoint.*'
@@ -79,18 +84,19 @@ class WhenBuildingProxyMappings extends WhenWorkingWithWireMock {
         mapping['priority'] == (MAX_LEVELS * PRIORITIES_PER_LEVEL) + 4
     }
     def 'should target a specified url'() throws Exception {
-        GlobalScope globalScope = buildGlobalScope("TestRun")
+        GlobalScope globalScope = buildGlobalScope('TestRun',5)
 
-        def i = 5
-        ScopedWireMockServer wireMockServer = initializeWireMock(globalScope, i)
+        ScopedWireMockServer wireMockServer = initializeWireMock(globalScope)
         given:
         OnStage.present(globalScope)
+
+        def johnSmith = actorNamed("John Smith")
         when:
-        forRequestsFrom(actorNamed("John Smith")).allow(
+        forRequestsFrom(johnSmith).allow(
                 a(PUT).to("some.property.name").to(target('http://target.com/base').ignoring().theFirst(5).segments())
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.getCurrentUserInScope().getScopePath())
+        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.enter(johnSmith).getScopePath())
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['urlPattern'] == '/resolved/endpoint.*'

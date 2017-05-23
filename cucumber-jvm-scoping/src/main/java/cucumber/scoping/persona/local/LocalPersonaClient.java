@@ -36,7 +36,7 @@ public class LocalPersonaClient implements PersonaClient<JsonObject> {
     @Override
     public void savePersonaLocally(Persona<JsonObject> persona, File targetFile) throws IOException {
         try (FileWriter fileWriter = new FileWriter(targetFile)) {
-            fileWriter.write(persona.getJsonObject().toString());
+            fileWriter.write(persona.getDataObject().toString());
         }
     }
 
@@ -46,6 +46,11 @@ public class LocalPersonaClient implements PersonaClient<JsonObject> {
         data.addProperty("name", name);
         data.addProperty("userName", userName);
         return new LocalPersona(name, data);
+    }
+
+    @Override
+    public String getDefaultPersonaFileName() {
+        return "persona.json";
     }
 
 }

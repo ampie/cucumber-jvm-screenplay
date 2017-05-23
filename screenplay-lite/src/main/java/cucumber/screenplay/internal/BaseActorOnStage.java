@@ -12,7 +12,6 @@ public class BaseActorOnStage implements ActorOnStage {
 
     public BaseActorOnStage(Actor actor) {
         this.actor = actor;
-        actor.setCurrentRole(this);
     }
 
     @Override

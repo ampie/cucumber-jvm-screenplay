@@ -1,9 +1,9 @@
 package cucumber.scoping.events;
 
 
-import cucumber.scoping.UserInScope;
-import cucumber.scoping.annotations.UserInvolvement;
 import cucumber.scoping.annotations.SubscribeToUser;
+import cucumber.scoping.annotations.UserInvolvement;
+import cucumber.screenplay.events.ScreenPlayEventCallback;
 
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
@@ -13,39 +13,22 @@ import static cucumber.scoping.events.ScopeEventBus.mostSpecific;
 
 ;
 
-public class UserEventCallback {
+public class UserEventCallback extends ScreenPlayEventCallback {
     private final Class<?> type;
-    private Method method;
-    private UserInvolvement timing;
+    private UserInvolvement involvement;
     private String scopeNamePattern;
     private int level;
-    private Object target;
 
-    public UserEventCallback(Object target, Method method, SubscribeToUser b) {
-        this.target = target;
-        this.method = method;
-        timing = b.involvement();
+    public UserEventCallback(Object target, Method method, SubscribeToUser b,UserInvolvement involvement) {
+        super(target, method);
+        this.involvement = involvement;
         scopeNamePattern = b.namePattern();
         this.level = b.level();
-        type= mostSpecific(method,b.scopeType());
-    }
-
-    public void execute(UserInScope scope, UserInvolvement phase) {
-        try {
-            ScopeEventBus.invoke(getTarget(), scope, phase, this.method);
-        } catch (Exception e) {
-            //Yeah think about this
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    private Object getTarget() {
-        return target;
+        type = mostSpecific(method, b.scopeType());
     }
 
     public boolean isMatch(UserEvent event) {
-       return type.isInstance(event.getUserInScope()) && this.timing == event.getInvolvement() && levelsMatch(event.getUserInScope().getScope().getLevel()) &&
+        return type.isInstance(event.getUserInScope()) && this.involvement == event.getInvolvement() && levelsMatch(event.getUserInScope().getScope().getLevel()) &&
                 namesMatch(event.getUserInScope().getName());
     }
 

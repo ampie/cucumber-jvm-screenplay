@@ -7,17 +7,37 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 
-public abstract class ChildStepInfo {
+public class ChildStepInfo {
+    private String keyword;
     protected final Object performer;
     protected String location;
-    protected String name;
+    protected String nameExpression;
     protected Object origin;
     private boolean pending;
     private boolean ignored;
+    private String name;
 
-    protected ChildStepInfo(Object performer, Object origin) {
+    protected ChildStepInfo(String keyword, Object performer, Object origin) {
+        this.keyword = keyword;
         this.performer = performer;
         this.origin = origin;
+        try {
+            deriveState();
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public String getNameExpression() {
+        return nameExpression;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public boolean isPending() {
@@ -30,9 +50,9 @@ public abstract class ChildStepInfo {
 
     protected void deriveState() throws NoSuchMethodException {
         Method method = lookupMethod();
-        extractNameFrom(method);
+        extractNameExpressionFrom(method);
         locateMethod(method);
-        this.name = AnnotatedTitle.injectFieldsInto(name).using(getImplementation());
+        this.name = AnnotatedTitle.injectFieldsInto(nameExpression).using(getImplementation());
         if (getImplementation() instanceof Question) {
             name = origin.toString();
         }
@@ -41,7 +61,7 @@ public abstract class ChildStepInfo {
     }
 
     public Object getImplementation() {
-        return origin instanceof Consequence ? ((Consequence) origin).getQuestion():origin;
+        return origin instanceof Consequence ? ((Consequence) origin).getQuestion() : origin;
     }
 
     private void locateMethod(Method method) {
@@ -49,12 +69,11 @@ public abstract class ChildStepInfo {
     }
 
 
-
-    protected void extractNameFrom(Method method) {
-        this.name = method.getName();
+    protected void extractNameExpressionFrom(Method method) {
+        this.nameExpression = method.getName();
         if (method.isAnnotationPresent(cucumber.screenplay.annotations.Step.class)) {
             if (method.getAnnotation(cucumber.screenplay.annotations.Step.class).value().length() > 0) {
-                name = method.getAnnotation(cucumber.screenplay.annotations.Step.class).value();
+                this.nameExpression= method.getAnnotation(cucumber.screenplay.annotations.Step.class).value();
             }
         }
     }
@@ -64,7 +83,7 @@ public abstract class ChildStepInfo {
             return getImplementation().getClass().getMethod("performAs", Actor.class);
         } else if (getImplementation() instanceof Question) {
             return getImplementation().getClass().getMethod("answeredBy", Actor.class);
-        } else if(getImplementation() instanceof OnStageAction){
+        } else if (getImplementation() instanceof OnStageAction) {
             return getImplementation().getClass().getMethod("performOnStage", ActorOnStage.class);
         }
         throw new IllegalStateException(getImplementation().getClass() + " not a question or a task");
@@ -93,5 +112,9 @@ public abstract class ChildStepInfo {
                 ((OnStageAction) this.origin).performOnStage((ActorOnStage) performer);
             }
         }
+    }
+
+    public String getLocation() {
+        return location;
     }
 }

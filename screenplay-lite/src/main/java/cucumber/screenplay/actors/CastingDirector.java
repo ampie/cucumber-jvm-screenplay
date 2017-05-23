@@ -10,11 +10,13 @@ public interface CastingDirector {
      */
     Actor recruitActor(String name);
     /**
-     * Only get an Actor in to talk to. No contract signed (not logged in)
+     * A candidate actor that does not yet have an official role in the play
+     * This is a user who does not (yet) have a profile on the system, or whose
+     * activity extends beyond any single profile
      * and only ready for activity that falls outside of actual contracted work
      * @param name
      * @return
      */
-    Actor interviewActor(String name);
+    Actor findCandidate(String name);
 
 }

@@ -28,9 +28,20 @@ public class VerificationScope {
         return getContainingScope().getLevel() + 1;
     }
 
+    public void start() {
+        if (!isActive()) {
+            //We only start once
+            getGlobalScope().broadcast(new ScopeEvent(this, ScopePhase.BEFORE_START));
+            startWithoutEvents();
+            getGlobalScope().broadcast(new ScopeEvent(this, ScopePhase.AFTER_START));
+        }
+    }
+
+
     public final void complete() {
         if (isActive()) {
             //We only complete once
+            completeChildren();
             getGlobalScope().broadcast(new ScopeEvent(this, ScopePhase.BEFORE_COMPLETE));
             completeWithoutEvents();
             getGlobalScope().broadcast(new ScopeEvent(this, ScopePhase.AFTER_COMPLETE));
@@ -38,10 +49,13 @@ public class VerificationScope {
     }
 
     protected void completeWithoutEvents() {
+        this.active = false;
+    }
+
+    protected void completeChildren() {
         for (VerificationScope nestedScope : nestedScopes) {
             nestedScope.complete();
         }
-        this.active = false;
     }
 
     public <T> T getInnerMostActive(Class<T> ofType) {
@@ -93,15 +107,6 @@ public class VerificationScope {
         return this.active;
     }
 
-    public void start() {
-        if (!isActive()) {
-            //WE only start once
-            getGlobalScope().broadcast(new ScopeEvent(this, ScopePhase.BEFORE_START));
-            startWithoutEvents();
-            getGlobalScope().broadcast(new ScopeEvent(this, ScopePhase.AFTER_START));
-        }
-    }
-
     protected void startWithoutEvents() {
         this.active = true;
     }
@@ -116,9 +121,6 @@ public class VerificationScope {
     }
 
     public VerificationScope completeNestedScope(String childName) {
-        if (getActiveNestedScope() == null) {
-            System.out.printf("");
-        }
         if (childName.equals(getActiveNestedScope().getName())) {
             VerificationScope scope = getActiveNestedScope();
             scope.complete();

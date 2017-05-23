@@ -9,4 +9,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD,ElementType.FIELD})
 public @interface ProducesEmbedding {
     String mimeType() default "text/plain";
+    Class<? extends EmbeddingSerializer> serializer() default EmbeddingSerializer.class;
 }

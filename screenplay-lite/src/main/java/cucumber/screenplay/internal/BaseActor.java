@@ -1,13 +1,15 @@
 package cucumber.screenplay.internal;
 
 import cucumber.screenplay.*;
+import cucumber.screenplay.events.ScreenPlayEvent;
+import cucumber.screenplay.events.ScreenPlayEventBus;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class BaseActor<T extends ChildStepInfo> implements Actor {
+public class BaseActor implements Actor {
     protected static StopWatch stopWatch = new StopWatch() {
         final ThreadLocal<Deque<Long>> startStack = new ThreadLocal<>();
 
@@ -24,26 +26,24 @@ public abstract class BaseActor<T extends ChildStepInfo> implements Actor {
             return System.nanoTime() - startStack.get().pollLast();
         }
     };
+
     protected final String name;
-    protected ActorOnStage currentRole;
     private Memory memory = new SimpleMemory();
     private Set<Ability> abilities = new HashSet<>();
+    private ScreenPlayEventBus eventBus;
 
-    public BaseActor(String name) {
+    public BaseActor(ScreenPlayEventBus eventBus, String name) {
+        this.eventBus = eventBus;
         this.name = name;
     }
 
-    protected abstract T[] extractInfo(String keyword, Object performer, Object[] stepObjects);
-
-    protected abstract void logChildStepStart(T childStepInfo);
-
-    protected abstract void logChildStepResult(StepErrorTally errorTally, T childStepInfo);
-
-    protected abstract void logChildStepPending(StepErrorTally errorTally, T childStepInfo);
-
-    protected abstract void logChildStepSkipped(T childStepInfo);
-
-    protected abstract void logChildStepFailure(T childStepInfo, StepErrorTally errorTally, Throwable skipped);
+    protected ChildStepInfo[] extractInfo(String keyword, Object performer, Object[] stepObjects) {
+        ChildStepInfo[] result = new ChildStepInfo[stepObjects.length];
+        for (int i = 0; i < stepObjects.length; i++) {
+            result[i] = new ChildStepInfo(keyword, performer, stepObjects[i]);
+        }
+        return result;
+    }
 
     @Override
     public void should(Consequence... consequences) {
@@ -61,28 +61,33 @@ public abstract class BaseActor<T extends ChildStepInfo> implements Actor {
     }
 
     public void performSteps(String keyword, Object performer, Object... stepObjects) {
-        T[] steps = extractInfo(keyword, performer, stepObjects);
+        ChildStepInfo[] steps = extractInfo(keyword, performer, stepObjects);
         StepErrorTally errorTally = new StepErrorTally(stopWatch);
-        for (T childStepInfo : steps) {
+        for (ChildStepInfo childStepInfo : steps) {
             errorTally.startStopWatch();
             try {
-                logChildStepStart(childStepInfo);
+                eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_STARTED));
                 if (errorTally.shouldSkip() || childStepInfo.isSkipped()) {
-                    logChildStepSkipped(childStepInfo);
+                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_SKIPPED, errorTally.stopStopWatch()));
                 } else if (childStepInfo.isPending()) {
                     errorTally.setPending();
-                    logChildStepPending(errorTally, childStepInfo);
+                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_PENDING, errorTally.stopStopWatch()));
                 } else {
                     childStepInfo.invoke();
-                    logChildStepResult(errorTally, childStepInfo);
+                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_SUCCESSFUL, errorTally.stopStopWatch()));
                 }
             } catch (Throwable t) {
-                t.printStackTrace();
-                logChildStepFailure(childStepInfo, errorTally, t);
+                errorTally.addThrowable(t);
+                if (errorTally.indicatesPending(t)) {
+                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_PENDING, errorTally.stopStopWatch(), t));
+                } else if (errorTally.indicatesAssertionFailed(t)) {
+                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_ASSERTION_FAILED, errorTally.stopStopWatch(), t));
+                } else {
+                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_FAILED, errorTally.stopStopWatch(), t));
+                }
             }
         }
         errorTally.reportAnyErrors();
-
     }
 
 
@@ -90,9 +95,6 @@ public abstract class BaseActor<T extends ChildStepInfo> implements Actor {
         BaseActor.stopWatch = stopWatch;
     }
 
-    public void setCurrentRole(ActorOnStage currentRole) {
-        this.currentRole = currentRole;
-    }
 
     @Override
     public String getName() {
@@ -115,7 +117,7 @@ public abstract class BaseActor<T extends ChildStepInfo> implements Actor {
     }
 
     private Memory getMemoryToUse() {
-        return currentRole != null ? currentRole : memory;
+        return memory;
     }
 
     @Override

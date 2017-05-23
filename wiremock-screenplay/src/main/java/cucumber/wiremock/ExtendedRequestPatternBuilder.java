@@ -16,9 +16,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-//import cucumber.scoping.UserInScope;
-
-
 public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
     private String urlInfo;
     private String pathSuffix;

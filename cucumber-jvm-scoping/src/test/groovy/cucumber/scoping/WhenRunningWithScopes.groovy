@@ -10,7 +10,8 @@ import cucumber.runtime.java.JavaBackend
 import cucumber.scoping.annotations.ScopePhase
 import cucumber.scoping.annotations.UserInvolvement
 import cucumber.scoping.glue.StepDefs
-import cucumber.scoping.plugin.ScopingFormatter
+import cucumber.scoping.plugin.ScopingPlugin
+import cucumber.screenplay.StopWatchStub
 import cucumber.screenplay.internal.BaseActor
 import groovy.json.JsonSlurper
 import spock.lang.Specification
@@ -21,7 +22,7 @@ import static java.util.Arrays.asList
 class WhenRunningWithScopes  extends Specification{
     def 'the correct event should be fired in a predictable  sequence'() {
         given:
-        BaseActor.useStopWatch(new StopWatch.Stub(9999))
+        BaseActor.useStopWatch(new StopWatchStub(9999))
         when:
         def report = runFeaturesWithScreenplayPlugin(asList("classpath:cucumber/scoping/ScopedStuff.feature"));
         then:
@@ -37,8 +38,8 @@ class WhenRunningWithScopes  extends Specification{
         StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping'][0] == ScopePhase.BEFORE_START
         StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else'][0] == ScopePhase.BEFORE_START
         StepDefs.USER_CALLBACKS.keySet().size()==5
-        StepDefs.USER_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][0] == UserInvolvement.BEFORE_ENTER
-        StepDefs.USER_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][1] == UserInvolvement.AFTER_ENTER
+        StepDefs.USER_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][0] == UserInvolvement.BEFORE_ENTER_STAGE
+        StepDefs.USER_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][1] == UserInvolvement.AFTER_ENTER_STAGE
         StepDefs.VARIABLE_AFTER_COMPLETE.keySet().size()==5
         StepDefs.VARIABLE_AFTER_START['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else']==4
         StepDefs.VARIABLE_AFTER_COMPLETE['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else']==3
@@ -52,7 +53,7 @@ class WhenRunningWithScopes  extends Specification{
         def resourceLoader = new MultiLoader(classLoader);
         def args = new ArrayList<String>();
         args.add("--plugin");
-        args.add(ScopingFormatter.class.getName() +  ":" + report.getAbsolutePath());
+        args.add(ScopingPlugin.class.getName() +  ":" + report.getAbsolutePath());
         args.add("--glue");
         args.add(StepDefs.class.getPackage().getName());
         args.addAll(featurePaths);

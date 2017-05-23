@@ -1,54 +1,34 @@
 package cucumber.scoping.events;
 
 
-import cucumber.scoping.VerificationScope;
 import cucumber.scoping.annotations.ScopePhase;
 import cucumber.scoping.annotations.SubscribeToScope;
+import cucumber.screenplay.events.ScreenPlayEventCallback;
 
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
-;import static cucumber.scoping.IdGenerator.fromName;
+import static cucumber.scoping.IdGenerator.fromName;
 import static cucumber.scoping.events.ScopeEventBus.mostSpecific;
 
-public class ScopedCallback {
-    private Method method;
+;
+
+public class ScopedCallback extends ScreenPlayEventCallback {
     private ScopePhase timing;
     private String scopeNamePattern;
     private int level;
-    private Object target;
     private Class<?> type;
 
-    public ScopedCallback(Object target, Method method, SubscribeToScope b) {
-        this.target = target;
-        this.method = method;
-        timing = b.scopePhase();
+    public ScopedCallback(Object target, Method method, SubscribeToScope b, ScopePhase phase) {
+        super(target, method);
+        timing = phase;
         scopeNamePattern = b.namePattern();
         this.level = b.level();
-        type=mostSpecific(method,b.scopeType());
-    }
-
-
-
-
-    public void execute(VerificationScope scope, ScopePhase phase) {
-        try {
-            ScopeEventBus.invoke(getTarget(), scope, phase, this.method);
-
-        } catch (Exception e) {
-            //Yeah think about this
-            throw new RuntimeException(e);
-        }
-
-    }
-
-
-    private Object getTarget() {
-        return target;
+        type = mostSpecific(method, b.scopeType());
     }
 
     public boolean isMatch(ScopeEvent event) {
-        return type.isInstance(event.getScope()) &&  this.timing == event.getScopePhase() && levelsMatch(event.getScope().getLevel()) &&
+        return type.isInstance(event.getScope()) && this.timing == event.getScopePhase() && levelsMatch(event.getScope().getLevel()) &&
                 namesMatch(event.getScope().getName());
     }
 

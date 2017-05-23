@@ -7,10 +7,11 @@ import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.StepDefinition;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.scoping.GlobalScope;
-import cucumber.scoping.events.InstanceGetter;
+import cucumber.scoping.events.ScreenplayLifecycleSync;
+import cucumber.screenplay.internal.InstanceGetter;
 import cucumber.scoping.events.ScopeEventBus;
 import cucumber.scoping.persona.local.LocalPersonaClient;
-import cucumber.scoping.screenplay.ScopedCastingDirector;
+import cucumber.scoping.ScopedCastingDirector;
 import cucumber.screenplay.actors.OnStage;
 import cucumber.screenplay.util.Fields;
 
@@ -35,7 +36,7 @@ public class GlobalScopeBuilder implements GlueBase {
                 public <T> T getInstance(Class<T> type) {
                     return objectFactory.getInstance(type);
                 }
-            }, 0);
+            });
             Set<Class<?>> classes = new HashSet<>();
             Map<String, StepDefinition> stepDefs = (Map<String, StepDefinition>) Fields.of(glue).asMap().get("stepDefinitionsByPattern");
             for (StepDefinition sd : stepDefs.values()) {
@@ -52,9 +53,10 @@ public class GlobalScopeBuilder implements GlueBase {
                     }
                 }
             }
+            classes.add(ScreenplayLifecycleSync.class);
             scopeEventBus.scanClasses(classes);
             Path resourceRoot = Paths.get("src/test/resources");
-            OnStage.present(new GlobalScope("RunAll", resourceRoot, new ScopedCastingDirector(new LocalPersonaClient(), resourceRoot), scopeEventBus));
+            OnStage.present(new GlobalScope("RunAll", resourceRoot, new ScopedCastingDirector(scopeEventBus, new LocalPersonaClient(), resourceRoot), scopeEventBus));
         }
 
     }

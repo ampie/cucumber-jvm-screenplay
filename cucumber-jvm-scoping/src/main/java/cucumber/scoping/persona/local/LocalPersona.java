@@ -26,7 +26,7 @@ public class LocalPersona implements Persona<JsonObject>{
     }
 
     @Override
-    public JsonObject getJsonObject() {
+    public JsonObject getDataObject() {
         return data;
     }
 

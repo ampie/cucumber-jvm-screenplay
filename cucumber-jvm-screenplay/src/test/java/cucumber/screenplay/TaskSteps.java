@@ -6,7 +6,6 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import cucumber.screenplay.annotations.PendingStep;
 import cucumber.screenplay.annotations.Step;
-import cucumber.screenplay.formatter.FormattingActor;
 import cucumber.screenplay.formatter.ScreenPlayFormatter;
 import org.junit.Ignore;
 
@@ -16,7 +15,7 @@ public class TaskSteps {
 
     @Given("^John Smith performs two implemented tasks$")
     public void johnSmithHasLoggedIntoTheApplication() throws Throwable {
-        FormattingActor johnSmith = actorNamed("John Smith");
+        Actor johnSmith = actorNamed("John Smith");
         givenThat(johnSmith).wasAbleTo(
                 performAnImplementedTask(),
                 performAAnotherImplementedTask());
@@ -35,7 +34,7 @@ public class TaskSteps {
 
     @And("^he performs two pending tasks$")
     public void hePerformsTwoPendingTasks() throws Throwable {
-        FormattingActor johnSmith = actorNamed("John Smith");
+        Actor johnSmith = actorNamed("John Smith");
         givenThat(johnSmith).wasAbleTo(
                 performATaskThatThrowsAPendingException(),
                 performATaskAnnotatedAsPending());
@@ -44,7 +43,7 @@ public class TaskSteps {
 
     @When("^he views his todo items$")
     public void heViewsHisTodoItems() throws Throwable {
-        FormattingActor johnSmith = actorNamed("John Smith");
+        Actor johnSmith = actorNamed("John Smith");
         when(johnSmith).attemptsTo(
                 performAnIgnoredTask(),
                 performAnImplementedTask()
@@ -62,7 +61,7 @@ public class TaskSteps {
 
     @Given("^John Smith performs one pending and one implemented task$")
     public void johnSmithPerformsOnePendingAndOneImplementedTask() throws Throwable {
-        FormattingActor johnSmith = actorNamed("John Smith");
+        Actor johnSmith = actorNamed("John Smith");
         givenThat(johnSmith).wasAbleTo(
                 performATaskAnnotatedAsPending(),
                 performAAnotherImplementedTask());
@@ -70,7 +69,7 @@ public class TaskSteps {
 
     @When("^John Smith performs one ignored and one implemented task$")
     public void johnSmithPerformsOneIgnoredAndOneImplementedTask() throws Throwable {
-        FormattingActor johnSmith = actorNamed("John Smith");
+        Actor johnSmith = actorNamed("John Smith");
         givenThat(johnSmith).wasAbleTo(
                 performAnIgnoredTask(),
                 performAnImplementedTask());
@@ -78,7 +77,7 @@ public class TaskSteps {
 
     @Given("^John Smith performs one failing task and one implemented task$")
     public void johnSmithPerformsOneFailingTaskAndOneImplementedTask() throws Throwable {
-        FormattingActor johnSmith = actorNamed("John Smith");
+        Actor johnSmith = actorNamed("John Smith");
         givenThat(johnSmith).wasAbleTo(
                 performAFailingTask(new RuntimeException()),
                 performAnImplementedTask());

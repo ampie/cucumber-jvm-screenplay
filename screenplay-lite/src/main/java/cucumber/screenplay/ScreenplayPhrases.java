@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ScreenplayPhrases {
     public static <T extends Actor> T actorNamed(String actorName){
-        return (T)OnStage.performance().getCastingDirector().recruitActor(actorName);
+        return (T)OnStage.performance().getCast().actorNamed(actorName);
     }
     public static <T extends Actor> T givenThat(T actor) {
         return actor;

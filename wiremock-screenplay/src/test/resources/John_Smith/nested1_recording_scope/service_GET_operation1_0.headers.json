@@ -1,0 +1,5 @@
+{
+  "Content-Type" : "application/json",
+  "requestedUrl" : "/context/service/operation1",
+  "responseCode" : "1"
+}

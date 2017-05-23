@@ -6,6 +6,7 @@ import cucumber.scoping.UserInScope;
 import cucumber.scoping.UserTrackingScope;
 import cucumber.screenplay.ActorOnStage;
 import cucumber.screenplay.util.Optional;
+import cucumber.wiremock.scoping.CorrelationPath;
 
 import java.io.File;
 import java.io.FilenameFilter;

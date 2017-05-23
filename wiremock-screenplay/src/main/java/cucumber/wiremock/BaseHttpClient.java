@@ -3,7 +3,6 @@ package cucumber.wiremock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import cucumber.screenplay.util.Optional;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -22,39 +21,21 @@ import java.util.Map;
 
 public abstract class BaseHttpClient {
     protected static Map<String, Integer> statusMap = new HashMap<>();
-    private static Optional<CloseableHttpClient> httpClientOverride= Optional.absent();
     private CloseableHttpClient httpClient;
+
     static {
         statusMap.put("POST", HttpURLConnection.HTTP_CREATED);
         statusMap.put("DELETE", HttpURLConnection.HTTP_NO_CONTENT);
         statusMap.put("GET", HttpURLConnection.HTTP_OK);
         statusMap.put("PUT", HttpURLConnection.HTTP_OK);
     }
-    public static void overrideHttpClient(CloseableHttpClient c){
-        httpClientOverride=Optional.fromNullable(c);
-    }
 
     public BaseHttpClient(CloseableHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
-    protected void queryParameter(HttpRequestBase request, String name, String value) {
-        try {
-            String baseUri = request.getURI().toString();
-            if (request.getURI().getQuery() == null) {
-                baseUri += "?";
-            } else {
-                baseUri += "&";
-            }
-            baseUri = baseUri + name + "=" + URLEncoder.encode(value, "UTF-8");
-            request.setURI(URI.create(baseUri));
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
     public ObjectNode execute(HttpRequestBase request) throws IOException {
-        CloseableHttpResponse response = httpClientOverride.or(httpClient).execute(request);
+        CloseableHttpResponse response = httpClient.execute(request);
         if (response == null) {
             throw new IllegalStateException(request.getURI() + " " + request.getMethod() + " not mocked!");
         }

@@ -1,18 +1,30 @@
 package cucumber.screenplay.formatter;
 
-import gherkin.formatter.model.Match;
-import gherkin.formatter.model.Result;
-import gherkin.formatter.model.Step;
+import gherkin.formatter.model.*;
 
 import java.util.*;
 
-public class ScreenPlayFormatter extends CopiedCucumberJSONFormatter {
+public class ScreenPlayFormatter extends CopiedJSONFormatter {
     private static ThreadLocal<ScreenPlayFormatter> current = new ThreadLocal<ScreenPlayFormatter>();
     private Deque<Map<String, Object>> childStepStack=new ArrayDeque<Map<String, Object>>();
+    private boolean inScenarioOutline = false;
 
     public ScreenPlayFormatter(Appendable out) {
         super(out);
         current.set(this);
+    }
+    public void step(Step step) {
+        if (!this.inScenarioOutline) {
+            super.step(step);
+        }
+    }
+    public void scenarioOutline(ScenarioOutline scenarioOutline) {
+        this.inScenarioOutline = true;
+    }
+    @Override
+    public void startOfScenarioLifeCycle(Scenario scenario) {
+        this.inScenarioOutline = false;
+        super.startOfScenarioLifeCycle(scenario);
     }
 
     public static ScreenPlayFormatter getCurrent() {

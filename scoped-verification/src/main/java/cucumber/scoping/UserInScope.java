@@ -5,7 +5,6 @@ import cucumber.scoping.annotations.UserInvolvement;
 import cucumber.scoping.events.UserEvent;
 import cucumber.screenplay.*;
 import cucumber.screenplay.internal.BaseActorOnStage;
-import cucumber.screenplay.internal.ChildStepInfo;
 import cucumber.screenplay.internal.SimpleMemory;
 
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import static cucumber.scoping.IdGenerator.fromName;
 public abstract class UserInScope extends BaseActorOnStage implements Memory, ActorOnStage {
     private String id;
     private boolean active = false;
-    private Map<String, UserInScope> usersInScope = new HashMap<>();
     private UserTrackingScope scope;
     private SimpleMemory memory = new SimpleMemory();
     private List<DownstreamVerification> downstreamExpectations = new ArrayList<>();
@@ -59,7 +57,14 @@ public abstract class UserInScope extends BaseActorOnStage implements Memory, Ac
 
     @Override
     public <T> T recall(String name) {
-        return getScope().recallForUser(id, name);
+        T value = getScope().recallForUser(id, name);
+        if(value == null){
+            value=getActor().recall(name);
+        }
+        if(value == null){
+            value = getScope().recallForUser(getScope().getEverybodyScope().getId(),name);
+        }
+        return value;
     }
 
     @Override
@@ -71,28 +76,41 @@ public abstract class UserInScope extends BaseActorOnStage implements Memory, Ac
         return this.active;
     }
 
-    public void enter() {
-        if (!isActive()) {
-            getScope().getGlobalScope().broadcast(new UserEvent(this, UserInvolvement.BEFORE_ENTER));
-            enterWithoutEvents();
-            getScope().getGlobalScope().broadcast(new UserEvent(this, UserInvolvement.AFTER_ENTER));
-        }
-    }
-
-    public void exit() {
+    public void enterSpotlight() {
         if (isActive()) {
-            getScope().getGlobalScope().broadcast(new UserEvent(this, UserInvolvement.BEFORE_EXIT));
-            exitWithoutEvents();
-            getScope().getGlobalScope().broadcast(new UserEvent(this, UserInvolvement.AFTER_EXIT));
+            getScope().getGlobalScope().broadcast(new UserEvent(this, UserInvolvement.INTO_SPOTLIGHT));
         }
     }
 
-    protected void exitWithoutEvents() {
+    public void exitSpotlight() {
+        if (isActive()) {
+            getScope().getGlobalScope().broadcast(new UserEvent(this, UserInvolvement.OUT_OF_SPOTLIGHT));
+        }
+    }
+
+    public void enterStage() {
+        if (!isActive()) {
+            getScope().getGlobalScope().broadcast(new UserEvent(this, UserInvolvement.BEFORE_ENTER_STAGE));
+            enterStageWithoutEvents();
+            getScope().getGlobalScope().broadcast(new UserEvent(this, UserInvolvement.AFTER_ENTER_STAGE));
+        }
+    }
+
+    public void exitStage() {
+        if (isActive()) {
+            getScope().getGlobalScope().broadcast(new UserEvent(this, UserInvolvement.BEFORE_EXIT_STAGE));
+            exitStageWithoutEvents();
+            getScope().getGlobalScope().broadcast(new UserEvent(this, UserInvolvement.AFTER_EXIT_STAGE));
+        }
+    }
+
+
+    protected void exitStageWithoutEvents() {
         memory.clear();
         this.active = false;
     }
 
-    protected void enterWithoutEvents() {
+    protected void enterStageWithoutEvents() {
         this.active = true;
     }
 

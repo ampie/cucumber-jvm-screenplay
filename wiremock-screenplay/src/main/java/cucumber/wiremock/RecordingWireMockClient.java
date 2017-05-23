@@ -46,7 +46,6 @@ public class RecordingWireMockClient extends ScopedWireMock {
             if (!(recordingDirectory.exists() || recordingDirectory.mkdirs())) {
                 throw new IllegalStateException("Could not create dir: " + recordingDirectory.getAbsolutePath());
             }
-
             List<RecordedExchange> recordedExchanges = findMatchingExchanges(stringValuePattern, pattern);
             for (int i = 0; i < recordedExchanges.size(); i++) {
                 writeFiles(recordingDirectory, recordedExchanges.get(i));

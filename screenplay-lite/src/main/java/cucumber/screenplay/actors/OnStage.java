@@ -2,6 +2,7 @@ package cucumber.screenplay.actors;
 
 
 import cucumber.screenplay.Actor;
+import cucumber.screenplay.ActorOnStage;
 
 public class OnStage {
     private static final String defaultPeformance = "cucumber.screenplay.formatter.FormattingPerformance";
@@ -13,27 +14,21 @@ public class OnStage {
     }
 
     public static Performance performance() {
-        Performance result = OnStage.performance.get();
-        if (result == null) {
-            OnStage.performance.set(result = newDefaultPerformance());
-        }
-        return result;
+        return OnStage.performance.get();
     }
 
-    public static Performance newDefaultPerformance() {
-        try {
-            Class<? extends Performance> aClass = (Class<? extends Performance>) Class.forName(defaultPeformance);
-            return aClass.newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException(e);
-        }
+
+    public static ActorOnStage shineSpotlightOn(Actor actor){
+        return performance().shineSpotlightOn(actor);
+    }
+    public static ActorOnStage enter(Actor actor){
+        return performance().enter(actor);
+    }
+    public static void exit(Actor actor){
+        performance().exit(actor);
     }
 
-    public static Actor theActorCalled(String requiredActor) {
-        return performance().getCast().actorNamed(requiredActor);
-    }
-
-    public static Actor theActorInTheSpotlight() {
+    public static ActorOnStage theActorInTheSpotlight() {
         return performance().theActorInTheSpotlight();
     }
 

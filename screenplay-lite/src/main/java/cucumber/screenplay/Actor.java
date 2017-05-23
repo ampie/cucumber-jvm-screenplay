@@ -16,5 +16,4 @@ public interface Actor extends Memory {
     /**Utility method for more reusability - TODO evaluate need again in future*/
     void performSteps(String keyword, Object performer, Object ... steps);
 
-    void setCurrentRole(ActorOnStage actorOnStage);
 }

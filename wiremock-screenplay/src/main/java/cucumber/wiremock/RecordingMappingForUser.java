@@ -1,11 +1,14 @@
 package cucumber.wiremock;
 
 import com.github.ampie.wiremock.common.HeaderName;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import cucumber.scoping.IdGenerator;
 import cucumber.scoping.UserTrackingScope;
 import cucumber.scoping.VerificationScope;
+import cucumber.wiremock.scoping.CorrelationPath;
+import cucumber.wiremock.scoping.RelativeResourceDir;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -55,7 +58,7 @@ public class RecordingMappingForUser {
     }
 
     private StringValuePattern deriveCorrelationPath(UserTrackingScope scope) {
-        return CorrelationPath.equalTo(scope , userInScopeId);
+        return WireMock.equalTo(CorrelationPath.ofUserInScope(scope , userInScopeId));
     }
     
     public boolean enforceJournalModeInScope() {
@@ -109,7 +112,7 @@ public class RecordingMappingForUser {
     }
 
     private String getJournalRoot(UserTrackingScope scope) {
-        Path outputResourceRoot = scope.recall("journalRoot");
+        Path outputResourceRoot = scope.getEverybodyScope().recall("journalRoot");
         return outputResourceRoot.toString();
     }
 
@@ -117,7 +120,7 @@ public class RecordingMappingForUser {
     private String getResourceRoot(UserTrackingScope scope) {
 
         if (getRecordingSpecification().getJournalModeOverride() == JournalMode.RECORD) {
-            Path outputResourceRoot = scope.recall("outputResourceRoot");
+            Path outputResourceRoot = scope.getEverybodyScope().recall("outputResourceRoot");
             return outputResourceRoot.toString();
         } else {
             return scope.getGlobalScope().getResourceRoot().toString();

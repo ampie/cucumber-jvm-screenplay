@@ -1,4 +1,15 @@
 description = 'Scoped verification - a library to scope your verification code'
+apply plugin: 'groovy'
 dependencies {
     compile project(':screenplay-lite')
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.codehaus.groovy:groovy-all:2.4.5'
+    testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
+        exclude group: "junit"
+        exclude module: "groovy-all"
+    }
+    testCompile("com.github.goldin:spock-extensions:0.1.4") {
+        exclude module: "spock-core"
+        exclude module: "slf4j-api"
+    }
 }

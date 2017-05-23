@@ -5,11 +5,12 @@ import cucumber.deps.com.thoughtworks.xstream.converters.SingleValueConverter;
 import cucumber.runtime.xstream.LocalizedXStreams;
 
 import java.util.Locale;
+
 public class StringConverter {
     private static final ThreadLocal<LocalizedXStreams> localizedXStreams = new ThreadLocal<>();
 
     public static String toString(Object object) {
-        if(object==null){
+        if (object == null) {
             return "null";
         }
         return getConverter(object).toString(object);
@@ -27,7 +28,6 @@ public class StringConverter {
         if (localizedXStreams.get() == null) {
             localizedXStreams.set(new LocalizedXStreams(Thread.currentThread().getContextClassLoader()));
         }
-
         return localizedXStreams.get();
     }
 

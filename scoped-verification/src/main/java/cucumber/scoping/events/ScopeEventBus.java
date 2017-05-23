@@ -1,53 +1,47 @@
 package cucumber.scoping.events;
 
+import cucumber.scoping.annotations.ScopePhase;
 import cucumber.scoping.annotations.SubscribeToScope;
 import cucumber.scoping.annotations.SubscribeToUser;
+import cucumber.scoping.annotations.UserInvolvement;
+import cucumber.screenplay.events.ScreenPlayEventBus;
+import cucumber.screenplay.internal.InstanceGetter;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class ScopeEventBus {
+public class ScopeEventBus extends ScreenPlayEventBus {
     
-    private InstanceGetter objectFactory;
-    private List<ScopedCallback> scopeSubscribers = new ArrayList<>();
-    private List<UserEventCallback> userSubscribers = new ArrayList<>();
-    private int featureLevel;
-    
-    public ScopeEventBus(InstanceGetter objectFactory, int featureLevel) {
-        this.objectFactory = objectFactory;
-        this.featureLevel = featureLevel;
+    private Map<ScopePhase, List<ScopedCallback>> scopeSubscribers = new HashMap<>();{
+        for (ScopePhase phase : ScopePhase.values()) {
+            scopeSubscribers.put(phase,new ArrayList<ScopedCallback>());
+        }
+    }
+    private Map<UserInvolvement, List<UserEventCallback>> userSubscribers = new HashMap<>();
+    {
+        for (UserInvolvement userInvolvement : UserInvolvement.values()) {
+            userSubscribers.put(userInvolvement,new ArrayList<UserEventCallback>());
+        }
+    }
+    public ScopeEventBus(InstanceGetter objectFactory) {
+        super(objectFactory);
     }
 
     public static Class<?> mostSpecific(Method method, Class<?> aClass) {
-        if(method.getParameterTypes().length==0){
+        if (method.getParameterTypes().length == 0) {
             return aClass;
-        }else{
-            if(aClass.isAssignableFrom(method.getParameterTypes()[0])){
+        } else {
+            if (aClass.isAssignableFrom(method.getParameterTypes()[0])) {
                 return method.getParameterTypes()[0];
-            }else{
+            } else {
                 return aClass;
             }
         }
     }
 
-    public static void invoke(Object target, Object scope, Enum<?> phase, Method method) throws IllegalAccessException, InvocationTargetException {
-        if (method.getParameterTypes().length == 0) {
-            method.invoke(target);
-        } else if (method.getParameterTypes().length == 1 && method.getParameterTypes()[0].isInstance(scope)) {
-            method.invoke(target, scope);
-        } else if (method.getParameterTypes().length == 2 && method.getParameterTypes()[0].isInstance(scope) && method.getParameterTypes()[1].isInstance(phase)) {
-            method.invoke(target, scope, phase);
-        }
-    }
-    
-    public int getFeatureLevel() {
-        return featureLevel;
-    }
     
     public void scanClasses(Set<Class<?>> classes) {
+        super.scanClasses(classes);
         for (Class<?> aClass : classes) {
             scanMethods(aClass);
         }
@@ -57,29 +51,34 @@ public class ScopeEventBus {
     private void scanMethods(Class<?> aClass) {
         for (Method method : aClass.getMethods()) {
             if (method.isAnnotationPresent(SubscribeToScope.class)) {
-                Object target = objectFactory.getInstance(aClass);
-                scopeSubscribers.add(new ScopedCallback(target, method, method.getAnnotation(SubscribeToScope.class)));
+                Object target = instanceGetter.getInstance(aClass);
+                for (ScopePhase scopePhase : method.getAnnotation(SubscribeToScope.class).scopePhases()) {
+                    List<ScopedCallback> scopeSubscribers = this.scopeSubscribers.get(scopePhase);
+                    scopeSubscribers.add(new ScopedCallback(target, method, method.getAnnotation(SubscribeToScope.class),scopePhase));
+                }
             }
             if (method.isAnnotationPresent(SubscribeToUser.class)) {
-                Object target = objectFactory.getInstance(aClass);
-                userSubscribers.add(new UserEventCallback(target, method, method.getAnnotation(SubscribeToUser.class)));
+                Object target = instanceGetter.getInstance(aClass);
+                for (UserInvolvement involvement : method.getAnnotation(SubscribeToUser.class).involvement()) {
+                    List<UserEventCallback> userSubscribers = this.userSubscribers.get(involvement);
+                    userSubscribers.add(new UserEventCallback(target, method, method.getAnnotation(SubscribeToUser.class),involvement));
+                }
             }
-
         }
     }
     
     public void broadcast(ScopeEvent event) {
-        for (ScopedCallback callback : scopeSubscribers) {
+        for (ScopedCallback callback : scopeSubscribers.get(event.getScopePhase())) {
             if (callback.isMatch(event)) {
-                callback.execute(event.getScope(), event.getScopePhase());
+                callback.invoke(event, event.getScopePhase());
             }
         }
     }
 
     public void broadcast(UserEvent event) {
-        for (UserEventCallback callback : userSubscribers) {
+        for (UserEventCallback callback : userSubscribers.get(event.getInvolvement())) {
             if (callback.isMatch(event)) {
-                callback.execute(event.getUserInScope(), event.getInvolvement());
+                callback.invoke(event, event.getInvolvement());
             }
         }
     }

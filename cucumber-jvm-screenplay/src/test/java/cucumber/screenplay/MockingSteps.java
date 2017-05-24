@@ -1,7 +1,7 @@
 package cucumber.screenplay;
 
 import cucumber.api.java.en.When;
-import cucumber.screenplay.annotations.ProducesEmbedding;
+import cucumber.screenplay.annotations.ProducesAttachment;
 import cucumber.screenplay.annotations.Step;
 import org.mockito.Mockito;
 
@@ -51,7 +51,7 @@ public class MockingSteps {
                 stubDescription = "Mock downstreamSystem.doStuff(10)).thenReturn(\"" + actorOnStage.getActor().getName() + " did stuff\")";
             }
 
-            @ProducesEmbedding
+            @ProducesAttachment
             private String stubDescription;
         };
     }

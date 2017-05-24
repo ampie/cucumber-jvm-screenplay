@@ -2,6 +2,9 @@ package cucumber.screenplay.actors;
 
 import cucumber.screenplay.Actor;
 
+/**
+ * Primarily a factory for actors. Is responsible for extract a persona for the actor
+ */
 public interface CastingDirector {
     /**
      * Gets an Actor, contract signed (logged in) and ready for work

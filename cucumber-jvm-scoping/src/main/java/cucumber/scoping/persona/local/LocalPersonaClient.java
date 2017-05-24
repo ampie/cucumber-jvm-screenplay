@@ -1,7 +1,7 @@
 package cucumber.scoping.persona.local;
 
-import cucumber.scoping.persona.Persona;
-import cucumber.scoping.persona.PersonaClient;
+import cucumber.screenplay.persona.Persona;
+import cucumber.screenplay.persona.PersonaClient;
 import gherkin.deps.com.google.gson.JsonObject;
 import gherkin.deps.com.google.gson.JsonParser;
 

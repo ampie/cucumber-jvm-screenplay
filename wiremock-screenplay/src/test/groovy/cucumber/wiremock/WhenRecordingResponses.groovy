@@ -12,7 +12,7 @@ import cucumber.screenplay.actors.OnStage
 import org.apache.commons.io.FileUtils
 
 import java.nio.file.Paths
-import cucumber.wiremock.scoping.listeners.RecordingManagementListener
+import cucumber.scoping.wiremock.listeners.RecordingManagementListener
 
 import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT
 import static cucumber.scoping.ScopingPhrases.everybody
@@ -49,7 +49,7 @@ class WhenRecordingResponses extends WhenWorkingWithWireMock{
                 return [exchange1, exchange2]
             }
         }
-        globalScope.everybodyScope.remember(new RecordingWireMockClient(wireMockServer))
+        globalScope.everybodyScope.remember('recordingWireMockClient', new RecordingWireMockClient(wireMockServer))
         OnStage.present(globalScope)
         def outputPath = Paths.get('build', 'output', 'recordings').toAbsolutePath()
         forRequestsFrom(everybody()).allow(

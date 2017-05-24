@@ -23,14 +23,7 @@ public class Fields {
     private Fields(Class<?> clazz) {
         this.clazz = clazz;
     }
-    public Optional<Field> withName(String pages) {
-        for(Field field : allFields()) {
-            if (field.getName().equals(pages)){
-                return Optional.of(field);
-            }
-        }
-        return Optional.absent();
-    }
+
     public Set<Field> allFields() {
         Set<Field> fields = new HashSet<Field>();
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));

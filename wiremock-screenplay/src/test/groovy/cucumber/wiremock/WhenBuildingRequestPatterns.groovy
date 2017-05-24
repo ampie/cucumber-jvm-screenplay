@@ -35,7 +35,7 @@ class WhenBuildingRequestPatterns extends WhenWorkingWithWireMock{
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['url'] == '/home/path'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == '5/TestRun/.*John_Smith'
-        mapping['response']['headers']['Content-Type'] == 'text/plain'
+        mapping['response']['headers']['Content-StepEventType'] == 'text/plain'
         mapping['response']['body'] == 'blah'
         mapping['priority'] == (MAX_LEVELS*PRIORITIES_PER_LEVEL)+3
     }
@@ -58,7 +58,7 @@ class WhenBuildingRequestPatterns extends WhenWorkingWithWireMock{
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['url'] == '/resolved/endpoint'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == '5/TestRun/.*John_Smith'
-        mapping['response']['headers']['Content-Type'] == 'text/plain'
+        mapping['response']['headers']['Content-StepEventType'] == 'text/plain'
         mapping['response']['body'] == 'blah'
         mapping['priority'] == (MAX_LEVELS*PRIORITIES_PER_LEVEL)+3
     }
@@ -83,7 +83,7 @@ class WhenBuildingRequestPatterns extends WhenWorkingWithWireMock{
         def mapping1 = new JsonSlurper().parseText(Json.write(mappings[1]))
         mapping1['request']['urlPattern'] == '/service/two/endpoint.*'
         mapping1['request']['headers']['x-sbg-messageTraceId']['matches'] == '5/TestRun/.*John_Smith'
-        mapping1['response']['headers']['Content-Type'] == 'text/plain'
+        mapping1['response']['headers']['Content-StepEventType'] == 'text/plain'
         mapping1['response']['body'] == 'blah'
         mapping1['priority'] == (MAX_LEVELS*PRIORITIES_PER_LEVEL)+3
     }

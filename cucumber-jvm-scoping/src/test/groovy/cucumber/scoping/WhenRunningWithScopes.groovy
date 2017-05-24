@@ -7,8 +7,8 @@ import cucumber.runtime.RuntimeOptions
 import cucumber.runtime.StopWatch
 import cucumber.runtime.io.MultiLoader
 import cucumber.runtime.java.JavaBackend
-import cucumber.scoping.annotations.ScopePhase
-import cucumber.scoping.annotations.UserInvolvement
+import cucumber.screenplay.annotations.SceneEventType
+import cucumber.screenplay.annotations.ActorInvolvement
 import cucumber.scoping.glue.StepDefs
 import cucumber.scoping.plugin.ScopingPlugin
 import cucumber.screenplay.StopWatchStub
@@ -30,16 +30,16 @@ class WhenRunningWithScopes  extends Specification{
         report[0].elements.size() == 2
         report[0].elements[0].steps.size() == 1
         StepDefs.SCOPE_CALLBACKS.keySet().size()==5
-        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][0] == ScopePhase.BEFORE_START
-        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][1] == ScopePhase.AFTER_START
-        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][2] == ScopePhase.BEFORE_COMPLETE
-        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][3] == ScopePhase.AFTER_COMPLETE
+        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][0] == SceneEventType.BEFORE_START
+        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][1] == SceneEventType.AFTER_START
+        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][2] == SceneEventType.BEFORE_COMPLETE
+        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][3] == SceneEventType.AFTER_COMPLETE
         StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping'].size() == 4
-        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping'][0] == ScopePhase.BEFORE_START
-        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else'][0] == ScopePhase.BEFORE_START
+        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping'][0] == SceneEventType.BEFORE_START
+        StepDefs.SCOPE_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else'][0] == SceneEventType.BEFORE_START
         StepDefs.USER_CALLBACKS.keySet().size()==5
-        StepDefs.USER_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][0] == UserInvolvement.BEFORE_ENTER_STAGE
-        StepDefs.USER_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][1] == UserInvolvement.AFTER_ENTER_STAGE
+        StepDefs.USER_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][0] == ActorInvolvement.BEFORE_ENTER_STAGE
+        StepDefs.USER_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][1] == ActorInvolvement.AFTER_ENTER_STAGE
         StepDefs.VARIABLE_AFTER_COMPLETE.keySet().size()==5
         StepDefs.VARIABLE_AFTER_START['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else']==4
         StepDefs.VARIABLE_AFTER_COMPLETE['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else']==3

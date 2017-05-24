@@ -1,7 +1,6 @@
 package cucumber.screenplay;
 
 import cucumber.screenplay.actors.OnStage;
-import cucumber.screenplay.questions.ConsequenceGroup;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 
@@ -46,31 +45,22 @@ public class ScreenplayPhrases {
         return new QuestionConsequence(actual, expected);
     }
     
-    public static <T> Consequence<T> seeThat(String subject, Question<? extends T> actual, Matcher<T> expected) {
-        return new QuestionConsequence(subject, actual, expected);
-    }
-    
     public static Consequence<Boolean> seeThat(Question<Boolean> actual) {
         return new BooleanQuestionConsequence(actual);
     }
     
-    public static  Consequence<Boolean> seeThat(String subject, Question<Boolean> actual) {
-        return new BooleanQuestionConsequence(subject, actual);
-    }
+
     
     public static <T> Consequence<T>[] seeThat(Question<? extends T> actual, Matcher<T>... expectedMatchers) {
         
         if (thereAreNo(expectedMatchers)) {
-            return consequenceGroupFor(actual);
+             throw new IllegalArgumentException("No matchers supplied");
         } else {
             return consequencesForEachMatcher(actual, expectedMatchers);
         }
     }
     
-    private static <T> Consequence<T>[] consequenceGroupFor(Question<? extends T> actual) {
-        return new Consequence[]{new ConsequenceGroup(actual)};
-    }
-    
+
     private static <T> Consequence<T>[] consequencesForEachMatcher(Question<? extends T> actual, Matcher<T>[] expectedMatchers) {
         List<Consequence<T>> consequences = new ArrayList<>();
         
@@ -84,14 +74,8 @@ public class ScreenplayPhrases {
         return expectedMatchers.length == 0;
     }
     
-    public static <T> Consequence<T>[] seeThat(String subject, Question<? extends T> actual, Matcher<T>... expectedMatchers) {
-        List<Consequence<T>> consequences = new ArrayList<>();
-        for (Matcher<T> matcher : expectedMatchers) {
-            consequences.add(new QuestionConsequence(subject, actual, matcher));
-        }
-        return consequences.toArray(new Consequence[]{});
-    }
+
     public static ActorOnStage forRequestsFrom(Actor actor){
-        return OnStage.performance().enter(actor);
+        return OnStage.callActorToStage(actor);
     }
 }

@@ -1,8 +1,9 @@
 package cucumber.screenplay.internal;
 
 import cucumber.screenplay.*;
-import cucumber.screenplay.events.ScreenPlayEvent;
+import cucumber.screenplay.events.StepEvent;
 import cucumber.screenplay.events.ScreenPlayEventBus;
+import cucumber.screenplay.annotations.StepEventType;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -10,37 +11,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BaseActor implements Actor {
-    protected static StopWatch stopWatch = new StopWatch() {
-        final ThreadLocal<Deque<Long>> startStack = new ThreadLocal<>();
-
-        @Override
-        public void start() {
-            if (startStack.get() == null) {
-                startStack.set(new ArrayDeque<Long>());
-            }
-            startStack.get().push(System.nanoTime());
-        }
-
-        @Override
-        public long stop() {
-            return System.nanoTime() - startStack.get().pollLast();
-        }
-    };
-
+    protected static StopWatch stopWatch;
     protected final String name;
     private Memory memory = new SimpleMemory();
     private Set<Ability> abilities = new HashSet<>();
     private ScreenPlayEventBus eventBus;
+    private Deque<String> stepPaths = new ArrayDeque<>();
 
     public BaseActor(ScreenPlayEventBus eventBus, String name) {
         this.eventBus = eventBus;
         this.name = name;
     }
 
-    protected ChildStepInfo[] extractInfo(String keyword, Object performer, Object[] stepObjects) {
-        ChildStepInfo[] result = new ChildStepInfo[stepObjects.length];
+    protected StepMethodInfo[] extractInfo(String keyword, Object performer, Object[] stepObjects) {
+        StepMethodInfo[] result = new StepMethodInfo[stepObjects.length];
         for (int i = 0; i < stepObjects.length; i++) {
-            result[i] = new ChildStepInfo(keyword, performer, stepObjects[i]);
+            result[i] = new StepMethodInfo(stepPaths.isEmpty() ? null : stepPaths.peekLast(), keyword, performer, stepObjects[i]);
         }
         return result;
     }
@@ -61,35 +47,57 @@ public class BaseActor implements Actor {
     }
 
     public void performSteps(String keyword, Object performer, Object... stepObjects) {
-        ChildStepInfo[] steps = extractInfo(keyword, performer, stepObjects);
-        StepErrorTally errorTally = new StepErrorTally(stopWatch);
-        for (ChildStepInfo childStepInfo : steps) {
+        StepMethodInfo[] steps = extractInfo(keyword, performer, stepObjects);
+        StepErrorTally errorTally = new StepErrorTally(getStopWatch());
+        for (StepMethodInfo stepMethodInfo : steps) {
             errorTally.startStopWatch();
             try {
-                eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_STARTED));
-                if (errorTally.shouldSkip() || childStepInfo.isSkipped()) {
-                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_SKIPPED, errorTally.stopStopWatch()));
-                } else if (childStepInfo.isPending()) {
+                pushStepPath(stepMethodInfo);
+                eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_STARTED));
+                if (errorTally.shouldSkip() || stepMethodInfo.isSkipped()) {
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_SKIPPED, errorTally.stopStopWatch()));
+                } else if (stepMethodInfo.isPending()) {
                     errorTally.setPending();
-                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_PENDING, errorTally.stopStopWatch()));
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_PENDING, errorTally.stopStopWatch()));
                 } else {
-                    childStepInfo.invoke();
-                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_SUCCESSFUL, errorTally.stopStopWatch()));
+                    stepMethodInfo.invoke();
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_SUCCESSFUL, errorTally.stopStopWatch()));
                 }
             } catch (Throwable t) {
+                t.printStackTrace();
                 errorTally.addThrowable(t);
                 if (errorTally.indicatesPending(t)) {
-                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_PENDING, errorTally.stopStopWatch(), t));
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_PENDING, errorTally.stopStopWatch(), t));
                 } else if (errorTally.indicatesAssertionFailed(t)) {
-                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_ASSERTION_FAILED, errorTally.stopStopWatch(), t));
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_ASSERTION_FAILED, errorTally.stopStopWatch(), t));
                 } else {
-                    eventBus.broadcast(new ScreenPlayEvent(childStepInfo, ScreenPlayEvent.Type.STEP_FAILED, errorTally.stopStopWatch(), t));
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_FAILED, errorTally.stopStopWatch(), t));
                 }
+            } finally {
+                popStepPath();
             }
         }
         errorTally.reportAnyErrors();
     }
 
+    private void popStepPath() {
+        stepPaths.pollLast();
+    }
+
+    private void pushStepPath(StepMethodInfo stepMethodInfo) {
+        if (stepPaths.isEmpty()) {
+            stepPaths.offerLast(stepMethodInfo.getName());
+        } else {
+            stepPaths.offerLast(stepPaths.getLast() + "/" + stepMethodInfo.getName());
+        }
+    }
+
+    private StopWatch getStopWatch() {
+        if (stopWatch == null) {
+            stopWatch = new StackedStopWatch();
+        }
+        return stopWatch;
+    }
 
     public static void useStopWatch(StopWatch stopWatch) {
         BaseActor.stopWatch = stopWatch;
@@ -134,4 +142,5 @@ public class BaseActor implements Actor {
     public <T> T recall(Class<T> clzz) {
         return getMemoryToUse().recall(clzz);
     }
+
 }

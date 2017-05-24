@@ -1,11 +1,11 @@
 package cucumber.scoping.persona.local;
 
 
-import cucumber.scoping.persona.CharacterType;
-import cucumber.scoping.persona.Persona;
+import cucumber.screenplay.persona.CharacterType;
+import cucumber.screenplay.persona.Persona;
 import gherkin.deps.com.google.gson.JsonObject;
 
-public class LocalPersona implements Persona<JsonObject>{
+public class LocalPersona implements Persona<JsonObject> {
     private final JsonObject data;
     private String name;
     private CharacterType characterType;

@@ -3,9 +3,8 @@ package cucumber.wiremock
 import com.github.ampie.wiremock.ScopedWireMockServer
 import com.github.tomakehurst.wiremock.common.Json
 import cucumber.scoping.GlobalScope
-import cucumber.screenplay.Actor
 import cucumber.screenplay.actors.OnStage
-import cucumber.wiremock.scoping.CorrelationPath
+import cucumber.scoping.wiremock.CorrelationPath
 import groovy.json.JsonSlurper
 
 import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT

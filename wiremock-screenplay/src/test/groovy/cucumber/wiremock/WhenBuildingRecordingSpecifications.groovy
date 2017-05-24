@@ -12,6 +12,7 @@ import static cucumber.screenplay.ScreenplayPhrases.actorNamed
 import static cucumber.screenplay.ScreenplayPhrases.forRequestsFrom
 import static cucumber.wiremock.RequestStrategies.a
 import static cucumber.wiremock.RecordingStrategies.*
+import static cucumber.screenplay.actors.OnStage.*
 
 class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
 
@@ -22,12 +23,13 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         given:
         OnStage.present(globalScope)
         def johnSmith = actorNamed("John Smith")
+        shineSpotlightOn(johnSmith)
         when:
         forRequestsFrom(johnSmith).allow(
                 a(PUT).to("/home/path").to(recordResponsesTo(tempDir.absolutePath))
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.getUserInSpotlight().getScopePath())
+        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.theActorInTheSpotlight().getScopePath())
         mappings.size() == 0
         def requestsToRecord = globalScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord[0].calculateRecordingDirectory(globalScope).toString() == Paths.get(tempDir.absolutePath,"John_Smith").toString()
@@ -67,12 +69,13 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         OnStage.present(globalScope)
 
         def johnSmith = actorNamed("John Smith")
+        shineSpotlightOn(johnSmith)
         when:
         forRequestsFrom(johnSmith).allow(
                 a(PUT).to("/home/path").to(recordResponses())
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.getUserInSpotlight().getScopePath())
+        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.theActorInTheSpotlight().getScopePath())
         mappings.size() == 0
         def requestsToRecord = globalScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord.size() == 1
@@ -89,12 +92,14 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         OnStage.present(globalScope)
 
         def johnSmith = actorNamed("John Smith")
+        shineSpotlightOn(johnSmith)
+
         when:
         forRequestsFrom(johnSmith).allow(
                 a(PUT).to("/home/path").to(playbackResponsesFrom(tempDir.absolutePath))
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.getUserInSpotlight().getScopePath())
+        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.theActorInTheSpotlight().getScopePath())
         mappings.size() == 0
         def requestsToRecord = globalScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord[0].calculateRecordingDirectory(globalScope).toString() == Paths.get(tempDir.absolutePath,"John_Smith").toString()
@@ -113,12 +118,13 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         OnStage.present(globalScope)
 
         def johnSmith = actorNamed("John Smith")
+        shineSpotlightOn(johnSmith)
         when:
         forRequestsFrom(johnSmith).allow(
                 a(PUT).to("/home/path").to(playbackResponses())
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.getUserInSpotlight().getScopePath())
+        def mappings = wireMockServer.getMappingsInScope("5/" + theActorInTheSpotlight().getScopePath())
         mappings.size() == 0
         def requestsToRecord = nestedScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord.size() == 1
@@ -135,12 +141,13 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         OnStage.present(globalScope)
 
         def johnSmith = actorNamed("John Smith")
+        shineSpotlightOn(johnSmith)
         when:
         forRequestsFrom(johnSmith).allow(
                 a(PUT).to("/endpoint/path").to(mapToJournalDirectory())
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.getUserInSpotlight().getScopePath())
+        def mappings = wireMockServer.getMappingsInScope("5/" + theActorInTheSpotlight().getScopePath())
         mappings.size() == 0
         def requestsToRecord = nestedScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord.size() == 1
@@ -158,12 +165,13 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         OnStage.present(globalScope)
 
         def johnSmith = actorNamed("John Smith")
+        shineSpotlightOn(johnSmith)
         when:
         forRequestsFrom(johnSmith).allow(
                 a(PUT).to("/home/path").to(mapToJournalDirectory("/tmp/journal"))
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.getUserInSpotlight().getScopePath())
+        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.theActorInTheSpotlight().getScopePath())
         mappings.size() == 0
         def requestsToRecord = nestedScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord.size() == 1

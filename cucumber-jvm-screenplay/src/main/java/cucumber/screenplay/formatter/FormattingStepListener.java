@@ -1,8 +1,8 @@
 package cucumber.screenplay.formatter;
 
 import cucumber.screenplay.annotations.StepListener;
-import cucumber.screenplay.events.ScreenPlayEvent;
-import cucumber.screenplay.internal.ChildStepInfo;
+import cucumber.screenplay.events.StepEvent;
+import cucumber.screenplay.internal.StepMethodInfo;
 import cucumber.screenplay.internal.Embeddings;
 import cucumber.screenplay.util.Fields;
 import cucumber.screenplay.util.StringConverter;
@@ -17,32 +17,32 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import static cucumber.screenplay.events.ScreenPlayEvent.Type.*;
+import static cucumber.screenplay.annotations.StepEventType.*;
 
 public class FormattingStepListener {
 
     @StepListener(eventTypes = STEP_SUCCESSFUL)
-    public void logChildStepResult(ScreenPlayEvent event) {
+    public void logChildStepResult(StepEvent event) {
         if (getFormatter() != null) {
             logEmbeddingsAndResult(event.getInfo(), new Result(Result.PASSED, event.getDuration(), null));
         }
     }
 
     @StepListener(eventTypes = STEP_PENDING)
-    public void logChildStepPending(ScreenPlayEvent event) {
+    public void logChildStepPending(StepEvent event) {
         if (getFormatter() != null) {
             logEmbeddingsAndResult(event.getInfo(), new Result("pending", event.getDuration(), null));
         }
     }
     @StepListener(eventTypes = {STEP_FAILED,STEP_ASSERTION_FAILED})
-    public void logChildFailed(ScreenPlayEvent event) {
+    public void logChildFailed(StepEvent event) {
         if (getFormatter() != null) {
             logEmbeddingsAndResult(event.getInfo(), new Result(Result.FAILED, event.getDuration(), event.getError(),null));
         }
     }
 
     @StepListener(eventTypes = STEP_SKIPPED)
-    public void logChildStepSkipped(ScreenPlayEvent event) {
+    public void logChildStepSkipped(StepEvent event) {
         if (getFormatter() != null) {
             logEmbeddingsAndResult(event.getInfo(), Result.SKIPPED);
         }
@@ -50,7 +50,7 @@ public class FormattingStepListener {
 
 
     @StepListener(eventTypes = STEP_STARTED)
-    public void logChildStepStart(ScreenPlayEvent event) {
+    public void logChildStepStart(StepEvent event) {
         if (getFormatter() != null) {
             Step step = new Step(null, event.getInfo().getKeyword(), event.getInfo().getName(), null, null, null);
             List<Argument> arguments = extractArguments(event.getInfo().getNameExpression(), event.getInfo().getImplementation());
@@ -78,14 +78,14 @@ public class FormattingStepListener {
 
 
 
-    private void logEmbeddingsAndResult(ChildStepInfo childStepInfo, Result skipped) {
+    private void logEmbeddingsAndResult(StepMethodInfo stepMethodInfo, Result skipped) {
         if (getFormatter() != null) {
-            logEmbeddings(childStepInfo);
+            logEmbeddings(stepMethodInfo);
             getFormatter().childResult(skipped);
         }
     }
 
-    private void logEmbeddings(ChildStepInfo csi) {
+    private void logEmbeddings(StepMethodInfo csi) {
         for (Pair<String, byte[]> embedding : Embeddings.producedBy(csi.getImplementation())) {
             getFormatter().embedding(embedding.getKey(), embedding.getValue());
         }

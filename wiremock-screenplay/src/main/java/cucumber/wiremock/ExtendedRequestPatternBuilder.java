@@ -4,8 +4,8 @@ import com.github.ampie.wiremock.common.HeaderName;
 import com.github.ampie.wiremock.common.Reflection;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.matching.*;
+import cucumber.scoping.wiremock.WireMockScopeContext;
 import cucumber.screenplay.ActorOnStage;
-import cucumber.screenplay.DownstreamStub;
 import cucumber.screenplay.DownstreamVerification;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -139,7 +139,7 @@ public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
         return new DownstreamVerification() {
             @Override
             public void performOnStage(ActorOnStage actorOnStage) {
-                WireMockContext verificationContext = new WireMockContext(actorOnStage);
+                WireMockContext verificationContext = new WireMockScopeContext(actorOnStage);
                 int count = verificationContext.count(ExtendedRequestPatternBuilder.this);
                 if (!countMatcher.matches(count)) {
                     StringDescription description = new StringDescription();
@@ -158,7 +158,7 @@ public class ExtendedRequestPatternBuilder extends RequestPatternBuilder {
 
     }
 
-    public DownstreamStub to(ResponseStrategy responseStrategy) {
+    public WireMockRuleBuilder to(ResponseStrategy responseStrategy) {
         return will(responseStrategy);
     }
 

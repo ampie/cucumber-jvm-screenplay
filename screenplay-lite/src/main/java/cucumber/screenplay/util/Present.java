@@ -38,10 +38,6 @@ final class Present<T> extends Optional<T> {
         return reference;
     }
 
-    @Override
-    public Set<T> asSet() {
-        return Collections.singleton(reference);
-    }
 
 
     @Override

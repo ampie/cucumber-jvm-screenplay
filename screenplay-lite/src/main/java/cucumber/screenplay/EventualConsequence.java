@@ -71,22 +71,22 @@ public class EventualConsequence<T> implements Consequence<T> {
 
     @Override
     public Consequence<T> orComplainWith(Class<? extends Error> complaintType) {
-        return new EventualConsequence(consequenceThatMightTakeSomeTime.orComplainWith(complaintType));
+        return new EventualConsequence(consequenceThatMightTakeSomeTime.orComplainWith(complaintType), timeout);
     }
 
     @Override
     public Consequence<T> orComplainWith(Class<? extends Error> complaintType, String complaintDetails) {
-        return new EventualConsequence(consequenceThatMightTakeSomeTime.orComplainWith(complaintType, complaintDetails));
+        return new EventualConsequence(consequenceThatMightTakeSomeTime.orComplainWith(complaintType, complaintDetails), timeout);
     }
 
     @Override
     public Consequence<T> whenAttemptingTo(Performable performable) {
-        return new EventualConsequence<T>(consequenceThatMightTakeSomeTime.whenAttemptingTo(performable));
+        return new EventualConsequence<T>(consequenceThatMightTakeSomeTime.whenAttemptingTo(performable), timeout);
     }
 
     @Override
     public Consequence<T> because(String explanation) {
-        return new EventualConsequence<T>(consequenceThatMightTakeSomeTime.because(explanation));
+        return new EventualConsequence<T>(consequenceThatMightTakeSomeTime.because(explanation), timeout);
     }
 
     @Override

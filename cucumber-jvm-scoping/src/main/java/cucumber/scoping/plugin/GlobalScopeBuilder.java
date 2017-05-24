@@ -8,10 +8,10 @@ import cucumber.runtime.StepDefinition;
 import cucumber.runtime.java.JavaBackend;
 import cucumber.scoping.GlobalScope;
 import cucumber.scoping.events.ScreenplayLifecycleSync;
+import cucumber.screenplay.events.ScreenPlayEventBus;
 import cucumber.screenplay.internal.InstanceGetter;
-import cucumber.scoping.events.ScopeEventBus;
 import cucumber.scoping.persona.local.LocalPersonaClient;
-import cucumber.scoping.ScopedCastingDirector;
+import cucumber.screenplay.internal.BaseCastingDirector;
 import cucumber.screenplay.actors.OnStage;
 import cucumber.screenplay.util.Fields;
 
@@ -31,12 +31,13 @@ public class GlobalScopeBuilder implements GlueBase {
             final ObjectFactory objectFactory = (ObjectFactory) backendState.get("objectFactory");
             RuntimeGlue glue = (RuntimeGlue) backendState.get("glue");
             ClassFinder classFinder = (ClassFinder) backendState.get("classFinder");
-            ScopeEventBus scopeEventBus = new ScopeEventBus(new InstanceGetter() {
+            final InstanceGetter objectFactory1 = new InstanceGetter() {
                 @Override
                 public <T> T getInstance(Class<T> type) {
                     return objectFactory.getInstance(type);
                 }
-            });
+            };
+            ScreenPlayEventBus scopeEventBus = new ScreenPlayEventBus(objectFactory1);
             Set<Class<?>> classes = new HashSet<>();
             Map<String, StepDefinition> stepDefs = (Map<String, StepDefinition>) Fields.of(glue).asMap().get("stepDefinitionsByPattern");
             for (StepDefinition sd : stepDefs.values()) {
@@ -56,7 +57,7 @@ public class GlobalScopeBuilder implements GlueBase {
             classes.add(ScreenplayLifecycleSync.class);
             scopeEventBus.scanClasses(classes);
             Path resourceRoot = Paths.get("src/test/resources");
-            OnStage.present(new GlobalScope("RunAll", resourceRoot, new ScopedCastingDirector(scopeEventBus, new LocalPersonaClient(), resourceRoot), scopeEventBus));
+            OnStage.present(new GlobalScope("RunAll", resourceRoot, new BaseCastingDirector(scopeEventBus, new LocalPersonaClient(), resourceRoot), scopeEventBus));
         }
 
     }

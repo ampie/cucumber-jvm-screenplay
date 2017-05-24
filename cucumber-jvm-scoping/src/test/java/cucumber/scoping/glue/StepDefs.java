@@ -4,10 +4,10 @@ import cucumber.api.java.en.Given;
 import cucumber.scoping.ActorInScope;
 import cucumber.scoping.FunctionalScope;
 import cucumber.scoping.ScenarioScope;
-import cucumber.scoping.annotations.ScopePhase;
-import cucumber.scoping.annotations.SubscribeToScope;
-import cucumber.scoping.annotations.SubscribeToUser;
-import cucumber.scoping.annotations.UserInvolvement;
+import cucumber.screenplay.annotations.ActorInvolvement;
+import cucumber.screenplay.annotations.ActorListener;
+import cucumber.screenplay.annotations.SceneEventType;
+import cucumber.screenplay.annotations.SceneListener;
 import cucumber.screenplay.Actor;
 import cucumber.screenplay.ActorOnStage;
 import cucumber.screenplay.DownstreamStub;
@@ -36,82 +36,82 @@ public class StepDefs {
 
     }
 
-    @SubscribeToScope(scopePhases = ScopePhase.BEFORE_START)
-    public void beforeStart(FunctionalScope scope, ScopePhase phase) {
+    @SceneListener(scopePhases = SceneEventType.BEFORE_START)
+    public void beforeStart(FunctionalScope scope, SceneEventType phase) {
         VARIABLE_BEFORE_START.put(scope.getScopePath(), scope.getEverybodyScope().<Integer>recall("scopeLevel"));
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    @SubscribeToScope(scopePhases = ScopePhase.AFTER_START)
-    public void afterStart(FunctionalScope scope, ScopePhase phase) {
+    @SceneListener(scopePhases = SceneEventType.AFTER_START)
+    public void afterStart(FunctionalScope scope, SceneEventType phase) {
         scope.getEverybodyScope().remember("scopeLevel", scope.getLevel());
         VARIABLE_AFTER_START.put(scope.getScopePath(), scope.getEverybodyScope().<Integer>recall("scopeLevel"));
         registerCallbackOccurrence(scope.getScopePath(), phase);
         scope.shineSpotlightOn(actorNamed("John"));
     }
 
-    @SubscribeToScope(scopePhases = ScopePhase.BEFORE_COMPLETE)
-    public void beforeComplete(FunctionalScope scope, ScopePhase phase) {
+    @SceneListener(scopePhases = SceneEventType.BEFORE_COMPLETE)
+    public void beforeComplete(FunctionalScope scope, SceneEventType phase) {
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    @SubscribeToScope(scopePhases = ScopePhase.AFTER_COMPLETE)
-    public void afterComplete(FunctionalScope scope, ScopePhase phase) {
+    @SceneListener(scopePhases = SceneEventType.AFTER_COMPLETE)
+    public void afterComplete(FunctionalScope scope, SceneEventType phase) {
         VARIABLE_AFTER_COMPLETE.put(scope.getScopePath(), scope.getEverybodyScope().<Integer>recall("scopeLevel"));
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
 
-    @SubscribeToScope(scopePhases = ScopePhase.BEFORE_START)
-    public void beforeStart(ScenarioScope scope, ScopePhase phase) {
+    @SceneListener(scopePhases = SceneEventType.BEFORE_START)
+    public void beforeStart(ScenarioScope scope, SceneEventType phase) {
         VARIABLE_BEFORE_START.put(scope.getScopePath(), scope.getEverybodyScope().<Integer>recall("scopeLevel"));
         scope.shineSpotlightOn(actorNamed("John"));
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    @SubscribeToScope(scopePhases = ScopePhase.AFTER_START)
-    public void afterStart(ScenarioScope scope, ScopePhase phase) {
+    @SceneListener(scopePhases = SceneEventType.AFTER_START)
+    public void afterStart(ScenarioScope scope, SceneEventType phase) {
         scope.getEverybodyScope().remember("scopeLevel", scope.getLevel());
         VARIABLE_AFTER_START.put(scope.getScopePath(), scope.getEverybodyScope().<Integer>recall("scopeLevel"));
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    @SubscribeToScope(scopePhases = ScopePhase.BEFORE_COMPLETE)
-    public void beforeComplete(ScenarioScope scope, ScopePhase phase) {
+    @SceneListener(scopePhases = SceneEventType.BEFORE_COMPLETE)
+    public void beforeComplete(ScenarioScope scope, SceneEventType phase) {
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    @SubscribeToScope(scopePhases = ScopePhase.AFTER_COMPLETE)
-    public void afterComplete(ScenarioScope scope, ScopePhase phase) {
+    @SceneListener(scopePhases = SceneEventType.AFTER_COMPLETE)
+    public void afterComplete(ScenarioScope scope, SceneEventType phase) {
         VARIABLE_AFTER_COMPLETE.put(scope.getScopePath(), scope.getEverybodyScope().<Integer>recall("scopeLevel"));
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    @SubscribeToUser(involvement = UserInvolvement.BEFORE_ENTER_STAGE)
-    public void beforeEnter(ActorInScope scope, UserInvolvement phase) {
+    @ActorListener(involvement = ActorInvolvement.BEFORE_ENTER_STAGE)
+    public void beforeEnter(ActorInScope scope, ActorInvolvement phase) {
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    @SubscribeToUser(involvement = UserInvolvement.AFTER_ENTER_STAGE)
-    public void afterEnter(ActorInScope scope, UserInvolvement phase) {
+    @ActorListener(involvement = ActorInvolvement.AFTER_ENTER_STAGE)
+    public void afterEnter(ActorInScope scope, ActorInvolvement phase) {
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    @SubscribeToUser(involvement = UserInvolvement.BEFORE_EXIT_STAGE)
+    @ActorListener(involvement = ActorInvolvement.BEFORE_EXIT_STAGE)
     public void beforeExit(ActorInScope scope) {
-        registerCallbackOccurrence(scope.getScopePath(), UserInvolvement.BEFORE_EXIT_STAGE);
+        registerCallbackOccurrence(scope.getScopePath(), ActorInvolvement.BEFORE_EXIT_STAGE);
     }
 
-    @SubscribeToUser(involvement = UserInvolvement.AFTER_EXIT_STAGE)
-    public void afterExit(ActorInScope scope, UserInvolvement phase) {
+    @ActorListener(involvement = ActorInvolvement.AFTER_EXIT_STAGE)
+    public void afterExit(ActorInScope scope, ActorInvolvement phase) {
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    private void registerCallbackOccurrence(String scopePath, ScopePhase phase) {
+    private void registerCallbackOccurrence(String scopePath, SceneEventType phase) {
         registerCallbackOccurrence(scopePath, phase, SCOPE_CALLBACKS);
     }
 
-    private void registerCallbackOccurrence(String scopePath, UserInvolvement phase) {
+    private void registerCallbackOccurrence(String scopePath, ActorInvolvement phase) {
         registerCallbackOccurrence(scopePath, phase, USER_CALLBACKS);
     }
 

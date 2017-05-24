@@ -1,17 +1,33 @@
 package cucumber.screenplay.internal;
 
 import cucumber.screenplay.*;
+import cucumber.screenplay.annotations.ActorInvolvement;
+import cucumber.screenplay.events.ActorEvent;
+import cucumber.screenplay.util.NameConverter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BaseActorOnStage implements ActorOnStage {
-    private Actor actor;
-    private Memory memory = new SimpleMemory();
-    private List<DownstreamVerification> downstreamExpectations =new ArrayList<>();
+    protected final String id;
+    protected Scene scene;
+    protected Actor actor;
+    protected SimpleMemory memory = new SimpleMemory();
+    protected List<DownstreamVerification> downstreamExpectations =new ArrayList<>();
+    private boolean active = false;
 
-    public BaseActorOnStage(Actor actor) {
+    public BaseActorOnStage(Scene scene, Actor actor) {
+        this.scene = scene;
         this.actor = actor;
+        this.id= NameConverter.filesystemSafe(actor.getName());
+
+    }
+    public static boolean isEverybody(ActorOnStage a){
+        return a.getId().equals("everybody");
+    }
+    @Override
+    public String getId() {
+        return id;
     }
 
     @Override
@@ -46,6 +62,16 @@ public class BaseActorOnStage implements ActorOnStage {
     }
 
     @Override
+    public Scene getScene() {
+        return scene;
+    }
+
+    @Override
+    public <T> T recallImmediately(String variableName) {
+        return memory.recall(variableName);
+    }
+
+    @Override
     public void remember(String name, Object value) {
         memory.remember(name, value);
     }
@@ -68,5 +94,46 @@ public class BaseActorOnStage implements ActorOnStage {
     @Override
     public <T> T recall(Class<T> clzz) {
         return memory.recall(clzz);
+    }
+
+    public boolean isActive() {
+        return this.active;
+    }
+
+    public void enterSpotlight() {
+        if (isActive()) {
+            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.INTO_SPOTLIGHT));
+        }
+    }
+
+    public void exitSpotlight() {
+        if (isActive()) {
+            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.OUT_OF_SPOTLIGHT));
+        }
+    }
+
+    public void enterStage() {
+        if (!isActive()) {
+            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.BEFORE_ENTER_STAGE));
+            enterStageWithoutEvents();
+            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.AFTER_ENTER_STAGE));
+        }
+    }
+
+    public void exitStage() {
+        if (isActive()) {
+            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.BEFORE_EXIT_STAGE));
+            exitStageWithoutEvents();
+            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.AFTER_EXIT_STAGE));
+        }
+    }
+
+    protected void exitStageWithoutEvents() {
+        memory.clear();
+        this.active = false;
+    }
+
+    protected void enterStageWithoutEvents() {
+        this.active = true;
     }
 }

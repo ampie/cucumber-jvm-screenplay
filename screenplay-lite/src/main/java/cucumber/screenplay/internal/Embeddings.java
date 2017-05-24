@@ -1,6 +1,6 @@
 package cucumber.screenplay.internal;
 
-import cucumber.screenplay.annotations.ProducesEmbedding;
+import cucumber.screenplay.annotations.ProducesAttachment;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -10,12 +10,12 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO migrate to screenplay-lite
+
 public class Embeddings {
     public static List<Pair<String, byte[]>> producedBy(Object o) {
         List<Pair<String, byte[]>> result = new ArrayList<>();
         for (Field field : FieldUtils.getAllFields(o.getClass())) {
-            if (field.isAnnotationPresent(ProducesEmbedding.class)) {
+            if (field.isAnnotationPresent(ProducesAttachment.class)) {
                 Object dataObject = readValue(o, field);
                 if (dataObject != null) {
                     result.add(asEmbedding(field, dataObject));
@@ -35,7 +35,7 @@ public class Embeddings {
     }
 
     private static ImmutablePair<String, byte[]> asEmbedding(Field field, Object dataObject) {
-        ProducesEmbedding annotation = field.getAnnotation(ProducesEmbedding.class);
+        ProducesAttachment annotation = field.getAnnotation(ProducesAttachment.class);
         byte[] data = null;
         if (dataObject instanceof byte[]) {
             data = (byte[]) dataObject;

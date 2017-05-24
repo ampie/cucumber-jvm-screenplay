@@ -7,7 +7,7 @@ package cucumber.scoping;
 public class FunctionalScope extends UserTrackingScope {
 
 
-    public FunctionalScope(VerificationScope containingScope, String name) {
+    public FunctionalScope(UserTrackingScope containingScope, String name) {
         super(containingScope, name);
     }
 

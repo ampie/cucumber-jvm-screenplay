@@ -3,18 +3,24 @@ package cucumber.screenplay.actors;
 
 import cucumber.screenplay.Actor;
 import cucumber.screenplay.ActorOnStage;
+import cucumber.screenplay.Scene;
+import cucumber.screenplay.events.ScreenPlayEventBus;
 
-public interface Performance {
+import java.nio.file.Path;
+
+public interface Performance{
 
     Cast getCast();
 
-    ActorOnStage shineSpotlightOn(Actor actor);
-
-    ActorOnStage theActorInTheSpotlight();
+    Scene raiseTheCurtain(String sceneName);
 
     void drawTheCurtain();
 
-    ActorOnStage enter(Actor actor);
+    <T> T recall(String variableName);
 
-    void exit(Actor actor);
+    Path getResourceRoot();
+
+    Scene currentScene();
+
+    ScreenPlayEventBus getEventBus();
 }

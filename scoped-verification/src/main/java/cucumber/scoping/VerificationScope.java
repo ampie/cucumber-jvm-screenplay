@@ -1,12 +1,9 @@
 package cucumber.scoping;
 
-import cucumber.scoping.annotations.ScopePhase;
-import cucumber.scoping.events.ScopeEvent;
+import cucumber.screenplay.util.NameConverter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static cucumber.scoping.IdGenerator.fromName;
 
 public class VerificationScope {
     private String id;
@@ -17,35 +14,18 @@ public class VerificationScope {
     protected boolean hasActiveChild = false;
     private List<VerificationScope> nestedScopes = new ArrayList<>();
 
-
     public VerificationScope(VerificationScope containingScope, String name) {
         this.containingScope = containingScope;
         this.name = name;
-        this.id = fromName(name);
+        this.id = NameConverter.filesystemSafe(name);
+    }
+
+    protected List<VerificationScope> getNestedScopes() {
+        return nestedScopes;
     }
 
     public int getLevel() {
         return getContainingScope().getLevel() + 1;
-    }
-
-    public void start() {
-        if (!isActive()) {
-            //We only start once
-            getGlobalScope().broadcast(new ScopeEvent(this, ScopePhase.BEFORE_START));
-            startWithoutEvents();
-            getGlobalScope().broadcast(new ScopeEvent(this, ScopePhase.AFTER_START));
-        }
-    }
-
-
-    public final void complete() {
-        if (isActive()) {
-            //We only complete once
-            completeChildren();
-            getGlobalScope().broadcast(new ScopeEvent(this, ScopePhase.BEFORE_COMPLETE));
-            completeWithoutEvents();
-            getGlobalScope().broadcast(new ScopeEvent(this, ScopePhase.AFTER_COMPLETE));
-        }
     }
 
     protected void completeWithoutEvents() {
@@ -56,6 +36,10 @@ public class VerificationScope {
         for (VerificationScope nestedScope : nestedScopes) {
             nestedScope.complete();
         }
+    }
+
+    public void complete() {
+        completeWithoutEvents();
     }
 
     public <T> T getInnerMostActive(Class<T> ofType) {
@@ -91,6 +75,10 @@ public class VerificationScope {
         return child;
     }
 
+    public void start() {
+        startWithoutEvents();
+    }
+
     public String getId() {
         return this.id;
     }
@@ -110,7 +98,6 @@ public class VerificationScope {
     protected void startWithoutEvents() {
         this.active = true;
     }
-
 
     public GlobalScope getGlobalScope() {
         return getContainingScope().getGlobalScope();

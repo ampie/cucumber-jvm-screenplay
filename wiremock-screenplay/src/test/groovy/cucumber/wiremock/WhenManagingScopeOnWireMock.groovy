@@ -3,12 +3,16 @@ package cucumber.wiremock
 import com.github.ampie.wiremock.ScopedWireMockServer
 import com.github.ampie.wiremock.admin.CorrelationState
 import cucumber.scoping.GlobalScope
+import cucumber.screenplay.ActorOnStage
+import cucumber.screenplay.DownstreamStub
+import cucumber.screenplay.annotations.Step
+import cucumber.screenplay.events.ScreenPlayEventBus
 import cucumber.screenplay.internal.InstanceGetter
-import cucumber.scoping.events.ScopeEventBus
+
 import cucumber.scoping.persona.local.LocalPersonaClient
-import cucumber.scoping.ScopedCastingDirector
+import cucumber.screenplay.internal.BaseCastingDirector
 import cucumber.screenplay.actors.OnStage
-import cucumber.wiremock.scoping.listeners.ScopeManagementListener
+import cucumber.scoping.wiremock.listeners.ScopeManagementListener
 import groovy.json.JsonOutput
 import org.apache.http.ProtocolVersion
 import org.apache.http.client.methods.CloseableHttpResponse
@@ -18,6 +22,7 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.message.BasicStatusLine
 import static cucumber.screenplay.ScreenplayPhrases.*
+import static cucumber.screenplay.actors.OnStage.*
 
 import java.nio.file.Paths
 
@@ -31,23 +36,29 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
         when:
         def scope = globalScope.startFunctionalScope('nested1')
         def scenarioScope = scope.startScenario('scenario1')
-        def stepScope = scenarioScope.startStep('step1')
+        def innerStep=null
+        forRequestsFrom(actorNamed('John Smith')).allow(new DownstreamStub() {
+            @Override
+            @Step('step1')
+            void performOnStage(ActorOnStage actorOnStage) {
+                innerStep=currentScene().recall('correlationState').currentStep
+            }
+        })
         def userScope = scope.shineSpotlightOn(actorNamed('John Smith'))
 
         then:
-        scope.everybodyScope.recall(CorrelationState).correlationPath == '5/TestRun/nested1'
-        userScope.recall(CorrelationState).correlationPath == '5/TestRun/nested1/John_Smith'
-        scenarioScope.everybodyScope.recall(CorrelationState).currentStep == 'step1'
-        scenarioScope.completeStep('step1')
-        scenarioScope.everybodyScope.recall(CorrelationState).currentStep == null
+        scope.everybodyScope.recall('correlationState').correlationPath == '5/TestRun/nested1'
+        userScope.recall('correlationState').correlationPath == '5/TestRun/nested1/John_Smith'
+        innerStep == 'step1'
+        scenarioScope.everybodyScope.recall('correlationState').currentStep == null
     }
 
     def buildGlobalScope(String name, Class<?>... glue) {
         def resourceRoot = Paths.get('src/test/resources')
-        def eventBus = new ScopeEventBus(Mock(InstanceGetter) {
+        def eventBus = new ScreenPlayEventBus(Mock(InstanceGetter) {
             getInstance(_) >> { args -> args[0].newInstance() }
         })
-        def castingDirector = new ScopedCastingDirector(eventBus,new LocalPersonaClient(), resourceRoot)
+        def castingDirector = new BaseCastingDirector(eventBus,new LocalPersonaClient(), resourceRoot)
 
         eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(glue)))
         def httpMock = Mock(CloseableHttpClient) {
@@ -75,7 +86,7 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
         globalScope.everybodyScope.remember('outputResourceRoot', Paths.get('build', 'output'))
         globalScope.everybodyScope.remember('journalRoot', Paths.get('build', 'journal'))
         globalScope.everybodyScope.remember('baseUrlOfServiceUnderTest', 'http://service.com/under/test')
-        globalScope.everybodyScope.remember(new RecordingWireMockClient(new ScopedWireMockServer()))
+        globalScope.everybodyScope.remember('recordingWireMockClient', new RecordingWireMockClient(new ScopedWireMockServer()))
 
         globalScope.start()
         globalScope

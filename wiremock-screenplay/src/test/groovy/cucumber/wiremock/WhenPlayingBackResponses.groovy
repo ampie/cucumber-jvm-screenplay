@@ -2,10 +2,10 @@ package cucumber.wiremock
 
 import cucumber.scoping.GlobalScope
 import cucumber.screenplay.actors.OnStage
-import cucumber.wiremock.scoping.CorrelationPath
+import cucumber.scoping.wiremock.CorrelationPath
 
 import java.nio.file.Paths
-import cucumber.wiremock.scoping.listeners.RecordingManagementListener
+import cucumber.scoping.wiremock.listeners.RecordingManagementListener
 
 import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT
 import static cucumber.scoping.ScopingPhrases.everybody

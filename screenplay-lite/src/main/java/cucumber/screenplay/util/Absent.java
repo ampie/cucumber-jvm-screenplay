@@ -41,10 +41,6 @@ final class Absent<T> extends Optional<T> {
         return null;
     }
 
-    @Override
-    public Set<T> asSet() {
-        return Collections.emptySet();
-    }
 
     @Override
     public boolean equals(Object object) {

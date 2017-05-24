@@ -8,6 +8,7 @@ import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import cucumber.scoping.wiremock.WireMockScopeContext;
 import cucumber.screenplay.ActorOnStage;
 
 import java.net.MalformedURLException;
@@ -100,9 +101,6 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
         this.requestPatternBuilder.withQueryParam(key, queryParamPattern);
         return this;
     }
-
-
-
 
     @Override
     public WireMockRuleBuilder to(String urlInfo) {
@@ -213,7 +211,7 @@ public class WireMockRuleBuilder implements ExtendedMappingBuilder {
 
     @Override
     public void performOnStage(ActorOnStage actorOnStage) {
-        WireMockContext verificationContext = new WireMockContext(actorOnStage);
+        WireMockContext verificationContext = new WireMockScopeContext(actorOnStage);
         if (responseDefinitionBuilder == null) {
             try {
                 responseDefinitionBuilder = responseStrategy.applyTo(this, verificationContext);

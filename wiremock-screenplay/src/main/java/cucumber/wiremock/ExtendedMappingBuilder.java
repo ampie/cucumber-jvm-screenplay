@@ -1,7 +1,6 @@
 package cucumber.wiremock;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
-import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import cucumber.screenplay.DownstreamStub;
 
 

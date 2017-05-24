@@ -2,7 +2,6 @@ package cucumber.screenplay.internal;
 
 import cucumber.screenplay.PendingException;
 import cucumber.screenplay.ScreenPlayException;
-import cucumber.screenplay.internal.StopWatch;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -10,15 +9,34 @@ import java.util.Collection;
 import java.util.List;
 
 public class StepErrorTally {
+    public static interface ErrorSelector {
+        boolean select(Throwable t);
+    }
+
+    private ErrorSelector isAssertion = new ErrorSelector() {
+        @Override
+        public boolean select(Throwable t) {
+            return t instanceof AssertionError;
+
+        }
+    };
+
     private static Class<? extends RuntimeException> pendingExceptionType;
-    static{
-        try{
-            pendingExceptionType= (Class<? extends RuntimeException>) Class.forName("cucumber.api.PendingException");
-        }catch(Exception e){
-            pendingExceptionType=PendingException.class;
+
+    static {
+        try {
+            pendingExceptionType = (Class<? extends RuntimeException>) Class.forName("cucumber.api.PendingException");
+        } catch (Exception e) {
+            pendingExceptionType = PendingException.class;
         }
     }
-    
+
+    private ErrorSelector isPending = new ErrorSelector() {
+        @Override
+        public boolean select(Throwable t) {
+            return pendingExceptionType.isInstance(t);
+        }
+    };
     private final StopWatch stopWatch;
     private List<Throwable> throwables = new ArrayList<>();
     private boolean pending;
@@ -33,11 +51,11 @@ public class StepErrorTally {
 
     public void reportAnyErrors() {
         if (throwables.size() > 1) {
-            if (allAssertionFailures(throwables)) {
-                throwSummaryExceptionFrom(throwables);
-            } else if (allPending(throwables)) {
+            if (all(throwables, isPending)) {
                 //TODO summary exception here too?
                 throw (RuntimeException) throwables.get(0);
+            } else if (all(throwables, isAssertion ,isPending)) {
+                throwSummeryAssertionErrorFrom(throwables);
             } else {
                 throw new ScreenPlayException(extractMessagesFrom(throwables), throwables.get(0));
             }
@@ -68,8 +86,8 @@ public class StepErrorTally {
     }
 
 
-    private void throwSummaryExceptionFrom(List<Throwable> errorCauses) {
-        String overallErrorMessage = StringUtils.join(errorMessagesIn(errorCauses),System.lineSeparator());
+    private void throwSummeryAssertionErrorFrom(List<Throwable> errorCauses) {
+        String overallErrorMessage = StringUtils.join(errorMessagesIn(errorCauses), System.lineSeparator());
         throw new AssertionError(overallErrorMessage);
     }
 
@@ -82,18 +100,13 @@ public class StepErrorTally {
         return errorMessages;
     }
 
-    private boolean allAssertionFailures(Collection<Throwable> throwables) {
+    private boolean all(Collection<Throwable> throwables, ErrorSelector... anyOf) {
         for (Throwable throwable : throwables) {
-            if (!indicatesAssertionFailed(throwable)) {
-                return false;
+            boolean selected = false;
+            for (ErrorSelector selector : anyOf) {
+                selected = selected || selector.select(throwable);
             }
-        }
-        return throwables.size() > 0;
-    }
-
-    private boolean allPending(Collection<Throwable> throwables) {
-        for (Throwable throwable : throwables) {
-            if (!indicatesPending(throwable)) {
+            if (!selected) {
                 return false;
             }
         }
@@ -101,17 +114,17 @@ public class StepErrorTally {
     }
 
     public boolean indicatesPending(Throwable t) {
-        return pendingExceptionType.isInstance(t);
+        return isPending.select(t);
     }
 
     public boolean indicatesAssertionFailed(Throwable t) {
-        return t instanceof AssertionError;
+        return isAssertion.select(t);
     }
 
-    public boolean  shouldSkip() {
-        //Only pending exceptions do not result in skips
+    public boolean shouldSkip() {
+        //pending exceptions assertions do not result in skips
         //TODO support IgnoredExceptions?
-        return throwables.size() > 0 && !allPending(throwables);
+        return throwables.size() > 0 && !all(throwables, isPending, isAssertion);
     }
 
     public void startStopWatch() {

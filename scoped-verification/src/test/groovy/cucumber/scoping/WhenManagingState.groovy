@@ -2,35 +2,9 @@ package cucumber.scoping
 
 import cucumber.screenplay.actors.OnStage
 
-import static cucumber.scoping.ScopingPhrases.everybody
-import static cucumber.scoping.ScopingPhrases.everybody
-import static cucumber.screenplay.ScreenplayPhrases.actorNamed
-import static cucumber.screenplay.ScreenplayPhrases.actorNamed
-import static cucumber.screenplay.ScreenplayPhrases.actorNamed
-import static cucumber.screenplay.ScreenplayPhrases.actorNamed
-import static cucumber.screenplay.ScreenplayPhrases.actorNamed
-import static cucumber.screenplay.ScreenplayPhrases.actorNamed
+import static ScopingPhrases.everybody
 import static cucumber.screenplay.ScreenplayPhrases.actorNamed
 import static cucumber.screenplay.actors.OnStage.shineSpotlightOn
-import static cucumber.screenplay.actors.OnStage.shineSpotlightOn
-import static cucumber.screenplay.actors.OnStage.shineSpotlightOn
-import static cucumber.screenplay.actors.OnStage.shineSpotlightOn
-import static cucumber.screenplay.actors.OnStage.shineSpotlightOn
-import static cucumber.screenplay.actors.OnStage.shineSpotlightOn
-import static cucumber.screenplay.actors.OnStage.shineSpotlightOn
-import static cucumber.screenplay.actors.OnStage.shineSpotlightOn
-import static cucumber.screenplay.actors.OnStage.shineSpotlightOn
-import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
-import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
-import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
-import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
-import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
-import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
-import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
-import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
-import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
-import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
-import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
 import static cucumber.screenplay.actors.OnStage.theActorInTheSpotlight
 
 /**

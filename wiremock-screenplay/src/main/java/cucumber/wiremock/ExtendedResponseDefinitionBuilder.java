@@ -9,9 +9,6 @@ import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.github.ampie.wiremock.common.Reflection.getValue;
-import static com.github.ampie.wiremock.common.Reflection.setValue;
-
 
 public class ExtendedResponseDefinitionBuilder extends ResponseDefinitionBuilder.ProxyResponseDefinitionBuilder  {
     private boolean interceptedFromSource;

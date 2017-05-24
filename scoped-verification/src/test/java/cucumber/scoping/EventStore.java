@@ -1,10 +1,11 @@
 package cucumber.scoping;
 
-import cucumber.scoping.annotations.ScopePhase;
-import cucumber.scoping.annotations.SubscribeToScope;
-import cucumber.scoping.annotations.SubscribeToUser;
-import cucumber.scoping.events.ScopeEvent;
-import cucumber.scoping.events.UserEvent;
+import cucumber.screenplay.annotations.SceneListener;
+import cucumber.screenplay.annotations.ActorListener;
+import cucumber.screenplay.annotations.StepListener;
+import cucumber.screenplay.events.SceneEvent;
+import cucumber.screenplay.events.ActorEvent;
+import cucumber.screenplay.events.StepEvent;
 
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -16,16 +17,20 @@ import java.util.List;
 public class EventStore {
     static private List<EventObject> events = new ArrayList<>();
 
-    @SubscribeToScope()
-    public void onScope(ScopeEvent event) {
+    @SceneListener()
+    public void onScope(SceneEvent event) {
         events.add(event);
     }
 
-    @SubscribeToUser()
-    public void onScope(UserEvent event) {
+    @ActorListener()
+    public void onScope(ActorEvent event) {
         events.add(event);
     }
 
+    @StepListener
+    public void onStep(StepEvent event){
+        events.add(event);
+    }
     public static List<EventObject> getEvents() {
         return events;
     }

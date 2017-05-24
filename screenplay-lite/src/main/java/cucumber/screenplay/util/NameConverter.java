@@ -126,71 +126,6 @@ public final class NameConverter {
                 && CharUtils.isAsciiAlphaLower(name.charAt(index));
     }
 
-    public static String withNoArguments(final String methodName) {
-        return stripArgumentsFrom(stripIndexesFrom(methodName));
-    }
-
-    public static String withNoIssueNumbers(final String methodName) {
-        if (methodName == null) {
-            return null;
-        }
-        int firstIssueNumberIndex = methodName.indexOf("_(#");
-        if (firstIssueNumberIndex == -1) {
-            firstIssueNumberIndex = methodName.indexOf("(#");
-        }
-        if (firstIssueNumberIndex == -1) {
-            firstIssueNumberIndex = methodName.indexOf("#");
-        }
-        if (firstIssueNumberIndex > 0) {
-            return methodName.substring(0, firstIssueNumberIndex);
-        } else {
-            return methodName;
-        }
-    }
-
-    public static String stripArgumentsFrom(final String methodName) {
-        if (methodName == null) {
-            return null;
-        }
-        int firstArgument = methodName.indexOf(':');
-        if (firstArgument > 0) {
-            return methodName.substring(0, firstArgument);
-        } else {
-            return methodName;
-        }
-    }
-
-
-    public static String stripIndexesFrom(final String methodName) {
-        if (methodName == null) {
-            return null;
-        }
-        return (methodName.matches(INDEXED_METHOD_NAME)) ? methodName.substring(0, methodName.lastIndexOf('[')) : methodName;
-    }
-
-    /**
-     * Transform a camel-case word to underscored-version.
-     *
-     * @param name name to be converted
-     * @return a name with underscore separators
-     */
-    public static String underscore(final String name) {
-        if (name != null) {
-            return name.replaceAll(" ", "_")
-                    .replaceAll("<", "_lt_")
-                    .replaceAll(">", "underscore_gt_")
-                    .replaceAll("'", "_sq_")
-                    .replaceAll("\"", "_dq_")
-                    .replaceAll(",", "_c_")
-                    .replaceAll(":", "_cl_")
-                    .replaceAll(";", "_sc_")
-                    .replaceAll("/", "_sl_")
-                    .replaceAll("=", "_eq_")
-                    .toLowerCase(Locale.getDefault()).trim();
-        } else {
-            return "";
-        }
-    }
 
     private final static Map<Character, String> EXCLUDE_FROM_FILENAMES = new HashMap<>();
 
@@ -232,7 +167,7 @@ public final class NameConverter {
         for (Character substitutableChar : EXCLUDE_FROM_FILENAMES.keySet()) {
             safeName = StringUtils.replace(safeName, substitutableChar.toString(), EXCLUDE_FROM_FILENAMES.get(substitutableChar));
         }
-        return safeName.toLowerCase();
+        return safeName;
     }
 
 }

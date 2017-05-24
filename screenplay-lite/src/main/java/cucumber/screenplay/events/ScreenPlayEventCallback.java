@@ -1,16 +1,21 @@
 package cucumber.screenplay.events;
 
+import cucumber.screenplay.util.NameConverter;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.EventObject;
+import java.util.regex.Pattern;
 
 public class ScreenPlayEventCallback {
     private Method method;
+    private String namePattern;
     private Object target;
 
-    public ScreenPlayEventCallback(Object target, Method method) {
+    public ScreenPlayEventCallback(Object target, Method method,String namePattern) {
         this.target = target;
         this.method = method;
+        this.namePattern = namePattern;
     }
 
     public void invoke(EventObject eventObject, Enum<?> qualifier) {
@@ -33,5 +38,9 @@ public class ScreenPlayEventCallback {
                 throw new RuntimeException(e.getTargetException());
             }
         }
+    }
+    protected boolean namesMatch(String nameToMatch) {
+        return nameToMatch.equals(namePattern) || Pattern.matches(namePattern, nameToMatch) || NameConverter.filesystemSafe(namePattern).equals(NameConverter.filesystemSafe(nameToMatch))
+                || Pattern.matches(namePattern, NameConverter.filesystemSafe(nameToMatch));
     }
 }

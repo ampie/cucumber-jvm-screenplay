@@ -2,10 +2,10 @@ package cucumber.wiremock
 
 import com.github.ampie.wiremock.ScopedWireMockServer
 import cucumber.scoping.GlobalScope
+import cucumber.screenplay.events.ScreenPlayEventBus
 import cucumber.screenplay.internal.InstanceGetter
-import cucumber.scoping.events.ScopeEventBus
 import cucumber.scoping.persona.local.LocalPersonaClient
-import cucumber.scoping.ScopedCastingDirector
+import cucumber.screenplay.internal.BaseCastingDirector
 import groovy.json.JsonOutput
 import org.apache.http.ProtocolVersion
 import org.apache.http.client.methods.CloseableHttpResponse
@@ -24,16 +24,16 @@ abstract class WhenWorkingWithWireMock extends Specification{
     static final int EVERYBODY_PRIORITY_DECREMENT = PRIORITIES_PER_LEVEL / 2;
     def initializeWireMock(GlobalScope globalScope) {
         def wireMockServer = new ScopedWireMockServer()
-        globalScope.everybodyScope.remember(new RecordingWireMockClient(wireMockServer))
+        globalScope.remember('recordingWireMockClient', new RecordingWireMockClient(wireMockServer))
         wireMockServer
     }
 
     def buildGlobalScope(String name, int runId, Class<?> ...glue) {
         def resourceRoot = Paths.get('src/test/resources')
-        def eventBus = new ScopeEventBus(Mock(InstanceGetter){
+        def eventBus = new ScreenPlayEventBus(Mock(InstanceGetter){
             getInstance(_) >> {args -> args[0].newInstance()}
         })
-        def castingDirector = new ScopedCastingDirector(eventBus, new LocalPersonaClient(), resourceRoot)
+        def castingDirector = new BaseCastingDirector(eventBus, new LocalPersonaClient(), resourceRoot)
         eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(glue)))
         def httpMock = Mock(CloseableHttpClient){
             execute(_) >>{ args ->
@@ -55,11 +55,11 @@ abstract class WhenWorkingWithWireMock extends Specification{
             }
         }
         def globalScope = new GlobalScope(name, resourceRoot, castingDirector, eventBus)
-        globalScope.everybodyScope.remember(ClientOfServiceUnderTest.class.getName(),new RemoteClientOfServiceUnderTest(httpMock,'http://localhost:8080/base'))
-        globalScope.everybodyScope.remember('runId', runId)
-        globalScope.everybodyScope.remember('outputResourceRoot', Paths.get('build','output'))
-        globalScope.everybodyScope.remember('journalRoot', Paths.get('build','journal'))
-        globalScope.everybodyScope.remember('baseUrlOfServiceUnderTest', 'http://service.com/under/test')
+        globalScope.remember('clientOfServiceUnderTest',new RemoteClientOfServiceUnderTest(httpMock,'http://localhost:8080/base'))
+        globalScope.remember('runId', runId)
+        globalScope.remember('outputResourceRoot', Paths.get('build','output'))
+        globalScope.remember('journalRoot', Paths.get('build','journal'))
+        globalScope.remember('baseUrlOfServiceUnderTest', 'http://service.com/under/test')
         globalScope.start()
         globalScope
     }

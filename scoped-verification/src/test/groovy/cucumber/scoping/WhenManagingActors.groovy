@@ -1,13 +1,12 @@
 package cucumber.scoping
 
-import cucumber.scoping.persona.CharacterType
-import cucumber.scoping.persona.Persona
+
 import cucumber.screenplay.actors.OnStage
+import cucumber.screenplay.persona.CharacterType
+import cucumber.screenplay.persona.Persona
 
 import static cucumber.screenplay.ScreenplayPhrases.actorNamed
-import static cucumber.screenplay.ScreenplayPhrases.actorNamed
-import static cucumber.screenplay.actors.OnStage.exit
-import static cucumber.screenplay.actors.OnStage.shineSpotlightOn
+import static cucumber.screenplay.actors.OnStage.dismissActorFromStage
 import static cucumber.screenplay.actors.OnStage.shineSpotlightOn
 
 /**
@@ -23,7 +22,7 @@ class WhenManagingActors extends WhenUsingScopes {
         def persona = (Persona) john.recall('persona')
         persona.characterType = CharacterType.DYNAMIC
         when:
-        exit(john)
+        dismissActorFromStage(john)
         def newJohn = shineSpotlightOn(actorNamed('John Smith')).actor
         then:
         newJohn != john

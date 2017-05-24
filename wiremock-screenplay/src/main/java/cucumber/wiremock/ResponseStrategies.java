@@ -25,7 +25,7 @@ public class ResponseStrategies {
         return new ResponseStrategy() {
             public ExtendedResponseDefinitionBuilder applyTo(ExtendedMappingBuilder builder, WireMockContext scope) throws Exception {
                 builder.atPriority(scope.calculatePriority(3));
-                return aResponse().withBody(body).withHeader("Content-Type", contentType);
+                return aResponse().withBody(body).withHeader("Content-StepEventType", contentType);
             }
         };
     }
@@ -42,7 +42,7 @@ public class ResponseStrategies {
                 String responseBody = FileUtils.readFileToString(bodyFile);
                 String headers = readHeaders(bodyFile);
                 builder.atPriority(scope.calculatePriority(3));
-                ExtendedResponseDefinitionBuilder responseBuilder = aResponse().withBody(responseBody).withHeader("Content-Type", determineContentType(fileName));
+                ExtendedResponseDefinitionBuilder responseBuilder = aResponse().withBody(responseBody).withHeader("Content-StepEventType", determineContentType(fileName));
                 if (headers != null) {
                     addHeaders(headers, responseBuilder);
                 }
@@ -70,7 +70,7 @@ public class ResponseStrategies {
                 String responseBody = writer.toString();
 
                 builder.atPriority(scope.calculatePriority(3));
-                ExtendedResponseDefinitionBuilder responseBuilder = aResponse().withBody(responseBody).withHeader("Content-Type", determineContentType(templateBuilder.getFileName()));
+                ExtendedResponseDefinitionBuilder responseBuilder = aResponse().withBody(responseBody).withHeader("Content-StepEventType", determineContentType(templateBuilder.getFileName()));
                 if (headers != null) {
                     addHeaders(headers, responseBuilder);
                 }

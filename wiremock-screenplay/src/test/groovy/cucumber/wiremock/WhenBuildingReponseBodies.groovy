@@ -34,7 +34,7 @@ class WhenBuildingReponseBodies extends WhenWorkingWithWireMock{
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['url'] == '/home/path'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == '5/TestRun/.*John_Smith'
-        mapping['response']['headers']['Content-Type'] == 'application/json'
+        mapping['response']['headers']['Content-StepEventType'] == 'application/json'
         mapping['response']['headers']['foo-header'] == 'bar-header-value'
         mapping['response']['body'] == "{\"foo\":\"bar\"}"
         mapping['priority'] == (MAX_LEVELS*PRIORITIES_PER_LEVEL)+3
@@ -57,7 +57,7 @@ class WhenBuildingReponseBodies extends WhenWorkingWithWireMock{
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['url'] == '/home/path'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == '5/TestRun/.*John_Smith'
-        mapping['response']['headers']['Content-Type'] == 'text/xml'
+        mapping['response']['headers']['Content-StepEventType'] == 'text/xml'
         mapping['response']['headers']['foo-header'] == 'bar-header-value'
         mapping['response']['body'] == "<root>thisValue</root>"
         mapping['priority'] == (MAX_LEVELS*PRIORITIES_PER_LEVEL)+3

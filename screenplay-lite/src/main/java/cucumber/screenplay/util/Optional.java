@@ -1,7 +1,5 @@
 package cucumber.screenplay.util;
 
-import java.util.Set;
-
 public abstract class Optional<T> {
 
 
@@ -43,17 +41,7 @@ public abstract class Optional<T> {
     public abstract Optional<T> or(Optional<? extends T> secondChoice);
 
 
-
     public abstract T orNull();
-
-    public abstract Set<T> asSet();
-
-
-
-    public java.util.Optional<T> toJavaUtil() {
-        return java.util.Optional.ofNullable(orNull());
-    }
-
 
     @Override
     public abstract boolean equals(Object object);

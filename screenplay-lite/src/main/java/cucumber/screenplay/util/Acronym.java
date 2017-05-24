@@ -44,7 +44,7 @@ class Acronym {
             }
 
             acronyms.add(new Acronym(word, wordFoundAt, wordFoundAt + word.length()));
-            startAt = startAt + word.length();
+            startAt = wordFoundAt + word.length();
         }
         return acronyms;
     }
@@ -71,13 +71,8 @@ class Acronym {
                 acronymText.equals(acronym.acronymText);
     }
 
-     @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Acronym{");
-        sb.append("acronymText='").append(acronymText).append('\'');
-        sb.append(", start=").append(start);
-        sb.append(", end=").append(end);
-        sb.append('}');
-        return sb.toString();
+    @Override
+    public int hashCode() {
+        return start;
     }
 }

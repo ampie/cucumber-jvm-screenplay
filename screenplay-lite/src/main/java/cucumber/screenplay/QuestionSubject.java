@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 
 
 import static cucumber.screenplay.util.NameConverter.humanize;
+import static java.beans.Introspector.decapitalize;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 
 public class QuestionSubject<T> {
@@ -73,7 +74,7 @@ public class QuestionSubject<T> {
     }
 
     public String subject() {
-        return annotatedSubject().or(lowerCase(humanize(questionClass.getSimpleName())));
+        return annotatedSubject().or(decapitalize(humanize(questionClass.getSimpleName())));
     }
 
 }

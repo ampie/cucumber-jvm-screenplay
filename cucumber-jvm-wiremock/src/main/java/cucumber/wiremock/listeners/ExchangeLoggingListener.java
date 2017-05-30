@@ -1,23 +1,24 @@
 package cucumber.wiremock.listeners;
 
 
-import com.github.ampie.wiremock.RecordedExchange;
 import com.github.tomakehurst.wiremock.common.Json;
-import cucumber.scoping.ScenarioScope;
-import cucumber.scoping.StepScope;
-import cucumber.scoping.VerificationScope;
-import cucumber.screenplay.annotations.SceneEventType;
-import cucumber.screenplay.annotations.SceneListener;
-import cucumber.screenplay.formatter.ScreenPlayFormatter;
-import cucumber.wiremock.RecordingWireMockClient;
-import cucumber.scoping.wiremock.CorrelationPath;
+import com.sbg.bdd.cucumber.screenplay.core.formatter.ScreenPlayFormatter;
+import com.sbg.bdd.screenplay.core.annotations.StepListener;
+import com.sbg.bdd.screenplay.scoped.ScenarioScope;
+import com.sbg.bdd.screenplay.scoped.StepScope;
+import com.sbg.bdd.screenplay.scoped.VerificationScope;
+import com.sbg.bdd.screenplay.wiremock.CorrelationPath;
+import com.sbg.bdd.wiremock.scoped.admin.model.RecordedExchange;
+import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
 
 import java.util.List;
+
+import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
 
 public class ExchangeLoggingListener {
 
 
-    @SceneListener(scopePhases = SceneEventType.BEFORE_COMPLETE)
+    @StepListener(eventTypes = {STEP_SUCCESSFUL, STEP_SKIPPED, STEP_PENDING, STEP_ASSERTION_FAILED, STEP_FAILED})
     public void logExchanges(StepScope scope) {
         ScenarioScope scenarioScope = scope.getNearestContaining(ScenarioScope.class);
         String scopePath = CorrelationPath.of(scenarioScope);

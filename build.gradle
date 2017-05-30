@@ -1,11 +1,11 @@
-
-group = 'info.cukes'
+group = 'com.sbg.bdd'
 version = '0.0.1'
 allprojects {
+    apply plugin: 'groovy'
+    apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
-
-    group = 'info.cukes'
+    group = 'com.sbg.bdd'
     version = '0.0.1'
 }
 
@@ -15,21 +15,15 @@ subprojects {
         maven { url "http://repo.maven.apache.org/maven2" }
     }
 
-    println "sssssss $project.name:$project.group:$project.version"
-    apply plugin: 'maven'
-    apply plugin: 'maven-publish'
-    group = 'info.cukes'
+    group = 'com.sbg.bdd'
     version = '0.0.1'
-    apply plugin: 'java'
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
     task packageSources(type: Jar) {
         classifier = 'sources'
         from sourceSets.main.allSource
-
     }
     artifacts.archives packageSources
-
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
@@ -49,7 +43,7 @@ subprojects {
             mavenJava(MavenPublication) {
 
                 println "Publishing $project.name:$project.group:$project.version"
-                groupId 'info.cukes'
+                groupId 'com.sbg.bdd'
                 artifactId "$project.name"
 
                 from components.java

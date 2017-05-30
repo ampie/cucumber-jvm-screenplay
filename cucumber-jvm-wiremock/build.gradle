@@ -1,6 +1,6 @@
 description = 'Wiremock Support Integrated into Scoped Lifecycles'
 dependencies {
-    compile project (':cucumber-jvm-scoping')
-    compile project (':wiremock-screenplay')
+    compile project (':cucumber-jvm-screenplay-scoped')
+    compile project (':screenplay-wiremock')
     compileOnly 'com.github.tomakehurst:wiremock:2.6.0'
 }

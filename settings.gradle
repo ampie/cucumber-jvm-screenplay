@@ -1,16 +1,16 @@
-
 rootProject.name = 'cucumber-jvm-ideas'
-rootProject.name = 'cucumber-jvm-ideas'
-include ':cucumber-jvm-screenplay'
-include ':cucumber-jvm-scoping'
+include ':screenplay-core'
+include ':screenplay-scoped'
+include ':screenplay-wiremock'
+include ':cucumber-jvm-screenplay-core'
+include ':cucumber-jvm-screenplay-scoped'
 include ':cucumber-jvm-wiremock'
-include ':screenplay-lite'
-include ':scoped-verification'
-include ':wiremock-screenplay'
+include 'serenity-cucumber-adaptor'
 
-project(':wiremock-screenplay').projectDir = "$rootDir/wiremock-screenplay" as File
-project(':scoped-verification').projectDir = "$rootDir/scoped-verification" as File
-project(':screenplay-lite').projectDir = "$rootDir/screenplay-lite" as File
+project(':screenplay-core').projectDir = "$rootDir/screenplay-core" as File
+project(':screenplay-scoped').projectDir = "$rootDir/screenplay-scoped" as File
+project(':screenplay-wiremock').projectDir = "$rootDir/screenplay-wiremock" as File
+project(':cucumber-jvm-screenplay-core').projectDir = "$rootDir/cucumber-jvm-screenplay-core" as File
+project(':cucumber-jvm-screenplay-scoped').projectDir = "$rootDir/cucumber-jvm-screenplay-scoped" as File
 project(':cucumber-jvm-wiremock').projectDir = "$rootDir/cucumber-jvm-wiremock" as File
-project(':cucumber-jvm-screenplay').projectDir = "$rootDir/cucumber-jvm-screenplay" as File
-project(':cucumber-jvm-scoping').projectDir = "$rootDir/cucumber-jvm-scoping" as File
+

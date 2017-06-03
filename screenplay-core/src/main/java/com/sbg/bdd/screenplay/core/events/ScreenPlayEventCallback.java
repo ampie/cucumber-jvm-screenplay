@@ -7,15 +7,33 @@ import java.lang.reflect.Method;
 import java.util.EventObject;
 import java.util.regex.Pattern;
 
-public class ScreenPlayEventCallback {
+public abstract class ScreenPlayEventCallback {
     private Method method;
     private String namePattern;
     private Object target;
+    private int level;
 
-    public ScreenPlayEventCallback(Object target, Method method,String namePattern) {
+    protected ScreenPlayEventCallback(Object target, Method method,String namePattern, int level) {
         this.target = target;
         this.method = method;
         this.namePattern = namePattern;
+        this.level = level;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public Class<?> getDeclaringClass(){
+        if(method.getDeclaringClass().isInterface()){
+            if(target.getClass().getEnclosingClass()!=null) {
+                return target.getClass().getEnclosingClass();
+            }else{
+                return target.getClass();
+            }
+        }else{
+            return method.getDeclaringClass();
+        }
     }
 
     public void invoke(EventObject eventObject, Enum<?> qualifier) {
@@ -42,5 +60,8 @@ public class ScreenPlayEventCallback {
     protected boolean namesMatch(String nameToMatch) {
         return nameToMatch.equals(namePattern) || Pattern.matches(namePattern, nameToMatch) || NameConverter.filesystemSafe(namePattern).equals(NameConverter.filesystemSafe(nameToMatch))
                 || Pattern.matches(namePattern, NameConverter.filesystemSafe(nameToMatch));
+    }
+    protected boolean levelsMatch(int levelToMatch) {
+        return level == -1 || levelToMatch == level;
     }
 }

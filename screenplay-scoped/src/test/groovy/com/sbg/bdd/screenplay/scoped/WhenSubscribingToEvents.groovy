@@ -59,11 +59,15 @@ class WhenSubscribingToEvents extends WhenUsingScopes {
         events[11].source.name == 'step1'
         events[12].source.name == 'John Smith'
         events[12].involvement == ActorInvolvement.INTO_SPOTLIGHT
-        events[13].source.name == 'John Smith'
-        events[13].involvement== ActorInvolvement.OUT_OF_SPOTLIGHT
+        events[13].source.name == 'scenario1'
+        events[13].sceneEventType== SceneEventType.BEFORE_COMPLETE
+        //Exiting the actors is part of the completion process
         events[14].source.name == 'John Smith'
-        events[14].involvement == ActorInvolvement.BEFORE_EXIT_STAGE
-        events[16].source.name == 'scenario1'
+        events[14].involvement == ActorInvolvement.OUT_OF_SPOTLIGHT
+        events[15].source.name == 'John Smith'
+        events[15].involvement == ActorInvolvement.BEFORE_EXIT_STAGE
+        events[16].source.name == 'John Smith'
+        events[16].involvement == ActorInvolvement.AFTER_EXIT_STAGE
         events[17].source.name == 'scenario1'
         events[18].source.name == 'nested1'
         events[19].source.name == 'nested1'

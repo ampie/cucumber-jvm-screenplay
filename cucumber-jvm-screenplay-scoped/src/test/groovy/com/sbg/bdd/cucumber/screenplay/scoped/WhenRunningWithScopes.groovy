@@ -44,7 +44,7 @@ class WhenRunningWithScopes  extends Specification{
         StepDefs.USER_CALLBACKS['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else/John'][1] == ActorInvolvement.AFTER_ENTER_STAGE
         StepDefs.VARIABLE_AFTER_COMPLETE.keySet().size()==5
         StepDefs.VARIABLE_AFTER_START['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else']==4
-        StepDefs.VARIABLE_AFTER_COMPLETE['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else']==3
+        StepDefs.VARIABLE_AFTER_COMPLETE['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else']==4//Because we retain the everybody scope's memory
         println( StepDefs.SCOPE_CALLBACKS.keySet())
 
     }

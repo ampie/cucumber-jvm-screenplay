@@ -3,7 +3,7 @@ package com.sbg.bdd.screenplay.core;
 import com.sbg.bdd.screenplay.core.annotations.Subject;
 import com.sbg.bdd.screenplay.core.util.AnnotatedTitle;
 import com.sbg.bdd.screenplay.core.util.Optional;
-import com.sbg.bdd.screenplay.core.util.Uninstrumented;
+import com.sbg.bdd.screenplay.core.util.Original;
 
 import java.lang.reflect.Method;
 
@@ -21,7 +21,7 @@ public class QuestionSubject<T> {
     }
 
     public QuestionSubject(Class<? extends Question> questionClass) {
-        this.questionClass = Uninstrumented.versionOf(questionClass);
+        this.questionClass = Original.versionOf(questionClass);
     }
 
     public QuestionSubject andQuestion(Question question) {

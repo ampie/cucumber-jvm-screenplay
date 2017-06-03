@@ -20,9 +20,7 @@ import java.util.Map;
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed;
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.forRequestsFrom;
 
-/**
- * Created by ampie on 2017/05/21.
- */
+
 public class StepDefs {
 
     public static Map<String, List<Object>> SCOPE_CALLBACKS = new HashMap<>();

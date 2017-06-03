@@ -33,7 +33,7 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
     def 'should keep in sync'() throws Exception {
         given:
         GlobalScope globalScope = buildGlobalScopeWithoutStarting('TestRun', 5, ScopeManagementListener)
-        initializeWireMock(globalScope)
+        def wireMockServer = initializeWireMock(globalScope)
         globalScope.start()
         OnStage.present(globalScope)
 
@@ -51,8 +51,8 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
         def userScope = scope.shineSpotlightOn(actorNamed('John Smith'))
 
         then:
-        scope.everybodyScope.recall('correlationState').correlationPath == '5/TestRun/nested1'
-        userScope.recall('correlationState').correlationPath == '5/TestRun/nested1/John_Smith'
+        scope.everybodyScope.recall('correlationState').correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1'
+        userScope.recall('correlationState').correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1/John_Smith'
         innerStep == 'step1'
         scenarioScope.everybodyScope.recall('correlationState').currentStep == null
     }

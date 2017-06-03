@@ -47,6 +47,11 @@ public class GlobalScope extends UserTrackingScope implements Performance {
         scopeEventBus.broadcast(event);
     }
 
+    @Override
+    protected void completeWithoutEvents() {
+        super.completeWithoutEvents();
+    }
+
     public void drawTheCurtain() {
         UserTrackingScope active = getInnerMostActive(UserTrackingScope.class);
         active.getContainingScope().completeNestedScope(active.getName());

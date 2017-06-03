@@ -3,7 +3,6 @@ package com.sbg.bdd.screenplay.core
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.core.annotations.StepEventType
 import com.sbg.bdd.screenplay.core.internal.BaseActor
-import com.sbg.bdd.screenplay.core.internal.BasePerformance
 
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.givenThat
@@ -49,15 +48,15 @@ class WhenDefininingTasksForActors extends WithinBasePerformance {
         def events = ScreenPlayEventStore.getEvents();
         events.size() == 6
         events[0].info.keyword == 'Was able to'
-        events[0].type == StepEventType.STEP_STARTED
+        events[0].type == StepEventType.STARTED
         events[0].info.name =='perform a task'
-        events[1].type == StepEventType.STEP_SUCCESSFUL
+        events[1].type == StepEventType.SUCCESSFUL
         events[2].info.keyword == 'Was able to'
         events[2].info.name =='fail a task'
         events[3].error.message == 'arrrgh!'
         events[3].error == error
-        events[3].type == StepEventType.STEP_FAILED
-        events[5].type == StepEventType.STEP_SKIPPED
+        events[3].type == StepEventType.FAILED
+        events[5].type == StepEventType.SKIPPED
     }
     def 'a pending task not should result in subsequent tasks being skipped'() {
         given:
@@ -82,14 +81,14 @@ class WhenDefininingTasksForActors extends WithinBasePerformance {
         def events = ScreenPlayEventStore.getEvents();
         events.size() == 6
         events[0].info.keyword == 'Was able to'
-        events[0].type == StepEventType.STEP_STARTED
+        events[0].type == StepEventType.STARTED
         events[0].info.name =='perform a task'
-        events[1].type == StepEventType.STEP_SUCCESSFUL
+        events[1].type == StepEventType.SUCCESSFUL
         events[2].info.keyword == 'Was able to'
         events[2].info.name =='pending task'
         events[3].error == error
-        events[3].type == StepEventType.STEP_PENDING
-        events[5].type == StepEventType.STEP_SUCCESSFUL
+        events[3].type == StepEventType.PENDING
+        events[5].type == StepEventType.SUCCESSFUL
     }
     def 'a task with a failing assertion not should result in subsequent tasks being skipped'() {
         given:
@@ -114,14 +113,14 @@ class WhenDefininingTasksForActors extends WithinBasePerformance {
         def events = ScreenPlayEventStore.getEvents();
         events.size() == 6
         events[0].info.keyword == 'Was able to'
-        events[0].type == StepEventType.STEP_STARTED
+        events[0].type == StepEventType.STARTED
         events[0].info.name =='perform a task'
-        events[1].type == StepEventType.STEP_SUCCESSFUL
+        events[1].type == StepEventType.SUCCESSFUL
         events[2].info.keyword == 'Was able to'
         events[2].info.name =='pending task'
         events[3].error == error
-        events[3].type == StepEventType.STEP_ASSERTION_FAILED
-        events[5].type == StepEventType.STEP_SUCCESSFUL
+        events[3].type == StepEventType.ASSERTION_FAILED
+        events[5].type == StepEventType.SUCCESSFUL
     }
 
 }

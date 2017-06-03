@@ -19,7 +19,7 @@ public class AnnotatedTitle {
     }
 
     public String using(Object question) {
-        Set<Field> fields = Fields.of(Uninstrumented.versionOf(question.getClass())).allFields();
+        Set<Field> fields = Fields.of(Original.versionOf(question.getClass())).allFields();
         String updatedText = text;
         for (Field field : fields) {
             String fieldName = fieldVariableFor(field.getName());

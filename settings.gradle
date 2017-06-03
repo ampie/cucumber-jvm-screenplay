@@ -3,14 +3,9 @@ include ':screenplay-core'
 include ':screenplay-scoped'
 include ':screenplay-wiremock'
 include ':cucumber-jvm-screenplay-core'
+include ':cucumber-jvm-screenplay-java8'
 include ':cucumber-jvm-screenplay-scoped'
 include ':cucumber-jvm-wiremock'
-include 'serenity-cucumber-adaptor'
-
-project(':screenplay-core').projectDir = "$rootDir/screenplay-core" as File
-project(':screenplay-scoped').projectDir = "$rootDir/screenplay-scoped" as File
-project(':screenplay-wiremock').projectDir = "$rootDir/screenplay-wiremock" as File
-project(':cucumber-jvm-screenplay-core').projectDir = "$rootDir/cucumber-jvm-screenplay-core" as File
-project(':cucumber-jvm-screenplay-scoped').projectDir = "$rootDir/cucumber-jvm-screenplay-scoped" as File
-project(':cucumber-jvm-wiremock').projectDir = "$rootDir/cucumber-jvm-wiremock" as File
+include ':serenity-cucumber-adaptor'
+include ':android-screenplay'
 

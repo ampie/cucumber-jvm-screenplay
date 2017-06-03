@@ -91,9 +91,7 @@ public abstract class UserTrackingScope extends VerificationScope implements Sce
         getEverybodyScope().remember(variableName, value);
     }
 
-    @Override
-    protected void completeChildren() {
-        super.completeChildren();
+    protected void completeUsersInScope() {
         spotlightOperator.actorOutOfSpotlight();
         for (UserInScope userInScope : usersInScope.values()) {
             userInScope.exitStage();
@@ -151,6 +149,7 @@ public abstract class UserTrackingScope extends VerificationScope implements Sce
             //We only complete once
             completeChildren();
             getGlobalScope().broadcast(new SceneEvent(this, SceneEventType.BEFORE_COMPLETE));
+            completeUsersInScope();
             completeWithoutEvents();
             getGlobalScope().broadcast(new SceneEvent(this, SceneEventType.AFTER_COMPLETE));
         }

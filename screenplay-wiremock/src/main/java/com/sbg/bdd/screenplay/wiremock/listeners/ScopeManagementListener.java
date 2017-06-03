@@ -6,6 +6,7 @@ import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.annotations.*;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.core.internal.BaseActorOnStage;
+import com.sbg.bdd.screenplay.scoped.listeners.ScreenplayLifecycleSync;
 import com.sbg.bdd.screenplay.wiremock.CorrelationPath;
 import com.sbg.bdd.wiremock.scoped.admin.model.CorrelationState;
 import com.sbg.bdd.wiremock.scoped.common.ParentPath;
@@ -13,7 +14,7 @@ import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
 
 import static com.sbg.bdd.screenplay.core.actors.OnStage.theCurrentScene;
 import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
-
+@Within(ScreenplayLifecycleSync.class)
 public class ScopeManagementListener {
     @SceneListener(scopePhases = SceneEventType.BEFORE_START)
     public void registerScope(Scene scene) {
@@ -28,14 +29,14 @@ public class ScopeManagementListener {
         getWireMockFrom(scene).stopCorrelatedScope(knownScopePath);
     }
 
-    @StepListener(eventTypes = StepEventType.STEP_STARTED)
+    @StepListener(eventTypes = StepEventType.STARTED)
     public void registerStep(StepEvent event) {
         Scene theCurrentScene = theCurrentScene();
         getWireMockFrom(theCurrentScene).startStep(CorrelationPath.of(theCurrentScene), event.getStepPath());
         ((CorrelationState)theCurrentScene.recall("correlationState")).setCurrentStep(event.getStepPath());
     }
 
-    @StepListener(eventTypes = {STEP_PENDING, STEP_SKIPPED, STEP_ASSERTION_FAILED, STEP_SUCCESSFUL, STEP_FAILED})
+    @StepListener(eventTypes = {PENDING, SKIPPED, ASSERTION_FAILED, SUCCESSFUL, FAILED})
     public void unregisterStep(StepEvent stepEvent) {
         Scene theCurrentScene = theCurrentScene();
         getWireMockFrom(theCurrentScene).stopStep(CorrelationPath.of(theCurrentScene), stepEvent.getStepPath());

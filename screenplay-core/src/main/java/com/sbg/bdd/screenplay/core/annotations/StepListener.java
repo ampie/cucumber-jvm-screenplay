@@ -10,7 +10,7 @@ import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface StepListener {
-    StepEventType[] eventTypes() default {STEP_STARTED, STEP_SUCCESSFUL, STEP_SKIPPED, STEP_PENDING, STEP_ASSERTION_FAILED, STEP_FAILED};
-    
+    StepEventType[] eventTypes() default {STARTED, SUCCESSFUL, SKIPPED, PENDING, ASSERTION_FAILED, FAILED};
+    int stepLevel() default -1;
     String namePattern() default ".*";
 }

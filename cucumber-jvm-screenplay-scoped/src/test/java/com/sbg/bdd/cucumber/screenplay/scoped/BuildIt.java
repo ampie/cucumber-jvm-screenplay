@@ -15,6 +15,8 @@ public class BuildIt extends GlobalScopeBuilder implements GlueBase {
     }
 
     public BuildIt() {
-        super("RunAll", inputResourceRoot, outputResourceRoot, new GsonPersonaClient());
+        super("RunAll", inputResourceRoot, new GsonPersonaClient());
+        getGlobalScope().remember("outputResourceRoot",outputResourceRoot);
+        getGlobalScope().start();
     }
 }

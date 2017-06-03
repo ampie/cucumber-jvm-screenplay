@@ -11,7 +11,7 @@ import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
 
 public class ScreenplayLifecycleSync {
 
-    @StepListener(eventTypes = STEP_STARTED)
+    @StepListener(eventTypes = STARTED)
     public void startStep(StepEvent event) {
         StepScope innerMostActive = getGlobalScope().getInnerMostActive(StepScope.class);
         if (innerMostActive == null) {
@@ -26,7 +26,7 @@ public class ScreenplayLifecycleSync {
         return (GlobalScope) OnStage.performance();
     }
 
-    @StepListener(eventTypes = {STEP_PENDING, STEP_SKIPPED, STEP_ASSERTION_FAILED, STEP_SUCCESSFUL, STEP_FAILED})
+    @StepListener(eventTypes = {PENDING, SKIPPED, ASSERTION_FAILED, SUCCESSFUL, FAILED})
     public void finishStep(StepEvent event) {
         StepScope stepScope = getGlobalScope().getInnerMostActive(StepScope.class);
         stepScope.getContainingScope().completeNestedScope(event.getInfo().getName());

@@ -1,19 +1,6 @@
 description = 'Screenplay Lite - a lightweight library to support the ScreenPlay pattern'
-//sourceSets{
-//    test {
-//        output.resourcesDir = 'build/classes/test'
-//        output.classesDir = 'build/classes/test'
-//        groovy {
-//            srcDir 'src/test/groovy'
-//        }
-//        java {
-//            srcDir 'src/test/java'
-//        }
-//        resources {
-//            srcDir 'src/test/resources'
-//        }
-//    }
-//}
+apply plugin: 'java'
+apply plugin: 'groovy'
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.1'
     compile 'com.sbg.bdd:common-resource-api:0.0.1'

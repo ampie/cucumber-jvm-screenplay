@@ -10,7 +10,7 @@ public interface Actor extends Memory {
     String getName();
 
     void can(Ability doSomething);
-
+    <T extends Ability> T usingAbilityTo(Class<? extends T> doSomething);
     /**Utility method for more reusability - TODO evaluate need again in future*/
     void performSteps(String keyword, Object performer, Object ... steps);
 

@@ -3,7 +3,6 @@ package com.sbg.bdd.screenplay.core
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.core.annotations.StepEventType
 import com.sbg.bdd.screenplay.core.internal.BaseActor
-import com.sbg.bdd.screenplay.core.internal.BasePerformance
 
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.*
 import static org.hamcrest.Matchers.*
@@ -85,7 +84,7 @@ class WhenDefininingQuestionsForActors extends WithinBasePerformance {
         events[0].info.keyword == 'Should'
         events[0].info.name =='Then diagnose it'
         events[1].error == error
-        events[1].type == StepEventType.STEP_ASSERTION_FAILED
+        events[1].type == StepEventType.ASSERTION_FAILED
     }
     def 'questions with acronynms should reflect the acronym in uppercase'() {
         given:

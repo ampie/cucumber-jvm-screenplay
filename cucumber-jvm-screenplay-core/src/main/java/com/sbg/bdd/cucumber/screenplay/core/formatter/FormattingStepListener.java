@@ -20,27 +20,27 @@ import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
 
 public class FormattingStepListener {
 
-    @StepListener(eventTypes = STEP_SUCCESSFUL)
+    @StepListener(eventTypes = SUCCESSFUL)
     public void logChildStepResult(StepEvent event) {
         if (getFormatter() != null) {
             logEmbeddingsAndResult(event.getInfo(), new Result(Result.PASSED, event.getDuration(), null));
         }
     }
 
-    @StepListener(eventTypes = STEP_PENDING)
+    @StepListener(eventTypes = PENDING)
     public void logChildStepPending(StepEvent event) {
         if (getFormatter() != null) {
             logEmbeddingsAndResult(event.getInfo(), new Result("pending", event.getDuration(), null));
         }
     }
-    @StepListener(eventTypes = {STEP_FAILED,STEP_ASSERTION_FAILED})
+    @StepListener(eventTypes = {FAILED, ASSERTION_FAILED})
     public void logChildFailed(StepEvent event) {
         if (getFormatter() != null) {
             logEmbeddingsAndResult(event.getInfo(), new Result(Result.FAILED, event.getDuration(), event.getError(),null));
         }
     }
 
-    @StepListener(eventTypes = STEP_SKIPPED)
+    @StepListener(eventTypes = SKIPPED)
     public void logChildStepSkipped(StepEvent event) {
         if (getFormatter() != null) {
             logEmbeddingsAndResult(event.getInfo(), Result.SKIPPED);
@@ -48,7 +48,7 @@ public class FormattingStepListener {
     }
 
 
-    @StepListener(eventTypes = STEP_STARTED)
+    @StepListener(eventTypes = STARTED)
     public void logChildStepStart(StepEvent event) {
         if (getFormatter() != null) {
             Step step = new Step(null, event.getInfo().getKeyword(), event.getInfo().getName(), null, null, null);

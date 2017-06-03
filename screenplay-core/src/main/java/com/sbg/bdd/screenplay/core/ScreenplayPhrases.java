@@ -8,30 +8,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScreenplayPhrases {
-    public static <T extends Actor> T actorNamed(String actorName){
-        return (T)OnStage.performance().getCast().actorNamed(actorName);
+    public static <T extends Actor> T actorNamed(String actorName) {
+        return (T) OnStage.performance().getCast().actorNamed(actorName);
     }
+
     public static <T extends Actor> T givenThat(T actor) {
         return actor;
     }
-    
-    public static Actor andThat(Actor actor) {
+
+    public static <T extends ActorOnStage> T givenThat(T actor) {
         return actor;
     }
     
-    public static Actor when(Actor actor) {
+    public static <T extends Actor> T andThat(T actor) {
         return actor;
     }
     
-    public static Actor then(Actor actor) {
+    public static <T extends Actor> T when(T actor) {
         return actor;
     }
     
-    public static Actor and(Actor actor) {
+    public static <T extends Actor> T then(T actor) {
+        return actor;
+    }
+
+    public static <T extends ActorOnStage> T then(T actor) {
+        return actor;
+    }
+
+    public static <T extends Actor> T and(T actor) {
         return actor;
     }
     
-    public static Actor but(Actor actor) {
+    public static <T extends Actor> T but(T actor) {
         return actor;
     }
 
@@ -48,11 +57,10 @@ public class ScreenplayPhrases {
     }
     
 
-    
     public static <T> Consequence<T>[] seeThat(Question<? extends T> actual, Matcher<T>... expectedMatchers) {
         
         if (thereAreNo(expectedMatchers)) {
-             throw new IllegalArgumentException("No matchers supplied");
+            throw new IllegalArgumentException("No matchers supplied");
         } else {
             return consequencesForEachMatcher(actual, expectedMatchers);
         }
@@ -73,7 +81,7 @@ public class ScreenplayPhrases {
     }
     
 
-    public static ActorOnStage forRequestsFrom(Actor actor){
-        return OnStage.callActorToStage(actor);
+    public static <T extends ActorOnStage> T forRequestsFrom(Actor actor) {
+        return (T) OnStage.callActorToStage(actor);
     }
 }

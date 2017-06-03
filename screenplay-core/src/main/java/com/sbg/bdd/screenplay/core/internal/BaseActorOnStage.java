@@ -14,7 +14,7 @@ public class BaseActorOnStage implements ActorOnStage {
     protected Actor actor;
     protected SimpleMemory memory = new SimpleMemory();
     protected List<DownstreamVerification> downstreamExpectations =new ArrayList<>();
-    private boolean active = false;
+    protected boolean active = false;
 
     public BaseActorOnStage(Scene scene, Actor actor) {
         this.scene = scene;

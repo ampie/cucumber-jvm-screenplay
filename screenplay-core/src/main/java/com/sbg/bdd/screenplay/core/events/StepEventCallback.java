@@ -7,6 +7,9 @@ import java.lang.reflect.Method;
 
 public class StepEventCallback extends ScreenPlayEventCallback {
     public StepEventCallback(Object target, Method method, StepListener stepListener) {
-        super(target, method,stepListener.namePattern());
+        this(target, method,stepListener.namePattern(),stepListener.stepLevel());
+    }
+    public StepEventCallback(Object target, Method method, String namePattern, int stepLevel) {
+        super(target, method,namePattern,stepLevel);
     }
 }

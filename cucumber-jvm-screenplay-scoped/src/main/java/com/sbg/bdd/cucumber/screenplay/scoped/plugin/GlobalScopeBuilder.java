@@ -5,6 +5,7 @@ import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 import com.sbg.bdd.screenplay.core.internal.BaseCastingDirector;
 import com.sbg.bdd.screenplay.core.internal.InstanceGetter;
+import com.sbg.bdd.screenplay.core.internal.SimpleInstanceGetter;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.util.Fields;
 import com.sbg.bdd.screenplay.scoped.GlobalScope;
@@ -17,23 +18,28 @@ import cucumber.runtime.StepDefinition;
 import cucumber.runtime.java.JavaBackend;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public abstract class GlobalScopeBuilder {
-    public GlobalScopeBuilder(String name, ResourceContainer inputResourceRoot, ResourceContainer outputResourceRoot, PersonaClient personaClient) {
+    private GlobalScope globalScope;
+
+    public GlobalScopeBuilder(String name, ResourceContainer inputResourceRoot,PersonaClient personaClient, Class ... extraClasses) {
         if (!(OnStage.performance() instanceof GlobalScope)) {
             Map<String, Object> backendState = Fields.of(JavaBackend.INSTANCE.get()).asMap();
             final ObjectFactory objectFactory = (ObjectFactory) backendState.get("objectFactory");
+            objectFactory.addClass(ScreenplayLifecycleSync.class);
+            for (Class aClass : extraClasses) {
+            objectFactory.addClass(aClass);
+
+            }
             RuntimeGlue glue = (RuntimeGlue) backendState.get("glue");
             ClassFinder classFinder = (ClassFinder) backendState.get("classFinder");
-            final InstanceGetter objectFactory1 = new InstanceGetter() {
+            final InstanceGetter objectFactory1 = new SimpleInstanceGetter() {
                 @Override
                 public <T> T getInstance(Class<T> type) {
-                    return objectFactory.getInstance(type);
+                    T instance = objectFactory.getInstance(type);
+                    return instance==null?super.getInstance(type):instance;
                 }
             };
             ScreenPlayEventBus scopeEventBus = new ScreenPlayEventBus(objectFactory1);
@@ -54,9 +60,15 @@ public abstract class GlobalScopeBuilder {
                 }
             }
             classes.add(ScreenplayLifecycleSync.class);
+            classes.addAll(Arrays.<Class<?>>asList(extraClasses));
             scopeEventBus.scanClasses(classes);
-            OnStage.present(new GlobalScope(name, new BaseCastingDirector(scopeEventBus, personaClient, inputResourceRoot), scopeEventBus));
+            globalScope = new GlobalScope(name, new BaseCastingDirector(scopeEventBus, personaClient, inputResourceRoot), scopeEventBus);
+            OnStage.present(globalScope);
         }
 
+    }
+
+    public GlobalScope getGlobalScope() {
+        return (GlobalScope) OnStage.performance();
     }
 }

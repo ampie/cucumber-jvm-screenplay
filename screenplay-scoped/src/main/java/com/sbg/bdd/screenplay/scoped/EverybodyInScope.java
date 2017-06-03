@@ -20,15 +20,14 @@ public class EverybodyInScope extends UserInScope {
     public void exitSpotlight() {
 
     }
-
     @Override
     public void enterStage() {
-        super.exitStageWithoutEvents();
+        super.enterStageWithoutEvents();
     }
 
     @Override
     public void exitStage() {
-        super.exitStageWithoutEvents();
+        //remains active, with memory, for the duration of the containing Scope
     }
 
     public static boolean isEverybody(Actor actor) {

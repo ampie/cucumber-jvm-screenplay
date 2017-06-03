@@ -5,16 +5,13 @@ import com.sbg.bdd.screenplay.core.annotations.StepEventType;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class BaseActor implements Actor {
     protected static StopWatch stopWatch;
     protected final String name;
     private Memory memory = new SimpleMemory();
-    private Set<Ability> abilities = new HashSet<>();
+    private Map<Class<?>,Ability> abilities = new HashMap<>();
     private ScreenPlayEventBus eventBus;
     private Deque<String> stepPaths = new ArrayDeque<>();
 
@@ -53,24 +50,24 @@ public class BaseActor implements Actor {
             errorTally.startStopWatch();
             try {
                 pushStepPath(stepMethodInfo);
-                eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_STARTED));
+                eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STARTED));
                 if (errorTally.shouldSkip() || stepMethodInfo.isSkipped()) {
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_SKIPPED, errorTally.stopStopWatch()));
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.SKIPPED, errorTally.stopStopWatch()));
                 } else if (stepMethodInfo.isPending()) {
                     errorTally.setPending();
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_PENDING, errorTally.stopStopWatch()));
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.PENDING, errorTally.stopStopWatch()));
                 } else {
                     stepMethodInfo.invoke();
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_SUCCESSFUL, errorTally.stopStopWatch()));
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.SUCCESSFUL, errorTally.stopStopWatch()));
                 }
             } catch (Throwable t) {
                 errorTally.addThrowable(t);
                 if (errorTally.indicatesPending(t)) {
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_PENDING, errorTally.stopStopWatch(), t));
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.PENDING, errorTally.stopStopWatch(), t));
                 } else if (errorTally.indicatesAssertionFailed(t)) {
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_ASSERTION_FAILED, errorTally.stopStopWatch(), t));
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.ASSERTION_FAILED, errorTally.stopStopWatch(), t));
                 } else {
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STEP_FAILED, errorTally.stopStopWatch(), t));
+                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.FAILED, errorTally.stopStopWatch(), t));
                 }
             } finally {
                 popStepPath();
@@ -110,7 +107,13 @@ public class BaseActor implements Actor {
 
     @Override
     public void can(Ability doSomething) {
-        abilities.add(doSomething);
+        doSomething.asActor(this);
+        abilities.put(doSomething.getClass(),doSomething);
+    }
+
+    @Override
+    public <T extends Ability> T usingAbilityTo(Class<? extends T> doSomething) {
+        return (T) abilities.get(doSomething);
     }
 
     @Override

@@ -35,7 +35,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         )
 
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.theActorInTheSpotlight().scopePath)
+        def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.theActorInTheSpotlight().scopePath)
         mappings.size() == 0
         def requestsToRecord = globalScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord[0].calculateRecordingDirectory(globalScope).getFile().toString() == new File(tempDir,"John_Smith").toString()
@@ -83,7 +83,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
                 a(PUT).to("/home/path").to(recordResponses())
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.theActorInTheSpotlight().scopePath)
+        def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.theActorInTheSpotlight().scopePath)
         mappings.size() == 0
         def requestsToRecord = globalScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord.size() == 1
@@ -107,7 +107,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
                 a(PUT).to("/home/path").to(playbackResponsesFrom(tempDir.absolutePath))
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.theActorInTheSpotlight().scopePath)
+        def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.theActorInTheSpotlight().scopePath)
         mappings.size() == 0
         def requestsToRecord = globalScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord[0].calculateRecordingDirectory(globalScope).getFile().toString() == new File(tempDir.absolutePath,"John_Smith").toString()
@@ -132,7 +132,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
                 a(PUT).to("/home/path").to(playbackResponses())
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + theActorInTheSpotlight().scopePath)
+        def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + theActorInTheSpotlight().scopePath)
         mappings.size() == 0
         def requestsToRecord = nestedScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord.size() == 1
@@ -155,7 +155,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
                 a(PUT).to("/endpoint/path").to(mapToJournalDirectory())
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + theActorInTheSpotlight().scopePath)
+        def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + theActorInTheSpotlight().scopePath)
         mappings.size() == 0
         def requestsToRecord = nestedScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord.size() == 1
@@ -179,7 +179,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
                 a(PUT).to("/home/path").to(mapToJournalDirectory("/tmp/journal"))
         )
         then:
-        def mappings = wireMockServer.getMappingsInScope("5/" + globalScope.theActorInTheSpotlight().scopePath)
+        def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.theActorInTheSpotlight().scopePath)
         mappings.size() == 0
         def requestsToRecord = nestedScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
         requestsToRecord.size() == 1

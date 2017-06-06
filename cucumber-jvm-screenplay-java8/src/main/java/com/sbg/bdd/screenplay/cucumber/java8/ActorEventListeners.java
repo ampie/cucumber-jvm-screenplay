@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 public interface ActorEventListeners {
     //TODO support other method contracts too
     interface ReceivesActorEvent {
-        void receive(ActorEvent event);
+        void receive(ActorEvent event) throws Throwable;
         
         default Method getMethod() {
             return METHOD;

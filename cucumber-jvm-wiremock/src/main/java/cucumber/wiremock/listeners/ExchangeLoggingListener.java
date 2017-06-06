@@ -3,8 +3,11 @@ package cucumber.wiremock.listeners;
 
 import com.github.tomakehurst.wiremock.common.Json;
 import com.sbg.bdd.cucumber.screenplay.core.formatter.ScreenPlayFormatter;
+import com.sbg.bdd.screenplay.core.Scene;
+import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.core.annotations.StepListener;
 import com.sbg.bdd.screenplay.core.annotations.Within;
+import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.scoped.ScenarioScope;
 import com.sbg.bdd.screenplay.scoped.StepScope;
 import com.sbg.bdd.screenplay.scoped.VerificationScope;
@@ -22,14 +25,14 @@ public class ExchangeLoggingListener {
 
 
     @StepListener(eventTypes = {SUCCESSFUL, SKIPPED, PENDING, ASSERTION_FAILED, FAILED})
-    public void logExchanges(StepScope scope) {
-        ScenarioScope scenarioScope = scope.getNearestContaining(ScenarioScope.class);
+    public void logExchanges(StepEvent event) {
+        Scene scenarioScope = OnStage.theCurrentScene();
         String scopePath = CorrelationPath.of(scenarioScope);
-        List<RecordedExchange> exchanges = getWireMock(scope).findExchangesAgainstStep(scopePath, scope.getStepPath());
+        List<RecordedExchange> exchanges = getWireMock(scenarioScope).findExchangesAgainstStep(scopePath, event.getStepPath());
         ScreenPlayFormatter.getCurrent().embedding("application/json", Json.write(exchanges).getBytes());
     }
 
-    public RecordingWireMockClient getWireMock(VerificationScope scope) {
-        return scope.getGlobalScope().getEverybodyScope().recall(RecordingWireMockClient.class);
+    public RecordingWireMockClient getWireMock(Scene scope) {
+        return scope.recall("recordingWireMockClient");
     }
 }

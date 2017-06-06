@@ -10,7 +10,9 @@ import com.sbg.bdd.screenplay.core.internal.InstanceGetter
 import com.sbg.bdd.screenplay.core.persona.properties.PropertiesPersonaClient
 import com.sbg.bdd.screenplay.scoped.GlobalScope
 import com.sbg.bdd.screenplay.wiremock.listeners.ScopeManagementListener
-import com.sbg.bdd.wiremock.scoped.ScopedWireMockServer
+import com.sbg.bdd.wiremock.scoped.integration.BaseDependencyInjectorAdaptor
+import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory
+import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient
 import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.RemoteEndPointConfigRegistry
 import groovy.json.JsonOutput
@@ -32,6 +34,7 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
 
     def 'should keep in sync'() throws Exception {
         given:
+        DependencyInjectionAdaptorFactory.useAdapter(new BaseDependencyInjectorAdaptor())
         GlobalScope globalScope = buildGlobalScopeWithoutStarting('TestRun', 5, ScopeManagementListener)
         def wireMockServer = initializeWireMock(globalScope)
         globalScope.start()

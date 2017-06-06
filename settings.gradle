@@ -8,4 +8,5 @@ include ':cucumber-jvm-screenplay-scoped'
 include ':cucumber-jvm-wiremock'
 include ':serenity-cucumber-adaptor'
 include ':android-screenplay'
+include 'screenplay-restassured'
 

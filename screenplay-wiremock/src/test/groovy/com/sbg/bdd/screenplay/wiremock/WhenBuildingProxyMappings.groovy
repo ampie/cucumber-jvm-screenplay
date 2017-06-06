@@ -3,7 +3,7 @@ package com.sbg.bdd.screenplay.wiremock
 import com.github.tomakehurst.wiremock.common.Json
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.scoped.GlobalScope
-import com.sbg.bdd.wiremock.scoped.ScopedWireMockServer
+import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import groovy.json.JsonSlurper
 
 import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT

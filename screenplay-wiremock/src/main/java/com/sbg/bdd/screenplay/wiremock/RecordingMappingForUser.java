@@ -13,6 +13,7 @@ import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedMappingBuilder;
 import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedRequestPatternBuilder;
 import com.sbg.bdd.wiremock.scoped.recording.builders.JournalMode;
 import com.sbg.bdd.wiremock.scoped.recording.builders.RecordingSpecification;
+import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.EndpointConfigRegistry;
 
 import java.io.File;
 
@@ -40,8 +41,9 @@ public class RecordingMappingForUser {
     }
 
     public void saveRecordings(Scene scope) {
-        RequestPatternBuilder requestPatternBuilder = new ExtendedRequestPatternBuilder(this.mappingBuilder.getRequestPatternBuilder());
+        ExtendedRequestPatternBuilder requestPatternBuilder = new ExtendedRequestPatternBuilder(this.mappingBuilder.getRequestPatternBuilder());
         RecordingWireMockClient wireMock = getWireMock(scope);
+        requestPatternBuilder.prepareForBuild((EndpointConfigRegistry) scope.recall("endpointConfigRegistry"));
         wireMock.saveRecordingsForRequestPattern(deriveCorrelationPath(scope), requestPatternBuilder.build(), calculateRecordingDirectory(scope));
     }
 

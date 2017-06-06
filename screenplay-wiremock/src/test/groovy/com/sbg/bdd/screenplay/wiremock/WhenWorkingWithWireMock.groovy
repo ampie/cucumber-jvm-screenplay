@@ -6,7 +6,7 @@ import com.sbg.bdd.screenplay.core.internal.BaseCastingDirector
 import com.sbg.bdd.screenplay.core.internal.SimpleInstanceGetter
 import com.sbg.bdd.screenplay.core.persona.properties.PropertiesPersonaClient
 import com.sbg.bdd.screenplay.scoped.GlobalScope
-import com.sbg.bdd.wiremock.scoped.ScopedWireMockServer
+import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient
 import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.RemoteEndPointConfigRegistry
 import groovy.json.JsonOutput

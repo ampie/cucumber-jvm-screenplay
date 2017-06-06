@@ -3,7 +3,7 @@ package com.sbg.bdd.screenplay.wiremock
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.core.util.Paths
 import com.sbg.bdd.screenplay.scoped.GlobalScope
-import com.sbg.bdd.wiremock.scoped.ScopedWireMockServer
+import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import com.sbg.bdd.wiremock.scoped.recording.builders.JournalMode
 import org.apache.commons.lang3.StringUtils
 

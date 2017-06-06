@@ -1,6 +1,7 @@
 description = 'Screenplay Lite - a lightweight library to support the ScreenPlay pattern'
 apply plugin: 'java'
 apply plugin: 'groovy'
+
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.1'
     compile 'com.sbg.bdd:common-resource-api:0.0.1'

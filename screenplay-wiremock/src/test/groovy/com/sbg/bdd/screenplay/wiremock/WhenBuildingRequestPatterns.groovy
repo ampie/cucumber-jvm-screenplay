@@ -3,7 +3,7 @@ package com.sbg.bdd.screenplay.wiremock
 import com.github.tomakehurst.wiremock.common.Json
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.scoped.GlobalScope
-import com.sbg.bdd.wiremock.scoped.ScopedWireMockServer
+import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import groovy.json.JsonSlurper
 
 import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT
@@ -29,7 +29,7 @@ class WhenBuildingRequestPatterns extends WhenWorkingWithWireMock {
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['url'] == '/home/path'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
-        mapping['response']['headers']['Content-StepEventType'] == 'text/plain'
+        mapping['response']['headers']['Content-Type'] == 'text/plain'
         mapping['response']['body'] == 'blah'
         mapping['priority'] == (MAX_LEVELS * PRIORITIES_PER_LEVEL) + 3
     }
@@ -50,7 +50,7 @@ class WhenBuildingRequestPatterns extends WhenWorkingWithWireMock {
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['url'] == '/resolved/endpoint'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
-        mapping['response']['headers']['Content-StepEventType'] == 'text/plain'
+        mapping['response']['headers']['Content-Type'] == 'text/plain'
         mapping['response']['body'] == 'blah'
         mapping['priority'] == (MAX_LEVELS * PRIORITIES_PER_LEVEL) + 3
     }
@@ -74,7 +74,7 @@ class WhenBuildingRequestPatterns extends WhenWorkingWithWireMock {
         def mapping1 = new JsonSlurper().parseText(Json.write(mappings[1]))
         mapping1['request']['urlPattern'] == '/service/one/endpoint.*'
         mapping1['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
-        mapping1['response']['headers']['Content-StepEventType'] == 'text/plain'
+        mapping1['response']['headers']['Content-Type'] == 'text/plain'
         mapping1['response']['body'] == 'blah'
         mapping1['priority'] == (MAX_LEVELS * PRIORITIES_PER_LEVEL) + 3
     }

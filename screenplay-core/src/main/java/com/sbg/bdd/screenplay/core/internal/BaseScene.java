@@ -83,7 +83,11 @@ public class BaseScene implements Scene {
 
     @Override
     public <T> T recall(String variableName) {
-        return memory.recall(variableName);
+        T localVal = memory.recall(variableName);
+        if(localVal==null){
+            return getPerformance().recall(variableName);
+        }
+        return localVal;
     }
 
     public ActorOnStage shineSpotlightOn(Actor actor) {

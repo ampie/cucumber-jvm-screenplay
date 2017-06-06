@@ -3,7 +3,7 @@ package com.sbg.bdd.screenplay.wiremock
 import com.github.tomakehurst.wiremock.common.Json
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.scoped.GlobalScope
-import com.sbg.bdd.wiremock.scoped.ScopedWireMockServer
+import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import groovy.json.JsonSlurper
 
 import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT
@@ -30,7 +30,7 @@ class WhenBuildingReponseBodies extends WhenWorkingWithWireMock{
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['url'] == '/home/path'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
-        mapping['response']['headers']['Content-StepEventType'] == 'application/json'
+        mapping['response']['headers']['Content-Type'] == 'application/json'
         mapping['response']['headers']['foo-header'] == 'bar-header-value'
         mapping['response']['body'] == "{\"foo\":\"bar\"}"
         mapping['priority'] == (MAX_LEVELS*PRIORITIES_PER_LEVEL)+3
@@ -53,7 +53,7 @@ class WhenBuildingReponseBodies extends WhenWorkingWithWireMock{
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['url'] == '/home/path'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
-        mapping['response']['headers']['Content-StepEventType'] == 'text/xml'
+        mapping['response']['headers']['Content-Type'] == 'text/xml'
         mapping['response']['headers']['foo-header'] == 'bar-header-value'
         mapping['response']['body'] == "<root>thisValue</root>"
         mapping['priority'] == (MAX_LEVELS*PRIORITIES_PER_LEVEL)+3

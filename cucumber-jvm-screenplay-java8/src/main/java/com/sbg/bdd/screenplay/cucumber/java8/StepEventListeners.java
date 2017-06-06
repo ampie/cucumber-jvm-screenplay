@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 public interface StepEventListeners {
     //TODO support other method contracts too
     interface ReceivesStepEvent {
-        void receive(StepEvent event);
+        void receive(StepEvent event) throws Throwable;
         
         default Method getMethod() {
             return METHOD;

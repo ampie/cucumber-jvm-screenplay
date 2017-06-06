@@ -88,12 +88,16 @@ public class BaseActorOnStage implements ActorOnStage {
 
     @Override
     public <T> T recall(String name) {
-        return memory.recall(name);
+        T localValue = memory.recall(name);
+        if(localValue==null){
+            return getScene().recall(name);
+        }
+        return localValue;
     }
 
     @Override
     public <T> T recall(Class<T> clzz) {
-        return memory.recall(clzz);
+        return recall(clzz.getName());
     }
 
     public boolean isActive() {

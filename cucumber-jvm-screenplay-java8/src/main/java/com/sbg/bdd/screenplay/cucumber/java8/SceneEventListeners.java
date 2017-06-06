@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 public interface SceneEventListeners {
     //TODO support other method contracts too
     interface ReceivesSceneEvent {
-        void receive(SceneEvent event);
+        void receive(SceneEvent event) throws Throwable;
         
         default Method getMethod() {
             return METHOD;

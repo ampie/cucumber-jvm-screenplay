@@ -10,7 +10,11 @@ import com.sbg.bdd.screenplay.scoped.listeners.ScreenplayLifecycleSync;
 import com.sbg.bdd.screenplay.wiremock.CorrelationPath;
 import com.sbg.bdd.wiremock.scoped.admin.model.CorrelationState;
 import com.sbg.bdd.wiremock.scoped.common.ParentPath;
+import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory;
+import com.sbg.bdd.wiremock.scoped.integration.WireMockCorrelationState;
 import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
+
+import java.util.Map;
 
 import static com.sbg.bdd.screenplay.core.actors.OnStage.theCurrentScene;
 import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
@@ -18,15 +22,30 @@ import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
 public class ScopeManagementListener {
     @SceneListener(scopePhases = SceneEventType.BEFORE_START)
     public void registerScope(Scene scene) {
+        RecordingWireMockClient wireMock = getWireMockFrom(scene);
         String scopePath = CorrelationPath.of(scene);
-        CorrelationState correlationState = getWireMockFrom(scene).joinCorrelatedScope(scopePath);
+        CorrelationState correlationState = wireMock.joinCorrelatedScope(scopePath);
         scene.remember("correlationState", correlationState);
+        syncCorrelationState(scene, correlationState);
+    }
+
+    private void syncCorrelationState(Scene scene, CorrelationState correlationState) {
+        WireMockCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
+        currentCorrelationState.set(correlationState.getCorrelationPath(),Boolean.TRUE.equals(scene.recall("proxyUnmappedEndpoings")));
+        for (Map.Entry<String, Integer> entry : correlationState.getServiceInvocationCounts().entrySet()) {
+            currentCorrelationState.initSequenceNumberFor(entry.getKey(),entry.getValue());
+        }
     }
 
     @SceneListener(scopePhases = SceneEventType.AFTER_COMPLETE)
     public void unregisterScope(Scene scene) {
         String knownScopePath = CorrelationPath.of(scene);
         getWireMockFrom(scene).stopCorrelatedScope(knownScopePath);
+        if(scene.recall("parent")!=null){
+            Scene parentScene=scene.recall("parent");
+            CorrelationState correlationState = parentScene.recall("correlationState");
+            syncCorrelationState(scene, correlationState);
+        }
     }
 
     @StepListener(eventTypes = StepEventType.STARTED)
@@ -42,7 +61,6 @@ public class ScopeManagementListener {
         getWireMockFrom(theCurrentScene).stopStep(CorrelationPath.of(theCurrentScene), stepEvent.getStepPath());
         String stepPath = ParentPath.of(stepEvent.getStepPath());
         ((CorrelationState)theCurrentScene.recall("correlationState")).setCurrentStep(stepPath);
-
     }
 
 
@@ -51,6 +69,7 @@ public class ScopeManagementListener {
         if (!BaseActorOnStage.isEverybody(userInScope)) {
             String scopePath = CorrelationPath.of(userInScope);
             CorrelationState state = getWireMockFrom(userInScope.getScene()).joinCorrelatedScope(scopePath);
+            syncCorrelationState(userInScope.getScene(),state);
             userInScope.remember("correlationState", state);
         }
     }

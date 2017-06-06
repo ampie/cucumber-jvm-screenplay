@@ -58,15 +58,20 @@ class When extends Specification {
         given:
         def client = new FileClient(InetAddress.getLocalHost().hostName, 9999)
         def root = new FileServerResourceRoot(client)
-        def file = root.resolvePotential('dir1', 'dir1_1/file2.txt')
+        def actualFile = new File(rootFile, 'dir1/dir1_1/file2.txt')
+        if(actualFile.exists()){
+            actualFile.delete()
+        }
+        def fileServerWritableResource = root.resolvePotential('dir1', 'dir1_1/file2.txt')
 
 
         def expectedContent = "expected_content".getBytes()
         when:
-        file.write(expectedContent)
+        fileServerWritableResource.write(expectedContent)
+
 
         then:
-        def fis = new FileInputStream(new File(rootFile, 'dir1/dir1_1/file2.txt'))
+        def fis = new FileInputStream(actualFile)
         def foundContent = new byte[expectedContent.length]
         fis.read(foundContent)
         foundContent == expectedContent

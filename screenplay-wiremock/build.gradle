@@ -2,19 +2,19 @@ description = 'WireMock Screenplay'
 apply plugin: 'groovy'
 dependencies {
     compile project (':screenplay-core')
+    compile project (':screenplay-scoped')//Need this for the listener dependency
     compile 'com.sbg.bdd:common-resource-api:0.0.1'
-    compile 'com.sbg.bdd:cucumber-jvm-screenplay-scoped:0.0.1'
     compile 'com.sbg.bdd:scoped-wiremock-client-recording:0.0.1'
     compile 'com.github.jknack:handlebars:4.0.6'
     compileOnly 'com.github.tomakehurst:wiremock:2.6.0'
     compile 'commons-io:commons-io:2.5'
     testCompile 'org.codehaus.groovy:groovy-all:2.4.5'
-    testCompile project (':screenplay-scoped')
+    testCompile 'com.sbg.bdd:scoped-wiremock-server:0.0.1'
     testCompile('org.spockframework:spock-core:0.7-groovy-2.0') {
         exclude group: 'junit'
         exclude module: 'groovy-all'
     }
-    testCompile('com.sbg.bdd:scoped-wiremock:0.0.1') {
+    testCompile('com.sbg.bdd:scoped-wiremock-server:0.0.1') {
         exclude module:'asm'
     }
     testCompile('com.github.goldin:spock-extensions:0.1.4') {

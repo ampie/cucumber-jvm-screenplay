@@ -7,7 +7,7 @@ import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.core.util.Paths
 import com.sbg.bdd.screenplay.scoped.GlobalScope
 import com.sbg.bdd.screenplay.wiremock.listeners.RecordingManagementListener
-import com.sbg.bdd.wiremock.scoped.ScopedWireMockServer
+import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import com.sbg.bdd.wiremock.scoped.admin.model.RecordedExchange
 import com.sbg.bdd.wiremock.scoped.admin.model.RecordedRequest
 import com.sbg.bdd.wiremock.scoped.admin.model.RecordedResponse

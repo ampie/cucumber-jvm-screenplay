@@ -6,6 +6,7 @@ import com.sbg.bdd.screenplay.core.annotations.Subject;
 import com.sbg.bdd.screenplay.core.util.Fields;
 import io.restassured.assertion.BodyMatcher;
 import io.restassured.assertion.BodyMatcherGroup;
+import io.restassured.assertion.HeaderMatcher;
 import io.restassured.function.RestAssuredFunction;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import static com.sbg.bdd.screenplay.core.actors.OnStage.callActorToStage;
 
 public class ResponseConsequence extends BaseConsequence implements Consequence, ResponseSpecification {
-    ResponseSpecification specification;
+    private ResponseSpecification specification;
 
     public ResponseConsequence(ResponseSpecification specification) {
         this.specification = specification;
@@ -35,18 +36,34 @@ public class ResponseConsequence extends BaseConsequence implements Consequence,
         ActorOnStage actorOnStage = callActorToStage(actor);
         Response response = actorOnStage.recall("lastResponse");
         specification.validate(response);
+
     }
     @Override
     public String toString() {
         Map<String, Object> specFields = Fields.of(specification).asMap();
         Description description = new StringDescription();
-        description.appendText("Then ");
+        description.appendText(" should see that ");
+        boolean hasAdded=false;
         if(specFields.containsKey("bodyMatchers")){
             description.appendText("the body of the response ");
             BodyMatcherGroup bmg = (BodyMatcherGroup) specFields.get("bodyMatchers");
             Collection<BodyMatcher> bodyAssertions = (Collection<BodyMatcher>) Fields.of(bmg).asMap().get("bodyAssertions");
             for (BodyMatcher matcher : bodyAssertions) {
                 matcher.getMatcher().describeTo(description);
+            }
+            hasAdded=true;
+        }
+        if(specFields.containsKey("headerAssertions")){
+            Collection<HeaderMatcher> headerAssertions = (Collection<HeaderMatcher>) specFields.get("headerAssertions");
+            for (HeaderMatcher assertion : headerAssertions) {
+                if(hasAdded) {
+                    description.appendText("and ");
+                }
+                hasAdded=true;
+                description.appendText("the header \"");
+                description.appendText(assertion.getHeaderName().toString());
+                description.appendText("\" ");
+                assertion.getMatcher().describeTo(description);
             }
         }
         //TODO header assertions

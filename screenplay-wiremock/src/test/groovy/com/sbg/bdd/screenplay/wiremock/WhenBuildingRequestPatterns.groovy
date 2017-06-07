@@ -27,7 +27,7 @@ class WhenBuildingRequestPatterns extends WhenWorkingWithWireMock {
         def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.enter(johnSmith).getScopePath())
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
-        mapping['request']['url'] == '/home/path'
+        mapping['request']['urlPath'] == '/home/path'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
         mapping['response']['headers']['Content-Type'] == 'text/plain'
         mapping['response']['body'] == 'blah'
@@ -48,7 +48,7 @@ class WhenBuildingRequestPatterns extends WhenWorkingWithWireMock {
         def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.enter(johnSmith).getScopePath())
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
-        mapping['request']['url'] == '/resolved/endpoint'
+        mapping['request']['urlPath'] == '/resolved/endpoint'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
         mapping['response']['headers']['Content-Type'] == 'text/plain'
         mapping['response']['body'] == 'blah'
@@ -70,9 +70,9 @@ class WhenBuildingRequestPatterns extends WhenWorkingWithWireMock {
         mappings.size() == 2
         println Json.write(mappings)
         def mapping0 = new JsonSlurper().parseText(Json.write(mappings[0]))
-        mapping0['request']['urlPattern'] == '/service/two/endpoint.*'
+        mapping0['request']['urlPathPattern'] == '/service/two/endpoint.*'
         def mapping1 = new JsonSlurper().parseText(Json.write(mappings[1]))
-        mapping1['request']['urlPattern'] == '/service/one/endpoint.*'
+        mapping1['request']['urlPathPattern'] == '/service/one/endpoint.*'
         mapping1['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
         mapping1['response']['headers']['Content-Type'] == 'text/plain'
         mapping1['response']['body'] == 'blah'

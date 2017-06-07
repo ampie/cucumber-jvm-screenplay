@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.Options
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.core.annotations.StepEventType
+import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import io.restassured.RestAssured
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.is
@@ -13,16 +14,38 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.givenThat
 import static com.sbg.bdd.screenplay.restassured.RestAssuredTasks.*
+import static org.hamcrest.Matchers.isEmptyOrNullString
 
 class WhenUsingTheRestAssuredTasks extends WhenUsingRestAssured {
-    def 'should generate pretty descriptions'() {
-        TaskListener.EVENTS.clear()
-        def server = initWireMockAndBasePerformance()
-        def dummyServer = new WireMockServer(Options.DYNAMIC_PORT);
-        dummyServer.start()
-        def builder = WireMock.any(WireMock.urlEqualTo('/some/path'))
-        builder.willReturn(aResponse().withBody('hello'))
-        dummyServer.addStubMapping(builder.build())
+    ScopedWireMockServer server
+    WireMockServer dummyServer
+    def cleanup(){
+        if(server!=null){
+            server.stop()
+        }
+        if(dummyServer!=null){
+            dummyServer.stop()
+        }
+    }
+    def 'should generate perty descriptions for GETs'() {
+        prepareWireMockAndMappings()
+
+
+        given:
+        OnStage.raiseTheCurtain('Scene 1')
+
+        when:
+        givenThat(actorNamed('John')).wasAbleTo(
+                get('http://localhost:' + dummyServer.port() + '/some/path', with().body('bar'))
+        )
+
+        then:
+        TaskListener.EVENTS.size() == 2
+        TaskListener.EVENTS[0].info.name == 'send a GET request to http://localhost:' + dummyServer.port() + "/some/path"
+        TaskListener.EVENTS[1].type == StepEventType.SUCCESSFUL
+    }
+    def 'should generate perty descriptions for PUTs'() {
+        prepareWireMockAndMappings()
 
 
         given:
@@ -32,13 +55,54 @@ class WhenUsingTheRestAssuredTasks extends WhenUsingRestAssured {
         givenThat(actorNamed('John')).wasAbleTo(
                 put('http://localhost:' + dummyServer.port() + '/some/path', with().body('bar'))
         )
-        thenFor(actorNamed('John'),
-                assertThat().body(is(equalTo('hello')))
-        )
+
         then:
-        TaskListener.EVENTS.size() == 4
-        TaskListener.EVENTS[0].info.name == 'Send a PUT request to http://localhost:' + dummyServer.port() + "/some/path with body 'bar'"
-        TaskListener.EVENTS[3].type == StepEventType.SUCCESSFUL
-        TaskListener.EVENTS[3].info.name == 'Then the body of the response is "hello"'
+        TaskListener.EVENTS.size() == 2
+        TaskListener.EVENTS[0].info.name == 'send a PUT request to http://localhost:' + dummyServer.port() + "/some/path with body 'bar'"
+        TaskListener.EVENTS[1].type == StepEventType.SUCCESSFUL
+    }
+    def 'should generate perty descriptions for POSTs'() {
+        prepareWireMockAndMappings()
+
+
+        given:
+        OnStage.raiseTheCurtain('Scene 1')
+
+        when:
+        givenThat(actorNamed('John')).wasAbleTo(
+                post('http://localhost:' + dummyServer.port() + '/some/path', with().body('bar'))
+        )
+
+        then:
+        TaskListener.EVENTS.size() == 2
+        TaskListener.EVENTS[0].info.name == 'send a POST request to http://localhost:' + dummyServer.port() + "/some/path with body 'bar'"
+        TaskListener.EVENTS[1].type == StepEventType.SUCCESSFUL
+    }
+    def 'should generate perty descriptions for DELETEs'() {
+        prepareWireMockAndMappings()
+
+
+        given:
+        OnStage.raiseTheCurtain('Scene 1')
+
+        when:
+        givenThat(actorNamed('John')).wasAbleTo(
+                delete('http://localhost:' + dummyServer.port() + '/some/path', with())
+        )
+
+        then:
+        TaskListener.EVENTS.size() == 2
+        TaskListener.EVENTS[0].info.name == 'send a DELETE request to http://localhost:' + dummyServer.port() + "/some/path"
+        TaskListener.EVENTS[1].type == StepEventType.SUCCESSFUL
+    }
+    private WireMockServer prepareWireMockAndMappings() {
+        TaskListener.EVENTS.clear()
+        server = initWireMockAndBasePerformance()
+        dummyServer = new WireMockServer(Options.DYNAMIC_PORT);
+        dummyServer.start()
+        def builder = WireMock.any(WireMock.urlEqualTo('/some/path'))
+        builder.willReturn(aResponse().withBody('hello').withHeader("foo", "bar"))
+        dummyServer.addStubMapping(builder.build())
+        dummyServer
     }
 }

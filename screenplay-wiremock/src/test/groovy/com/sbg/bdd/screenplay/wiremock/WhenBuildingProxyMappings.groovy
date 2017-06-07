@@ -28,7 +28,7 @@ class WhenBuildingProxyMappings extends WhenWorkingWithWireMock {
         def mappings = wireMockServer.getMappingsInScope(CorrelationPath.of(globalScope.enter(johnSmith)))
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
-        mapping['request']['urlPattern'] == '/home/path.*'
+        mapping['request']['urlPathPattern'] == '/home/path.*'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
         mapping['response']['proxyBaseUrl'] == "http://some.host.com/base"
         mapping['priority'] == (MAX_LEVELS * PRIORITIES_PER_LEVEL) + 5
@@ -48,7 +48,7 @@ class WhenBuildingProxyMappings extends WhenWorkingWithWireMock {
         def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.enter(johnSmith).getScopePath())
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
-        mapping['request']['urlPattern'] == '/resolved/endpoint.*'
+        mapping['request']['urlPathPattern'] == '/resolved/endpoint.*'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
         mapping['response']['proxyBaseUrl'] == "http://somehost.com"
         mapping['priority'] == (MAX_LEVELS * PRIORITIES_PER_LEVEL) + 5
@@ -68,7 +68,7 @@ class WhenBuildingProxyMappings extends WhenWorkingWithWireMock {
         def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.enter(johnSmith).getScopePath())
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
-        mapping['request']['urlPattern'] == '/resolved/endpoint.*'
+        mapping['request']['urlPathPattern'] == '/resolved/endpoint.*'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
         mapping['response']['proxyBaseUrl'] == 'http://service.com/under/test'
         mapping['response']['transformers'][0] == 'ProxyUrlTransformer'
@@ -92,7 +92,7 @@ class WhenBuildingProxyMappings extends WhenWorkingWithWireMock {
         def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.enter(johnSmith).getScopePath())
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
-        mapping['request']['urlPattern'] == '/resolved/endpoint.*'
+        mapping['request']['urlPathPattern'] == '/resolved/endpoint.*'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
         mapping['response']['proxyBaseUrl'] == 'http://target.com/base'
         mapping['response']['transformers'][0] == 'ProxyUrlTransformer'

@@ -52,7 +52,7 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
             }
         })
         def userScope = scope.shineSpotlightOn(actorNamed('John Smith'))
-
+        scope.completeNestedScope('scenario1')
         then:
         scope.everybodyScope.recall('correlationState').correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1'
         userScope.recall('correlationState').correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1/John_Smith'

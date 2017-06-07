@@ -28,7 +28,7 @@ class WhenBuildingReponseBodies extends WhenWorkingWithWireMock{
         def mappings =wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.enter(johnSmith).getScopePath())
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
-        mapping['request']['url'] == '/home/path'
+        mapping['request']['urlPath'] == '/home/path'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
         mapping['response']['headers']['Content-Type'] == 'application/json'
         mapping['response']['headers']['foo-header'] == 'bar-header-value'
@@ -51,7 +51,7 @@ class WhenBuildingReponseBodies extends WhenWorkingWithWireMock{
         def mappings =wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.enter(johnSmith).getScopePath())
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
-        mapping['request']['url'] == '/home/path'
+        mapping['request']['urlPath'] == '/home/path'
         mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
         mapping['response']['headers']['Content-Type'] == 'text/xml'
         mapping['response']['headers']['foo-header'] == 'bar-header-value'

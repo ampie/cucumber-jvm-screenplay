@@ -18,9 +18,11 @@ import java.net.URL;
 import static com.sbg.bdd.screenplay.core.actors.OnStage.*;
 
 public class RestAssuredTasks {
-    public static Task get(final String uri, final RequestSpecification spec) {
+    public static Task get(final String urii, final RequestSpecification spec) {
         return new Task() {
+            String uri=urii;
             @Override
+            @Step("send a GET request to #uri")
             public <T extends Actor> T performAs(T actor) {
                 ActorOnStage actorOnStage = shineSpotlightOn(actor);
                 Response response = spec.config(RestAssuredConfig.config())
@@ -35,7 +37,7 @@ public class RestAssuredTasks {
             String uri=urii;
             String body=((FilterableRequestSpecification)spec).getBody().toString();
             @Override
-            @Step("Send a PUT request to #uri with body '#body'")
+            @Step("send a PUT request to #uri with body '#body'")
             public <T extends Actor> T performAs(T actor) {
                 ActorOnStage actorOnStage = shineSpotlightOn(actor);
                 Response response = spec.config(RestAssuredConfig.config())
@@ -46,9 +48,12 @@ public class RestAssuredTasks {
             }
         };
     }
-    public static Task post(final String uri, final RequestSpecification spec) {
+    public static Task post(final String urii, final RequestSpecification spec) {
         return new Task() {
+            String uri=urii;
+            String body=((FilterableRequestSpecification)spec).getBody().toString();
             @Override
+            @Step("send a POST request to #uri with body '#body'")
             public <T extends Actor> T performAs(T actor) {
                 ActorOnStage actorOnStage = shineSpotlightOn(actor);
                 Response response = spec.config(RestAssuredConfig.config())
@@ -60,9 +65,11 @@ public class RestAssuredTasks {
     }
 
 
-    public static Task delete(final String uri, final RequestSpecification spec) {
+    public static Task delete(final String urii, final RequestSpecification spec) {
         return new Task() {
+            String uri=urii;
             @Override
+            @Step("send a DELETE request to #uri")
             public <T extends Actor> T performAs(T actor) {
                 ActorOnStage actorOnStage = shineSpotlightOn(actor);
                 Response response = spec.config(RestAssuredConfig.config())

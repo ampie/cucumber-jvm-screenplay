@@ -71,6 +71,7 @@ class When extends Specification {
 
 
         then:
+        println actualFile
         def fis = new FileInputStream(actualFile)
         def foundContent = new byte[expectedContent.length]
         fis.read(foundContent)

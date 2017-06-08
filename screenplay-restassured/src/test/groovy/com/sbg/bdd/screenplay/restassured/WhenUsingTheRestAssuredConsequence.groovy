@@ -37,9 +37,11 @@ class WhenUsingTheRestAssuredConsequence extends WhenUsingRestAssured {
         )
 
         then:
-        TaskListener.EVENTS.size() == 6
-        TaskListener.EVENTS[3].type == StepEventType.SUCCESSFUL
-        TaskListener.EVENTS[3].info.name == ' should see that the body of the response is \"hello\"and the header \"foo\" is \"bar\"'
-        TaskListener.EVENTS[5].info.name == ' should see that the body of the response and the header "fa" is (null or an empty string)'
+        TaskListener.EVENTS.size() == 10
+        TaskListener.EVENTS[0].info.name == 'Given that John was able to '
+        TaskListener.EVENTS[4].info.name == 'Then John should '
+        TaskListener.EVENTS[6].type == StepEventType.SUCCESSFUL
+        TaskListener.EVENTS[6].info.name == 'see that the body of the response is \"hello\"and the header \"foo\" is \"bar\"'
+        TaskListener.EVENTS[7].info.name == 'see that the body of the response and the header "fa" is (null or an empty string)'
     }
 }

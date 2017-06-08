@@ -17,15 +17,16 @@ class WhenAnsweringQuestionsSuccessfully extends WhenPerformingChildSteps {
 
         def firstStep = report[0].elements[0].steps[0]
         firstStep.name == 'two questions are answered successfully'
-        firstStep.children.size() == 2
-        firstStep.children[0].keyword == "Should"
-        firstStep.children[0].name == "Then is zero a number"
-        firstStep.children[0].result.duration == 9999
-        firstStep.children[0].result.status == "passed"
-        firstStep.children[1].keyword == "Should"
-        firstStep.children[1].name == "Then the text to expect  should be \"expect this text\""
-        firstStep.children[1].result.status == "passed"
-        firstStep.result.status == "passed"
+        def firstChild = firstStep.children[0]
+        firstChild.children.size() == 2
+        firstChild.children[0].keyword == "evaluateFor"
+        firstChild.children[0].name == "see that is zero a number"
+        firstChild.children[0].result.duration == 9999
+        firstChild.children[0].result.status == "passed"
+        firstChild.children[1].keyword == "evaluateFor"
+        firstChild.children[1].name == "see that the text to expect  is \"expect this text\""
+        firstChild.children[1].result.status == "passed"
+        firstChild.result.status == "passed"
 
     }
 }

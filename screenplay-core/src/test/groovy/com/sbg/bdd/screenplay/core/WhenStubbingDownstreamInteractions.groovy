@@ -46,8 +46,9 @@ class WhenStubbingDownstreamInteractions extends WithinBasePerformance {
         then:
         actorNamed('John').recall('callResult') == 'call was mocked'
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 4
-        events[0].info.keyword == 'Allow'
-        events[0].info.name == 'some stub do do nothing much'
+        events.size() == 8
+        events[0].info.name== 'For requests from John, allow '
+        events[2].info.keyword == 'performOnStage'
+        events[2].info.name == 'some stub do do nothing much'
     }
 }

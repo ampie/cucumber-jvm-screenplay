@@ -42,9 +42,9 @@ public class ResponseConsequence extends BaseConsequence implements Consequence,
     public String toString() {
         Map<String, Object> specFields = Fields.of(specification).asMap();
         Description description = new StringDescription();
-        description.appendText(" should see that ");
+        description.appendText("see that ");
         boolean hasAdded=false;
-        if(specFields.containsKey("bodyMatchers")){
+        if(specFields.get("bodyMatchers")!=null){
             description.appendText("the body of the response ");
             BodyMatcherGroup bmg = (BodyMatcherGroup) specFields.get("bodyMatchers");
             Collection<BodyMatcher> bodyAssertions = (Collection<BodyMatcher>) Fields.of(bmg).asMap().get("bodyAssertions");
@@ -53,7 +53,7 @@ public class ResponseConsequence extends BaseConsequence implements Consequence,
             }
             hasAdded=true;
         }
-        if(specFields.containsKey("headerAssertions")){
+        if(specFields.get("headerAssertions")!=null){
             Collection<HeaderMatcher> headerAssertions = (Collection<HeaderMatcher>) specFields.get("headerAssertions");
             for (HeaderMatcher assertion : headerAssertions) {
                 if(hasAdded) {
@@ -66,7 +66,16 @@ public class ResponseConsequence extends BaseConsequence implements Consequence,
                 assertion.getMatcher().describeTo(description);
             }
         }
-        //TODO header assertions
+        if(specFields.get("expectedStatusCode")!=null){
+            Matcher<Integer> expectedStatusCode= (Matcher<Integer>) specFields.get("expectedStatusCode");
+            if(hasAdded) {
+                description.appendText("and ");
+            }
+            hasAdded=true;
+            description.appendText("the status code ");
+            expectedStatusCode.describeTo(description);
+        }
+        //TODO cookies assertions
         return description.toString();
     }
 

@@ -27,6 +27,7 @@ public class MockingSteps {
     private DownstreamVerification aVerificationSucceeds() {
         return new DownstreamVerification() {
             @Override
+            @Step("doStuff was called with <10>")
             public void performOnStage(ActorOnStage actorOnStage) {
                 Mockito.verify(downstreamSystem).doStuff(10);
             }

@@ -5,12 +5,13 @@ import com.sbg.bdd.screenplay.core.annotations.Step;
 import com.sbg.bdd.screenplay.core.util.AnnotatedTitle;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
 public class StepMethodInfo {
     private String stepParentPath;
-    private String keyword;
+    private String methodName;
     protected final Object performer;
     protected String location;
     protected String nameExpression;
@@ -18,25 +19,22 @@ public class StepMethodInfo {
     private boolean pending;
     private boolean ignored;
     private String name;
+    private Method method;
 
-    protected StepMethodInfo(String stepParentPath, String keyword, Object performer, Object origin) {
+    protected StepMethodInfo(String stepParentPath, String methodName, Object performer, Object origin) {
         this.stepParentPath = stepParentPath;
-        this.keyword = keyword;
+        this.methodName = methodName;
         this.performer = performer;
         this.origin = origin;
-        try {
-            deriveState();
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException(e);
-        }
+        deriveState();
     }
 
     public String getStepPath() {
-        return stepParentPath==null?getName():stepParentPath+"/"+getName();
+        return stepParentPath == null ? getName() : stepParentPath + "/" + getName();
     }
 
     public String getKeyword() {
-        return keyword;
+        return methodName;
     }
 
     public String getNameExpression() {
@@ -55,10 +53,10 @@ public class StepMethodInfo {
         return ignored;
     }
 
-    protected void deriveState() throws NoSuchMethodException {
-        Method method = lookupMethod();
-        extractNameExpressionFrom(method);
-        locateMethod(method);
+    protected void deriveState() {
+        method = lookupMethod();
+        extractNameExpressionFrom();
+        locateMethod();
         this.name = AnnotatedTitle.injectFieldsInto(nameExpression).using(getImplementation());
         if (getImplementation() instanceof Question) {
             name = origin.toString();
@@ -71,29 +69,29 @@ public class StepMethodInfo {
         return origin instanceof Consequence ? ((Consequence) origin).getQuestion() : origin;
     }
 
-    private void locateMethod(Method method) {
+    private void locateMethod() {
         this.location = method.getDeclaringClass().getSimpleName() + " " + method.getReturnType().getSimpleName() + " " + method.getName();
     }
 
 
-    protected void extractNameExpressionFrom(Method method) {
+    protected void extractNameExpressionFrom() {
         this.nameExpression = method.getName();
         if (method.isAnnotationPresent(Step.class)) {
             if (method.getAnnotation(Step.class).value().length() > 0) {
-                this.nameExpression= method.getAnnotation(Step.class).value();
+                this.nameExpression = method.getAnnotation(Step.class).value();
             }
         }
     }
 
-    private Method lookupMethod() throws NoSuchMethodException {
-        if (getImplementation() instanceof Performable) {
-            return getImplementation().getClass().getMethod("performAs", Actor.class);
-        } else if (getImplementation() instanceof Question) {
-            return getImplementation().getClass().getMethod("answeredBy", Actor.class);
-        } else if (getImplementation() instanceof OnStageAction) {
-            return getImplementation().getClass().getMethod("performOnStage", ActorOnStage.class);
+    private Method lookupMethod() {
+        Method[] methods = origin.getClass().getMethods();
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                method.setAccessible(true);
+                return method;
+            }
         }
-        throw new IllegalStateException(getImplementation().getClass() + " not a question or a task");
+        throw new IllegalStateException(getImplementation().getClass() + " does not have method " + methodName);
     }
 
     private boolean isAnnotationPresent(Method method, String... annotationNames) {
@@ -108,16 +106,18 @@ public class StepMethodInfo {
     }
 
     public void invoke() {
-        if (performer instanceof Actor) {
-            if (this.origin instanceof Consequence) {
-                ((Consequence) this.origin).evaluateFor((Actor) performer);
-            } else if (this.origin instanceof Performable) {
-                ((Performable) this.origin).performAs((Actor) performer);
+        try {
+            lookupMethod().invoke(origin, performer);
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException() instanceof RuntimeException) {
+                throw (RuntimeException) e.getTargetException();
+            } else if (e.getTargetException() instanceof Error) {
+                throw (Error) e.getTargetException();
+            } else {
+                throw new IllegalStateException(e.getTargetException());
             }
-        } else if (performer instanceof ActorOnStage) {
-            if (this.origin instanceof OnStageAction) {
-                ((OnStageAction) this.origin).performOnStage((ActorOnStage) performer);
-            }
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
         }
     }
 
@@ -126,6 +126,6 @@ public class StepMethodInfo {
     }
 
     public int getStepLevel() {
-        return stepParentPath==null?0:stepParentPath.split("\\/").length;
+        return stepParentPath == null ? 0 : stepParentPath.split("\\/").length;
     }
 }

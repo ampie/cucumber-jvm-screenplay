@@ -22,9 +22,11 @@ class WhenDefininingQuestionsForActors extends WithinBasePerformance {
         then(actorNamed('John')).should(seeThat(theAnswer,is(equalTo(5))))
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 2
-        events[0].info.keyword == 'Should'
-        events[0].info.name =='Then the answer should be <5>'
+        events.size() == 4
+        events[0].info.keyword == 'should'
+        events[0].info.name =='Then John should '
+        events[1].info.keyword == 'evaluateFor'
+        events[1].info.name =='see that the answer is <5>'
     }
 
     def 'for questions with multiple matchers, each matcher should be logged with the appropriate keywords and names'() {
@@ -40,11 +42,13 @@ class WhenDefininingQuestionsForActors extends WithinBasePerformance {
         then(actorNamed('John')).should(seeThat(theAnswer,is(equalTo(5)),is(lessThan(6)),is(greaterThan(4))))
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 6
-        events[0].info.keyword == 'Should'
-        events[0].info.name =='Then the answer should be <5>'
-        events[2].info.name =='Then the answer should be a value less than <6>'
-        events[4].info.name =='Then the answer should be a value greater than <4>'
+        events.size() == 8
+        events[0].info.keyword == 'should'
+        events[0].info.name =='Then John should '
+        events[1].info.keyword == 'evaluateFor'
+        events[1].info.name =='see that the answer is <5>'
+        events[3].info.name =='see that the answer is a value less than <6>'
+        events[5].info.name =='see that the answer is a value greater than <4>'
     }
     def 'boolean questions should be logged with the appropriate keywords and name'() {
         given:
@@ -59,9 +63,11 @@ class WhenDefininingQuestionsForActors extends WithinBasePerformance {
         then(actorNamed('John')).should(seeThat(iDoExist))
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 2
-        events[0].info.keyword == 'Should'
-        events[0].info.name =='Then I do exist'
+        events.size() == 4
+        events[0].info.keyword == 'should'
+        events[0].info.name =='Then John should '
+        events[1].info.keyword == 'evaluateFor'
+        events[1].info.name =='see that I do exist'
     }
     def 'failing questions should throw their associated diagnostic error'() {
         given:
@@ -80,11 +86,13 @@ class WhenDefininingQuestionsForActors extends WithinBasePerformance {
         }
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 2
-        events[0].info.keyword == 'Should'
-        events[0].info.name =='Then diagnose it'
-        events[1].error == error
-        events[1].type == StepEventType.ASSERTION_FAILED
+        events.size() == 4
+        events[0].info.keyword == 'should'
+        events[0].info.name =='Then John should '
+        events[1].info.keyword == 'evaluateFor'
+        events[1].info.name =='see that a MyDiagnosticError is thrown'
+        events[2].error == error
+        events[2].type == StepEventType.ASSERTION_FAILED
     }
     def 'questions with acronynms should reflect the acronym in uppercase'() {
         given:
@@ -98,8 +106,10 @@ class WhenDefininingQuestionsForActors extends WithinBasePerformance {
             then(actorNamed('John')).should(seeThat(new QuestionTBDAcronym()))
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 2
-        events[0].info.keyword == 'Should'
-        events[0].info.name =='Then question TBD acronym'
+        events.size() == 4
+        events[0].info.keyword == 'should'
+        events[0].info.name =='Then John should '
+        events[1].info.keyword == 'evaluateFor'
+        events[1].info.name =='see that question TBD acronym'
     }
 }

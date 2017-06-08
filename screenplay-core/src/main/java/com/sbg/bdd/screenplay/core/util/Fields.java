@@ -8,11 +8,6 @@ import java.util.*;
 
 
 public class Fields {
-    public enum FieldValue {
-        UNDEFINED
-    }
-
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Fields.class);
     private final Class<?> clazz;
 
@@ -52,7 +47,7 @@ public class Fields {
                 try {
                     field.setAccessible(true);
                     if (isValid(field)) {
-                        fieldValues.put(field.getName(), fieldValueFrom(field).or(FieldValue.UNDEFINED));
+                        fieldValues.put(field.getName(), fieldValueFrom(field));
                     }
                 } catch (IllegalAccessException e) {
                     LOGGER.warn("Failed to inject the field " + field.getName(), e);
@@ -67,23 +62,10 @@ public class Fields {
             return ((field != null) && (!field.getName().contains("CGLIB")));
         }
 
-        private FieldValueProvider fieldValueFrom(Field field) {
-            return new FieldValueProvider(field, object);
+        private Object fieldValueFrom(Field field) throws IllegalAccessException {
+            return ((field == null) || (object == null) || (field.get(object) == null)) ? null : field.get(object);
         }
 
-        private static class FieldValueProvider {
-            Field field;
-            Object object;
-
-            public FieldValueProvider(Field field, Object object) {
-                this.field = field;
-                this.object = object;
-            }
-
-            public Object or(FieldValue undefinedValue) throws IllegalAccessException {
-                return ((field == null) || (object == null) || (field.get(object) == null)) ? undefinedValue : field.get(object);
-            }
-        }
     }
 
 }

@@ -7,7 +7,7 @@ import com.sbg.bdd.screenplay.core.annotations.Subject;
  */
 public class DiagnosticQuestionThatFails implements Question<Boolean>, QuestionDiagnostics {
     @Override
-    @Subject("diagnose it")
+    @Subject("a MyDiagnosticError is thrown")
     public Boolean answeredBy(Actor actor) {
         return false;
     }

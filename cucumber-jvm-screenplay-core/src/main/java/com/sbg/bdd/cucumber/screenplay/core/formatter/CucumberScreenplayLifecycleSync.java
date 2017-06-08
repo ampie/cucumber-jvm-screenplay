@@ -1,12 +1,16 @@
 package com.sbg.bdd.cucumber.screenplay.core.formatter;
 
 import com.sbg.bdd.screenplay.core.actors.OnStage;
+import com.sbg.bdd.screenplay.core.internal.BaseScene;
 import gherkin.formatter.model.*;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 
 
 public class CucumberScreenplayLifecycleSync implements ReportingFormatter {
+    Deque<Step> stepQueue=new ArrayDeque<>();
 
     public CucumberScreenplayLifecycleSync() {
     }
@@ -47,7 +51,7 @@ public class CucumberScreenplayLifecycleSync implements ReportingFormatter {
 
     @Override
     public void match(Match match) {
-
+        Step step = stepQueue.removeFirst();
     }
 
     @Override
@@ -74,7 +78,7 @@ public class CucumberScreenplayLifecycleSync implements ReportingFormatter {
 
     @Override
     public void step(Step step) {
-
+        stepQueue.add(step);
     }
 
 

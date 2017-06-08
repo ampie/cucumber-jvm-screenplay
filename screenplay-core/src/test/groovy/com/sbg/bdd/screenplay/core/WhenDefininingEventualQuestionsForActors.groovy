@@ -25,9 +25,11 @@ class WhenDefininingEventualQuestionsForActors extends WithinBasePerformance {
         System.currentTimeMillis() > start + 1000
 
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 2
-        events[0].info.keyword == 'Should'
-        events[0].info.name =='Then I died after a second'
+        events.size() == 4
+        events[0].info.keyword == 'should'
+        events[0].info.name == 'Then John should '
+        events[1].info.keyword == 'evaluateFor'
+        events[1].info.name =='eventually see that I died after a second'
     }
     def 'eventual questions that expire should complain with the appropriate exception and message'() {
         given:
@@ -50,12 +52,14 @@ class WhenDefininingEventualQuestionsForActors extends WithinBasePerformance {
         then:
         System.currentTimeMillis() > start + 100
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 2
-        events[0].info.keyword == 'Should'
-        events[0].info.name =='Then I died after a second'
-        events[1].error == error
-        events[1].duration > 100 * 1000000
-        events[1].duration < 200 * 1000000
+        events.size() == 4
+        events[0].info.keyword == 'should'
+        events[0].info.name =='Then John should '
+        events[1].info.keyword == 'evaluateFor'
+        events[1].info.name =='eventually see that I died after a second'
+        events[2].error == error
+        events[2].duration > 100 * 1000000
+        events[2].duration < 200 * 1000000
         error.message.startsWith('arrrrgh!') == true
     }
 }

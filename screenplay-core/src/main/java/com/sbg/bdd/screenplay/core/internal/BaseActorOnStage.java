@@ -2,6 +2,7 @@ package com.sbg.bdd.screenplay.core.internal;
 
 import com.sbg.bdd.screenplay.core.*;
 import com.sbg.bdd.screenplay.core.annotations.ActorInvolvement;
+import com.sbg.bdd.screenplay.core.annotations.Step;
 import com.sbg.bdd.screenplay.core.events.ActorEvent;
 import com.sbg.bdd.screenplay.core.util.NameConverter;
 
@@ -13,47 +14,67 @@ public class BaseActorOnStage implements ActorOnStage {
     protected Scene scene;
     protected Actor actor;
     protected SimpleMemory memory = new SimpleMemory();
-    protected List<DownstreamVerification> downstreamExpectations =new ArrayList<>();
+    protected List<DownstreamVerification> downstreamExpectations = new ArrayList<>();
     protected boolean active = false;
 
     public BaseActorOnStage(Scene scene, Actor actor) {
         this.scene = scene;
         this.actor = actor;
-        this.id= NameConverter.filesystemSafe(actor.getName());
+        this.id = NameConverter.filesystemSafe(actor.getName());
 
     }
-    public static boolean isEverybody(ActorOnStage a){
+
+    public static boolean isEverybody(ActorOnStage a) {
         return a.getId().equals("everybody");
     }
+
     @Override
     public String getId() {
         return id;
     }
 
     @Override
-    public void allow(DownstreamStub... downstreamStubs) {
-        actor.performSteps("Allow", this,downstreamStubs);
+    public void allow(final DownstreamStub... downstreamStubs) {
+        ((BaseActor) actor).performSteps(new StepMethodInfo[]{new StepMethodInfo(((BaseActor) actor).getParentStepPath(), "allow", this, new Object() {
+            String keyword = actor.getPrecedingKeyword();
+            String name = actor.getName();
+
+            @Step("#keyword #name, allow ")
+            public void allow(ActorOnStage me) {
+                actor.performSteps("performOnStage", BaseActorOnStage.this, downstreamStubs);
+            }
+        })});
     }
 
+    @Override
+    public void verifyThat(final DownstreamVerification... downstreamVerifications) {
+        ((BaseActor) actor).performSteps(new StepMethodInfo[]{new StepMethodInfo(((BaseActor) actor).getParentStepPath(), "verifyThat", this, new Object() {
+            String keyword = actor.getPrecedingKeyword();
+            String name = actor.getName();
+
+            @Step("#keyword #name, verify that ")
+            public void verifyThat(ActorOnStage me) {
+                actor.performSteps("performOnStage", BaseActorOnStage.this, downstreamVerifications);
+            }
+        })});
+    }
 
     @Override
     public void expect(DownstreamExpectation... downstreamExpectations) {
         DownstreamStub[] stubs = new DownstreamStub[downstreamExpectations.length];
         for (int i = 0; i < downstreamExpectations.length; i++) {
-             stubs[i]=downstreamExpectations[i].getStub();
+            stubs[i] = downstreamExpectations[i].getStub();
             this.downstreamExpectations.add(downstreamExpectations[i].getVerification());
         }
-        actor.performSteps("Expect", this, stubs);
+        allow(stubs);
     }
 
-    @Override
-    public void verifyThat(DownstreamVerification... downstreamVerifications) {
-        actor.performSteps("Verify", this,downstreamVerifications);
-    }
 
     @Override
     public void evaluateExpectations() {
-        actor.performSteps("Verify", this,downstreamExpectations.toArray());
+        if(downstreamExpectations.size()>0) {
+            verifyThat(downstreamExpectations.toArray(new DownstreamVerification[0]));
+        }
     }
 
     @Override
@@ -89,7 +110,7 @@ public class BaseActorOnStage implements ActorOnStage {
     @Override
     public <T> T recall(String name) {
         T localValue = memory.recall(name);
-        if(localValue==null){
+        if (localValue == null) {
             return getScene().recall(name);
         }
         return localValue;

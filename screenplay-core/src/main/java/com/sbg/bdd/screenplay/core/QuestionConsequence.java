@@ -47,7 +47,7 @@ public class QuestionConsequence<T> extends BaseConsequence<T> {
 
     @Override
     public String toString() {
-        String template = explanation.or("Then %s should be %s");
+        String template = explanation.or("see that %s is %s");
         String expectedExpression = StripRedundantTerms.from(expected.toString());
         return addRecordedInputValuesTo(String.format(template, subjectText.or(subject), expectedExpression));
     }

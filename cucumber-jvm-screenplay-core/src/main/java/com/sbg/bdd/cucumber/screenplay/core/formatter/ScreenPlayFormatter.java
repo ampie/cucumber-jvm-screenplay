@@ -41,7 +41,7 @@ public class ScreenPlayFormatter extends CopiedJSONFormatter  implements Reporti
         Map<String, Object> stepAsMap = step.toMap();
         stepAsMap.put("match",match.toMap());
         children.add(stepAsMap);
-        childStepStack.push(stepAsMap);
+        childStepStack.addLast(stepAsMap);
     }
 
     public void childResult(Result result) {
@@ -54,7 +54,7 @@ public class ScreenPlayFormatter extends CopiedJSONFormatter  implements Reporti
         if(childStepStack.isEmpty()) {
             return super.getCurrentStep(phase);
         }else{
-            Map<String, Object> peek = childStepStack.peekFirst();
+            Map<String, Object> peek = childStepStack.peekLast();
             return peek;
         }
     }

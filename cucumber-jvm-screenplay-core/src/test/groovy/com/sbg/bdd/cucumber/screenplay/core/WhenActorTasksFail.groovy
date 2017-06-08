@@ -18,14 +18,20 @@ class WhenActorTasksFail extends WhenPerformingChildSteps {
 
         def firstStep = report[0].elements[0].steps[0]
         firstStep.name == 'John Smith performs one failing task and one implemented task'
-        firstStep.children.size() == 2
-        firstStep.children[0].keyword == "Was able to"
-        firstStep.children[0].name == "enter the userName 'john@gmail.com' and password 'Password123'"
-        firstStep.children[0].match.arguments.size() == 2
-        firstStep.children[0].match.arguments[0].val == "john@gmail.com"
-        firstStep.children[0].result.duration == 9999
-        firstStep.children[0].result.status == "failed"
-        firstStep.children[1].result.status == "skipped"
+        firstStep.children.size() == 1
+
+        def firstChildStep = firstStep.children[0]
+//        firstChildStep.children.size() == 2
+        firstChildStep.keyword == "wasAbleTo"
+        firstChildStep.name == "Given that John Smith was able to "
+        firstChildStep.children[0].keyword == "performAs"
+        firstChildStep.children[0].name == "enter the userName 'john@gmail.com' and password 'Password123'"
+        firstChildStep.children[0].match.arguments.size() == 2
+        firstChildStep.children[0].match.arguments[0].val == "john@gmail.com"
+        firstChildStep.children[0].result.duration == 9999
+        firstChildStep.children[0].result.status == "failed"
+        firstChildStep.children[1].result.status == "skipped"
+        firstChildStep.result.status == "failed"
         firstStep.result.status == "failed"
 
     }

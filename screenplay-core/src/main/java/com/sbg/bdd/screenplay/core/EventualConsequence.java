@@ -66,7 +66,7 @@ public class EventualConsequence<T> implements Consequence<T> {
 
     @Override
     public String toString() {
-        return consequenceThatMightTakeSomeTime.toString();
+        return "eventually " + consequenceThatMightTakeSomeTime.toString();
     }
 
     @Override

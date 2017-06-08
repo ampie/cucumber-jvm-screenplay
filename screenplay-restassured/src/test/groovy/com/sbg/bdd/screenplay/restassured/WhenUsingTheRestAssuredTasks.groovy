@@ -40,9 +40,10 @@ class WhenUsingTheRestAssuredTasks extends WhenUsingRestAssured {
         )
 
         then:
-        TaskListener.EVENTS.size() == 2
-        TaskListener.EVENTS[0].info.name == 'send a GET request to http://localhost:' + dummyServer.port() + "/some/path"
-        TaskListener.EVENTS[1].type == StepEventType.SUCCESSFUL
+        TaskListener.EVENTS.size() == 4
+        TaskListener.EVENTS[0].info.name == 'Given that John was able to '
+        TaskListener.EVENTS[1].info.name == 'send a GET request to http://localhost:' + dummyServer.port() + "/some/path"
+        TaskListener.EVENTS[2].type == StepEventType.SUCCESSFUL
     }
     def 'should generate perty descriptions for PUTs'() {
         prepareWireMockAndMappings()
@@ -57,9 +58,10 @@ class WhenUsingTheRestAssuredTasks extends WhenUsingRestAssured {
         )
 
         then:
-        TaskListener.EVENTS.size() == 2
-        TaskListener.EVENTS[0].info.name == 'send a PUT request to http://localhost:' + dummyServer.port() + "/some/path with body 'bar'"
-        TaskListener.EVENTS[1].type == StepEventType.SUCCESSFUL
+        TaskListener.EVENTS.size() == 4
+        TaskListener.EVENTS[0].info.name == 'Given that John was able to '
+        TaskListener.EVENTS[1].info.name == 'send a PUT request to http://localhost:' + dummyServer.port() + "/some/path with body 'bar'"
+        TaskListener.EVENTS[2].type == StepEventType.SUCCESSFUL
     }
     def 'should generate perty descriptions for POSTs'() {
         prepareWireMockAndMappings()
@@ -74,9 +76,10 @@ class WhenUsingTheRestAssuredTasks extends WhenUsingRestAssured {
         )
 
         then:
-        TaskListener.EVENTS.size() == 2
-        TaskListener.EVENTS[0].info.name == 'send a POST request to http://localhost:' + dummyServer.port() + "/some/path with body 'bar'"
-        TaskListener.EVENTS[1].type == StepEventType.SUCCESSFUL
+        TaskListener.EVENTS.size() == 4
+        TaskListener.EVENTS[0].info.name == 'Given that John was able to '
+        TaskListener.EVENTS[1].info.name == 'send a POST request to http://localhost:' + dummyServer.port() + "/some/path with body 'bar'"
+        TaskListener.EVENTS[2].type == StepEventType.SUCCESSFUL
     }
     def 'should generate perty descriptions for DELETEs'() {
         prepareWireMockAndMappings()
@@ -91,9 +94,10 @@ class WhenUsingTheRestAssuredTasks extends WhenUsingRestAssured {
         )
 
         then:
-        TaskListener.EVENTS.size() == 2
-        TaskListener.EVENTS[0].info.name == 'send a DELETE request to http://localhost:' + dummyServer.port() + "/some/path"
-        TaskListener.EVENTS[1].type == StepEventType.SUCCESSFUL
+        TaskListener.EVENTS.size() == 4
+        TaskListener.EVENTS[0].info.name == 'Given that John was able to '
+        TaskListener.EVENTS[1].info.name == 'send a DELETE request to http://localhost:' + dummyServer.port() + "/some/path"
+        TaskListener.EVENTS[2].type == StepEventType.SUCCESSFUL
     }
     private WireMockServer prepareWireMockAndMappings() {
         TaskListener.EVENTS.clear()

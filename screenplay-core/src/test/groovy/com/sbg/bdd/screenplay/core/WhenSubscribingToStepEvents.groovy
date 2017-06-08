@@ -31,18 +31,18 @@ class WhenSubscribingToStepEvents extends WithinBasePerformance {
 
         then:
         def events = StepEventStore.EVENTS
-        events.size() == 6
+        events.size() == 12
         events[0].left == StepEventListener3
         events[0].right.type== StepEventType.STARTED
         events[1].left == StepEventListener2
         events[1].right.type== StepEventType.STARTED
         events[2].left == StepEventListener1
         events[2].right.type== StepEventType.STARTED
-        events[3].left == StepEventListener1
-        events[3].right.type== StepEventType.SUCCESSFUL
-        events[4].left == StepEventListener2
-        events[4].right.type== StepEventType.SUCCESSFUL
-        events[5].left == StepEventListener3
-        events[5].right.type== StepEventType.SUCCESSFUL
+        events[9].left == StepEventListener1
+        events[9].right.type== StepEventType.SUCCESSFUL
+        events[10].left == StepEventListener2
+        events[10].right.type== StepEventType.SUCCESSFUL
+        events[11].left == StepEventListener3
+        events[11].right.type== StepEventType.SUCCESSFUL
     }
 }

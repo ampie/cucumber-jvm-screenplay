@@ -33,11 +33,12 @@ class WhenVerifyingDownstreamInvocations extends WhenWorkingWithWireMock {
                 error=e
             }
         then:
-        Listener.EVENTS.size() ==2
+        Listener.EVENTS.size() ==4
 
-        Listener.EVENTS[0].info.name=='the number of times a PUT request was made to "/home/path" is (a value greater than <0> and a value less than <4>)'
-        Listener.EVENTS[1].error == error
-        Listener.EVENTS[1].error.message == 'Expected: (a value greater than <0> and a value less than <4>)\n' +
+        Listener.EVENTS[0].info.name=='For requests from John Smith, verify that '
+        Listener.EVENTS[1].info.name=='the number of times a PUT request was made to "/home/path" is (a value greater than <0> and a value less than <4>)'
+        Listener.EVENTS[2].error == error
+        Listener.EVENTS[2].error.message == 'Expected: (a value greater than <0> and a value less than <4>)\n' +
                 '     but: was <0>'
     }
 

@@ -29,8 +29,16 @@ class WhenMultipleTasksFail extends WithinBasePerformance {
         }
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 6
-        events[3].error == error
+        events.size() == 8
+        events[0].info.name == 'When John attempts to '
+        events[1].info.name == 'perform a task'
+        events[2].info.name == 'perform a task'
+        events[3].info.name == 'pending task'
+        events[4].info.name == 'pending task'
+        events[4].error == error
+        events[5].info.name == 'pending task'
+        events[6].info.name == 'pending task'
+        events[7].info.name == 'When John attempts to '
     }
     def 'a parent step should fail with an AssertionError if tasks failed with an AssertionError and all the other tasks succeeded or were pending'() {
         given:
@@ -53,10 +61,10 @@ class WhenMultipleTasksFail extends WithinBasePerformance {
         }
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 6
+        events.size() == 8
         error != null
-        events[3].error instanceof PendingException
-        events[5].error instanceof AssertionError
+        events[4].error instanceof PendingException
+        events[6].error instanceof AssertionError
     }
     def 'a parent step should fail with a ScreenPlayException if tasks failed because of AssertionErrors and other Exceptions'() {
         given:
@@ -79,10 +87,10 @@ class WhenMultipleTasksFail extends WithinBasePerformance {
         }
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 6
+        events.size() == 8
         error != null
-        events[1].error instanceof PendingException
-        events[3].error instanceof AssertionError
-        events[5].error instanceof IllegalArgumentException
+        events[2].error instanceof PendingException
+        events[4].error instanceof AssertionError
+        events[6].error instanceof IllegalArgumentException
     }
 }

@@ -43,7 +43,7 @@ public class BooleanQuestionConsequence extends BaseConsequence<Boolean> {
 
     @Override
     public String toString() {
-        String template = explanation.or("Then %s");
+        String template = explanation.or("see that %s");
         return addRecordedInputValuesTo(String.format(template, subjectText.or(subject)));
     }
 

@@ -24,8 +24,9 @@ class WhenSubmittingMappings extends WhenWorkingWithWireMock{
                 a(PUT).to("/home/path").to(returnTheFile("somefile.json"))
         )
         then:
-        Listener.EVENTS.size() ==2
-        Listener.EVENTS[0].info.name == 'a PUT to "/home/path" to return the file "somefile.json"'
+        Listener.EVENTS.size() ==4
+        Listener.EVENTS[0].info.name == 'For requests from John Smith, allow '
+        Listener.EVENTS[1].info.name == 'a PUT to "/home/path" to return the file "somefile.json"'
 
     }
 

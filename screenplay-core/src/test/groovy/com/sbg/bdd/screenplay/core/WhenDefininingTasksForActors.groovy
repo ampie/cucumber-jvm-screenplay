@@ -21,9 +21,9 @@ class WhenDefininingTasksForActors extends WithinBasePerformance {
         givenThat(actorNamed('John')).wasAbleTo(performATask())
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 2
-        events[0].info.keyword == 'Was able to'
-        events[0].info.name =='perform a task'
+        events.size() == 4
+        events[1].info.keyword == 'performAs'
+        events[1].info.name =='perform a task'
     }
     def 'a failing task should result in subsequent tasks being skipped'() {
         given:
@@ -46,17 +46,17 @@ class WhenDefininingTasksForActors extends WithinBasePerformance {
         }
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 6
-        events[0].info.keyword == 'Was able to'
-        events[0].type == StepEventType.STARTED
-        events[0].info.name =='perform a task'
-        events[1].type == StepEventType.SUCCESSFUL
-        events[2].info.keyword == 'Was able to'
-        events[2].info.name =='fail a task'
-        events[3].error.message == 'arrrgh!'
-        events[3].error == error
-        events[3].type == StepEventType.FAILED
-        events[5].type == StepEventType.SKIPPED
+        events.size() == 8
+        events[1].info.keyword == 'performAs'
+        events[1].type == StepEventType.STARTED
+        events[1].info.name =='perform a task'
+        events[2].type == StepEventType.SUCCESSFUL
+        events[3].info.keyword == 'performAs'
+        events[3].info.name =='fail a task'
+        events[4].error.message == 'arrrgh!'
+        events[4].error == error
+        events[4].type == StepEventType.FAILED
+        events[6].type == StepEventType.SKIPPED
     }
     def 'a pending task not should result in subsequent tasks being skipped'() {
         given:
@@ -79,16 +79,16 @@ class WhenDefininingTasksForActors extends WithinBasePerformance {
         }
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 6
-        events[0].info.keyword == 'Was able to'
-        events[0].type == StepEventType.STARTED
-        events[0].info.name =='perform a task'
-        events[1].type == StepEventType.SUCCESSFUL
-        events[2].info.keyword == 'Was able to'
-        events[2].info.name =='pending task'
-        events[3].error == error
-        events[3].type == StepEventType.PENDING
-        events[5].type == StepEventType.SUCCESSFUL
+        events.size() == 8
+        events[1].info.keyword == 'performAs'
+        events[1].type == StepEventType.STARTED
+        events[1].info.name =='perform a task'
+        events[2].type == StepEventType.SUCCESSFUL
+        events[3].info.keyword == 'performAs'
+        events[3].info.name =='pending task'
+        events[4].error == error
+        events[4].type == StepEventType.PENDING
+        events[6].type == StepEventType.SUCCESSFUL
     }
     def 'a task with a failing assertion not should result in subsequent tasks being skipped'() {
         given:
@@ -111,16 +111,16 @@ class WhenDefininingTasksForActors extends WithinBasePerformance {
         }
         then:
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 6
-        events[0].info.keyword == 'Was able to'
-        events[0].type == StepEventType.STARTED
-        events[0].info.name =='perform a task'
-        events[1].type == StepEventType.SUCCESSFUL
-        events[2].info.keyword == 'Was able to'
-        events[2].info.name =='pending task'
-        events[3].error == error
-        events[3].type == StepEventType.ASSERTION_FAILED
-        events[5].type == StepEventType.SUCCESSFUL
+        events.size() == 8
+        events[1].info.keyword == 'performAs'
+        events[1].type == StepEventType.STARTED
+        events[1].info.name =='perform a task'
+        events[2].type == StepEventType.SUCCESSFUL
+        events[3].info.keyword == 'performAs'
+        events[3].info.name =='pending task'
+        events[4].error == error
+        events[4].type == StepEventType.ASSERTION_FAILED
+        events[6].type == StepEventType.SUCCESSFUL
     }
 
 }

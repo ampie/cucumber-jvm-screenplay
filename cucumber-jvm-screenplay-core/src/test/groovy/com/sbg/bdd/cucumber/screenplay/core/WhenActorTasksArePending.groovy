@@ -17,13 +17,15 @@ class WhenActorTasksArePending extends WhenPerformingChildSteps {
 
         def firstStep = report[0].elements[0].steps[0]
         firstStep.name == 'John Smith performs one pending and one implemented task'
-        firstStep.children.size() == 2
-        firstStep.children[0].keyword == "Was able to"
-        firstStep.children[0].name == "submit the credentials"
-        firstStep.children[0].result.duration == 9999
-        firstStep.children[0].result.status == "pending"
-        firstStep.children[1].result.status == "passed"
-        firstStep.children[1].name == "successfully submit the credentials"
-        firstStep.result.status == "pending"
+        def firstChildStep=firstStep.children[0]
+        firstChildStep.name == "Given that John Smith was able to "
+        firstChildStep.children.size() == 2
+        firstChildStep.children[0].keyword == "performAs"
+        firstChildStep.children[0].name == "submit the credentials"
+        firstChildStep.children[0].result.duration == 9999
+        firstChildStep.children[0].result.status == "pending"
+        firstChildStep.children[1].result.status == "passed"
+        firstChildStep.children[1].name == "successfully submit the credentials"
+        firstChildStep.result.status == "pending"
     }
 }

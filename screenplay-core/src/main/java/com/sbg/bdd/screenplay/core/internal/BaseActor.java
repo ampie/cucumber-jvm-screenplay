@@ -1,9 +1,11 @@
 package com.sbg.bdd.screenplay.core.internal;
 
 import com.sbg.bdd.screenplay.core.*;
+import com.sbg.bdd.screenplay.core.annotations.Step;
 import com.sbg.bdd.screenplay.core.annotations.StepEventType;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
+import com.sbg.bdd.screenplay.core.util.NameConverter;
 
 import java.util.*;
 
@@ -11,69 +13,111 @@ public class BaseActor implements Actor {
     protected static StopWatch stopWatch;
     protected final String name;
     private Memory memory = new SimpleMemory();
-    private Map<Class<?>,Ability> abilities = new HashMap<>();
+    private Map<Class<?>, Ability> abilities = new HashMap<>();
     private ScreenPlayEventBus eventBus;
     private Deque<String> stepPaths = new ArrayDeque<>();
+    private String precedingKeyword;
 
     public BaseActor(ScreenPlayEventBus eventBus, String name) {
         this.eventBus = eventBus;
         this.name = name;
     }
 
-    protected StepMethodInfo[] extractInfo(String keyword, Object performer, Object[] stepObjects) {
+    @Override
+    public String getPrecedingKeyword() {
+        return precedingKeyword;
+    }
+
+    protected StepMethodInfo[] extractInfo(String methodName, Object performer, Object[] stepObjects) {
         StepMethodInfo[] result = new StepMethodInfo[stepObjects.length];
         for (int i = 0; i < stepObjects.length; i++) {
-            result[i] = new StepMethodInfo(stepPaths.isEmpty() ? null : stepPaths.peekLast(), keyword, performer, stepObjects[i]);
+            result[i] = new StepMethodInfo(getParentStepPath(), methodName, performer, stepObjects[i]);
         }
         return result;
     }
 
-    @Override
-    public void should(Consequence... consequences) {
-        performSteps("Should", this, consequences);
+    String getParentStepPath() {
+        return stepPaths.isEmpty() ? null : stepPaths.peekLast();
+    }
+
+    public void useKeyword(String format) {
+        this.precedingKeyword = format;
     }
 
     @Override
-    public void wasAbleTo(Performable... todos) {
-        performSteps("Was able to", this, todos);
+    public void should(final Consequence... consequences) {
+        performSteps(new StepMethodInfo[]{new StepMethodInfo(getParentStepPath(), "should", this, new Object() {
+            String keyword = BaseActor.this.precedingKeyword;
+            String name = BaseActor.this.name;
+            @Step("#keyword #name should ")
+            public void should(Actor me) {
+                performSteps("evaluateFor", BaseActor.this, consequences);
+            }
+        })});
     }
 
     @Override
-    public void attemptsTo(Performable... tasks) {
-        performSteps("Attempts to", this, tasks);
+    public void wasAbleTo(final Performable... tasks) {
+        performSteps(new StepMethodInfo[]{new StepMethodInfo(getParentStepPath(), "wasAbleTo", this, new Object() {
+            String keyword = BaseActor.this.precedingKeyword;
+            String name = BaseActor.this.name;
+            @Step("#keyword #name was able to ")
+            public void wasAbleTo(Actor me) {
+                performSteps("performAs", BaseActor.this, tasks);
+            }
+        })});
     }
 
-    public void performSteps(String keyword, Object performer, Object... stepObjects) {
-        StepMethodInfo[] steps = extractInfo(keyword, performer, stepObjects);
+    @Override
+    public void attemptsTo(final Performable... tasks) {
+        performSteps(new StepMethodInfo[]{new StepMethodInfo(getParentStepPath(), "attemptsTo", this, new Object() {
+            String keyword = BaseActor.this.precedingKeyword;
+            String name = BaseActor.this.name;
+            @Step("#keyword #name attempts to ")
+            public void attemptsTo(Actor me) {
+                performSteps("performAs", BaseActor.this, tasks);
+            }
+        })});
+    }
+
+    public void performSteps(String methodName, Object performer, Object... stepObjects) {
+        performSteps(extractInfo(methodName, performer, stepObjects));
+    }
+
+    public void performSteps(StepMethodInfo[] steps) {
         StepErrorTally errorTally = new StepErrorTally(getStopWatch());
         for (StepMethodInfo stepMethodInfo : steps) {
-            errorTally.startStopWatch();
-            try {
-                pushStepPath(stepMethodInfo);
-                eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.STARTED));
-                if (errorTally.shouldSkip() || stepMethodInfo.isSkipped()) {
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.SKIPPED, errorTally.stopStopWatch()));
-                } else if (stepMethodInfo.isPending()) {
-                    errorTally.setPending();
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.PENDING, errorTally.stopStopWatch()));
-                } else {
-                    stepMethodInfo.invoke();
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.SUCCESSFUL, errorTally.stopStopWatch()));
-                }
-            } catch (Throwable t) {
-                errorTally.addThrowable(t);
-                if (errorTally.indicatesPending(t)) {
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.PENDING, errorTally.stopStopWatch(), t));
-                } else if (errorTally.indicatesAssertionFailed(t)) {
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.ASSERTION_FAILED, errorTally.stopStopWatch(), t));
-                } else {
-                    eventBus.broadcast(new StepEvent(stepMethodInfo, StepEventType.FAILED, errorTally.stopStopWatch(), t));
-                }
-            } finally {
-                popStepPath();
-            }
+            performStep(errorTally, stepMethodInfo);
         }
         errorTally.reportAnyErrors();
+    }
+
+    private void performStep(StepErrorTally errorTally, StepMethodInfo stepMethodInfo) {
+        errorTally.startStopWatch();
+        try {
+            pushStepPath(stepMethodInfo);
+            eventBus.broadcast(new StepEvent(this, stepMethodInfo, StepEventType.STARTED));
+            if (errorTally.shouldSkip() || stepMethodInfo.isSkipped()) {
+                eventBus.broadcast(new StepEvent(this, stepMethodInfo, StepEventType.SKIPPED, errorTally.stopStopWatch()));
+            } else if (stepMethodInfo.isPending()) {
+                errorTally.setPending();
+                eventBus.broadcast(new StepEvent(this, stepMethodInfo, StepEventType.PENDING, errorTally.stopStopWatch()));
+            } else {
+                stepMethodInfo.invoke();
+                eventBus.broadcast(new StepEvent(this, stepMethodInfo, StepEventType.SUCCESSFUL, errorTally.stopStopWatch()));
+            }
+        } catch (Throwable t) {
+            errorTally.addThrowable(t);
+            if (errorTally.indicatesPending(t)) {
+                eventBus.broadcast(new StepEvent(this, stepMethodInfo, StepEventType.PENDING, errorTally.stopStopWatch(), t));
+            } else if (errorTally.indicatesAssertionFailed(t)) {
+                eventBus.broadcast(new StepEvent(this, stepMethodInfo, StepEventType.ASSERTION_FAILED, errorTally.stopStopWatch(), t));
+            } else {
+                eventBus.broadcast(new StepEvent(this, stepMethodInfo, StepEventType.FAILED, errorTally.stopStopWatch(), t));
+            }
+        } finally {
+            popStepPath();
+        }
     }
 
     private void popStepPath() {
@@ -81,10 +125,11 @@ public class BaseActor implements Actor {
     }
 
     private void pushStepPath(StepMethodInfo stepMethodInfo) {
+        String stepId = NameConverter.filesystemSafe(stepMethodInfo.getName());
         if (stepPaths.isEmpty()) {
-            stepPaths.offerLast(stepMethodInfo.getName());
+            stepPaths.offerLast(stepId);
         } else {
-            stepPaths.offerLast(stepPaths.getLast() + "/" + stepMethodInfo.getName());
+            stepPaths.offerLast(stepPaths.getLast() + "/" + stepId);
         }
     }
 
@@ -108,7 +153,7 @@ public class BaseActor implements Actor {
     @Override
     public void can(Ability doSomething) {
         doSomething.asActor(this);
-        abilities.put(doSomething.getClass(),doSomething);
+        abilities.put(doSomething.getClass(), doSomething);
     }
 
     @Override

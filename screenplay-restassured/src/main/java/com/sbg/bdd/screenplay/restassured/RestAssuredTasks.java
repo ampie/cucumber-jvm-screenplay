@@ -81,6 +81,7 @@ public class RestAssuredTasks {
     }
 
     public static void thenFor(Actor actor, ResponseConsequence... consequences) {
+        actor.useKeyword("Then");
         actor.should(consequences);
     }
     public static <T> Question<T> bodyAs(final Class<T> clss){

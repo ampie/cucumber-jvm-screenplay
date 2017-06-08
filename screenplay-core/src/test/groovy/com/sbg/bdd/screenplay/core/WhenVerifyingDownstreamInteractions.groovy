@@ -12,7 +12,7 @@ class WhenVerifyingDownstreamInteractions extends WithinBasePerformance {
     interface ContractToMock{
         String callIt();
     }
-    def 'the verification should have access to the context in which the stub was setup'() {
+    def 'the verification should have access to the context of the ActorOnStage in which the stub was setup'() {
         given:
         BaseActor.useStopWatch(new StopWatchStub(9999))
         ScreenPlayEventStore.events.clear()
@@ -42,7 +42,6 @@ class WhenVerifyingDownstreamInteractions extends WithinBasePerformance {
             forRequestsFrom(john).verifyThat(new DownstreamVerification() {
                 @Override
                 @Step("some verification that should fail")
-
                 void performOnStage(ActorOnStage actorOnStage) {
                     def token = actorOnStage.recall('tokenOfSuccess')
                     if (token == null) {
@@ -60,9 +59,10 @@ class WhenVerifyingDownstreamInteractions extends WithinBasePerformance {
         john.recall('tokenOfSuccess') == null
         callActorToStage(john).recall('tokenOfSuccess') == false
         def events = ScreenPlayEventStore.getEvents();
-        events.size() == 6
-        events[5].info.keyword == 'Verify'
-        events[5].info.name == 'some verification that should fail'
-        events[5].error == error
+        events.size() == 12
+        events[8].info.name == 'For requests from John, verify that '
+        events[10].info.keyword == 'performOnStage'
+        events[10].info.name == 'some verification that should fail'
+        events[11].error == error
     }
 }

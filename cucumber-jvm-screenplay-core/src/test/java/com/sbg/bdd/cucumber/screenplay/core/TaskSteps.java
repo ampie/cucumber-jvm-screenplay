@@ -93,12 +93,12 @@ public class TaskSteps {
     @When("^John Smith performs a nested task from within an outer task$")
     public void johnSmithPerformsANestedTaskFromWithinAnOuterTask() throws Throwable {
         ScreenPlayFormatter.getCurrent().embedding("embedding1", new byte[0]);
-        actorNamed("John Smith").wasAbleTo(new Task() {
+        givenThat(actorNamed("John Smith")).wasAbleTo(new Task() {
             @Override
             @Step("outer task")
             public <T extends Actor> T performAs(T actor) {
                 ScreenPlayFormatter.getCurrent().embedding("embedding2", new byte[0]);
-                actor.wasAbleTo(new Task() {
+                givenThat(actor).wasAbleTo(new Task() {
                     @Override
                     @Step("inner task")
                     public <T extends Actor> T performAs(T actor) {

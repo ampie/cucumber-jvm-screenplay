@@ -56,7 +56,7 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
         then:
         scope.everybodyScope.recall('correlationState').correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1'
         userScope.recall('correlationState').correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1/John_Smith'
-        innerStep == 'step1'
+        innerStep == 'For_requests_from_John_Smith_comma__allow/step1'
         scenarioScope.everybodyScope.recall('correlationState').currentStep == null
     }
 

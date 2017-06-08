@@ -1,5 +1,6 @@
 package com.sbg.bdd.screenplay.core.events;
 
+import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.annotations.StepEventType;
 import com.sbg.bdd.screenplay.core.internal.StepMethodInfo;
 
@@ -9,20 +10,26 @@ public class StepEvent extends EventObject {
     private final StepEventType type;
     private final long duration;
     private final Throwable error;
+    private final Actor actor;
 
-    public StepEvent(StepMethodInfo source, StepEventType type) {
-        this(source, type, -1);
+    public StepEvent(Actor actor, StepMethodInfo source, StepEventType type) {
+        this(actor,source, type, -1);
     }
 
-    public StepEvent(StepMethodInfo source, StepEventType type, long duration) {
-        this(source, type, duration, null);
+    public StepEvent(Actor actor, StepMethodInfo source, StepEventType type, long duration) {
+        this(actor, source, type, duration, null);
     }
 
-    public StepEvent(StepMethodInfo source, StepEventType type, long duration, Throwable error) {
+    public StepEvent(Actor actor,StepMethodInfo source, StepEventType type, long duration, Throwable error) {
         super(source);
+        this.actor=actor;
         this.type = type;
         this.duration = duration;
         this.error = error;
+    }
+
+    public Actor getActor() {
+        return actor;
     }
 
     public StepMethodInfo getInfo() {

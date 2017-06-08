@@ -19,12 +19,17 @@ class WhenPerformingActorTasksFromWithinActorTasks extends WhenPerformingChildSt
         firstStep.children.size() == 1
         firstStep.embeddings[0]['mime_type'] == 'embedding1'
         firstStep.embeddings.size()==1
-        firstStep.children[0].name == 'outer task'
-        firstStep.children[0].embeddings[0]['mime_type'] == 'embedding2'
-        firstStep.children[0].embeddings.size()==1
-        firstStep.children[0].children.size() == 1
-        firstStep.children[0].children[0].name == 'inner task'
-        firstStep.children[0].children[0].embeddings[0]['mime_type'] == 'embedding3'
-        firstStep.children[0].children[0].embeddings.size() == 1
+        def firstChildStep=firstStep.children[0]
+        firstChildStep.keyword=="wasAbleTo"
+        firstChildStep.name=="Given that John Smith was able to "
+        firstChildStep.children[0].name == 'outer task'
+        firstChildStep.children[0].embeddings[0]['mime_type'] == 'embedding2'
+        firstChildStep.children[0].embeddings.size()==1
+        firstChildStep.children[0].children.size() == 1
+        //NB!! Double nesting here - two nested givenThats
+        firstChildStep.children[0].children[0].name=="Given that John Smith was able to "
+        firstChildStep.children[0].children[0].children[0].name == 'inner task'
+        firstChildStep.children[0].children[0].children[0].embeddings[0]['mime_type'] == 'embedding3'
+        firstChildStep.children[0].children[0].children[0].embeddings.size() == 1
     }
 }

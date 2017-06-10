@@ -7,6 +7,7 @@ import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
 import com.sbg.bdd.screenplay.core.annotations.SceneListener;
 import com.sbg.bdd.screenplay.core.util.Optional;
 import com.sbg.bdd.screenplay.wiremock.RecordingMappingForUser;
+import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
 import com.sbg.bdd.wiremock.scoped.recording.builders.JournalMode;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class RecordingManagementListener {
 
     public List<RecordingMappingForUser> getActiveRecordingOrPlaybackMappings(Scene scene, JournalMode journalMode) {
         List<RecordingMappingForUser> activeRecordings = new ArrayList<>();
-        Scene parentScene = scene.recall("parentScene");
+        Scene parentScene = scene.recall(Scene.PARENT_SCENE);
         if (parentScene != null) {
             activeRecordings.addAll(getActiveRecordingOrPlaybackMappings(parentScene, journalMode));
         }
@@ -43,7 +44,7 @@ public class RecordingManagementListener {
 
     private List<RecordingMappingForUser> getRecordingOrPlaybackMappings(ActorOnStage userInScope, JournalMode journalMode) {
         List<RecordingMappingForUser> result = new ArrayList<>();
-        List<RecordingMappingForUser> requestsToRecordOrPlayback = userInScope.recallImmediately("requestsToRecordOrPlayback");
+        List<RecordingMappingForUser> requestsToRecordOrPlayback = userInScope.recallImmediately(WireMockScreenplayContext.REQUESTS_TO_RECORD_OR_PLAYBACK);
         if (requestsToRecordOrPlayback != null) {
             for (RecordingMappingForUser r : requestsToRecordOrPlayback) {
                 if (r.getJournalModeOverride() == journalMode || (r.enforceJournalModeInScope() && getJournalModeInScope(userInScope) == journalMode)) {

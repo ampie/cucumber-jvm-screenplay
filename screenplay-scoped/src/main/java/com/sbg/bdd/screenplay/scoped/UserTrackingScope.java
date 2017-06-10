@@ -73,7 +73,7 @@ public abstract class UserTrackingScope extends VerificationScope implements Sce
             spotlightOperator.actorOutOfSpotlight();
         }
         dismissRecursively(actor);
-        Persona<?> persona = actor.recall("persona");
+        Persona<?> persona = actor.recall(Actor.PERSONA);
         if (persona != null && persona.getCharacterType() == CharacterType.DYNAMIC) {
             //TODO do we want the parentScopes to remain in tact, but just reload the actor?
             //Data may have changed, needs to be reloaded
@@ -137,7 +137,7 @@ public abstract class UserTrackingScope extends VerificationScope implements Sce
     public void start() {
         if (!isActive()) {
             //We only start once
-            getEverybodyScope().remember("parentScene", getContainingScope());
+            getEverybodyScope().remember(Scene.PARENT_SCENE, getContainingScope());
             getGlobalScope().broadcast(new SceneEvent(this, SceneEventType.BEFORE_START));
             startWithoutEvents();
             getGlobalScope().broadcast(new SceneEvent(this, SceneEventType.AFTER_START));

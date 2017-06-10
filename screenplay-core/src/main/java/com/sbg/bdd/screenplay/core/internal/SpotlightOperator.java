@@ -4,9 +4,7 @@ import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Scene;
 
-/**
- * Created by ampie on 2017/05/24.
- */
+
 public class SpotlightOperator {
     private final Scene scene;
     private BaseActorOnStage actorInSpotlight;

@@ -21,7 +21,9 @@ class WhenPlayingBackResponses extends WhenWorkingWithWireMock{
         given:
         GlobalScope globalScope = buildGlobalScope('TestRun',5)
         def wireMockServer = initializeWireMock(globalScope)
-        globalScope.everybodyScope.remember(new RecordingWireMockClient(wireMockServer))
+
+        def recordingWireMockClient = new RecordingWireMockClient(wireMockServer)
+        globalScope.everybodyScope.remember(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT, recordingWireMockClient)
         OnStage.present(globalScope)
         def outputPath = new File('src/test/resources').getAbsolutePath()
         forRequestsFrom(everybody()).allow(

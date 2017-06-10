@@ -40,7 +40,7 @@ class WhenUsingTheInterceptor extends WhenUsingRestAssured {
         filter.filter(RestAssured.given().baseUri('http://localhost:' + server.port() + '/base/url'), null, context)
         then:
         requestSpecification != null
-        requestSpecification.getHeaders().getValue(HeaderName.ofTheCorrelationKey()) == 'localhost/' + server.port() + '/Runit/Scene 1/John'
+        requestSpecification.getHeaders().getValue(HeaderName.ofTheCorrelationKey()) == 'localhost/' + server.port() + '/Runit/Scene_1/John'
         requestSpecification.getHeaders().getValue(HeaderName.ofTheSequenceNumber()) == '1'
         requestSpecification.getHeaders().getValues(HeaderName.ofTheServiceInvocationCount()).size() == 1
         requestSpecification.getHeaders().getValues(HeaderName.ofTheServiceInvocationCount()).get(0) == 'http://localhost:' + server.port() + '/base/urlnull|1'

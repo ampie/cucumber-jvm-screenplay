@@ -2,9 +2,6 @@ package com.sbg.bdd.screenplay.core;
 
 import com.sbg.bdd.screenplay.core.annotations.Step;
 
-/**
- * Created by ampie on 2017/05/24.
- */
 public class TaskFactory {
     public static Task performATask() {
         return new Task() {

@@ -31,7 +31,7 @@ public class ScreenPlayRequestPatternBuilder extends ExtendedRequestPatternBuild
             @Override
             @Step("#description")
             public void performOnStage(ActorOnStage actorOnStage) {
-                WireMockContext verificationContext = new WireMockScopeContext(actorOnStage);
+                WireMockContext verificationContext = new WireMockScreenplayContext(actorOnStage);
                 int count = verificationContext.count(ScreenPlayRequestPatternBuilder.this);
                 if (!countMatcher.matches(count)) {
                     Description description = new StringDescription();

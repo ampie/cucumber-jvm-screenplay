@@ -52,7 +52,7 @@ class WhenRecordingResponses extends WhenWorkingWithWireMock{
                 return [exchange1, exchange2]
             }
         }
-        globalScope.everybodyScope.remember('recordingWireMockClient', new RecordingWireMockClient(wireMockServer))
+        globalScope.everybodyScope.remember(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT, new RecordingWireMockClient(wireMockServer))
         OnStage.present(globalScope)
         def outputPath = Paths.get('build', 'output', 'recordings').getAbsoluteFile()
         forRequestsFrom(everybody()).allow(

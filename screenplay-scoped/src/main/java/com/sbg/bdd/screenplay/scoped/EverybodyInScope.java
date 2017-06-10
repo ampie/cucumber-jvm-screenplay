@@ -10,7 +10,7 @@ public class EverybodyInScope extends UserInScope {
     }
 
     public static Actor everybody(GlobalScope globalScope) {
-        return globalScope.getCast().candidateActor("everybody");
+        return globalScope.getCast().candidateActor(Actor.EVERYBODY);
     }
 
     //NB!! Everybody is always there, no entering or exiting.
@@ -31,6 +31,6 @@ public class EverybodyInScope extends UserInScope {
     }
 
     public static boolean isEverybody(Actor actor) {
-        return actor.getName().equals("everybody");
+        return actor.getName().equals(Actor.EVERYBODY);
     }
 }

@@ -5,6 +5,8 @@ import com.sbg.bdd.screenplay.core.actors.Performance;
 import java.util.Map;
 
 public interface Scene {
+    String PARENT_SCENE = "parentScene";
+
     String getSceneIdentifier();
 
     Performance getPerformance();

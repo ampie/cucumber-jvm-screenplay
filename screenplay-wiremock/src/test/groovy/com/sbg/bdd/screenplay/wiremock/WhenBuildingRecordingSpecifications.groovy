@@ -1,13 +1,10 @@
 package com.sbg.bdd.screenplay.wiremock
 
 import com.sbg.bdd.screenplay.core.actors.OnStage
-import com.sbg.bdd.screenplay.core.util.Paths
+import com.sbg.bdd.screenplay.core.actors.Performance
 import com.sbg.bdd.screenplay.scoped.GlobalScope
 import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import com.sbg.bdd.wiremock.scoped.recording.builders.JournalMode
-import org.apache.commons.lang3.StringUtils
-
-import java.io.File
 
 import static OnStage.shineSpotlightOn
 import static OnStage.theActorInTheSpotlight
@@ -37,7 +34,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         then:
         def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.theActorInTheSpotlight().scopePath)
         mappings.size() == 0
-        def requestsToRecord = globalScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
+        def requestsToRecord = globalScope.enter(johnSmith).recall(WireMockScreenplayContext.REQUESTS_TO_RECORD_OR_PLAYBACK)
         requestsToRecord[0].calculateRecordingDirectory(globalScope).getFile().toString() == new File(tempDir,"John_Smith").toString()
         requestsToRecord.size() == 1
         requestsToRecord[0].recordingSpecification.journalModeOverride == JournalMode.RECORD
@@ -55,12 +52,12 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         globalScope.shineSpotlightOn(actorNamed("Jack_Smith"))
 
         when:
-        forRequestsFrom(actorNamed("everybody")).allow(
+        forRequestsFrom(actorNamed(Actor.EVERYBODY)).allow(
                 a(PUT).to("/home/path").to(recordResponsesTo(tempDir.absolutePath))
         )
 
         then:
-        def mappings = globalScope.getEverybodyScope().recallImmediately("requestsToRecordOrPlayback")
+        def mappings = globalScope.getEverybodyScope().recallImmediately(WireMockScreenplayContext.REQUESTS_TO_RECORD_OR_PLAYBACK)
         mappings.size() == 2
         mappings[0].recordingSpecification.journalModeOverride == JournalMode.RECORD
         mappings[0].recordingSpecification.recordingDirectory == tempDir.absolutePath
@@ -85,10 +82,10 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         then:
         def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.theActorInTheSpotlight().scopePath)
         mappings.size() == 0
-        def requestsToRecord = globalScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
+        def requestsToRecord = globalScope.enter(johnSmith).recall(WireMockScreenplayContext.REQUESTS_TO_RECORD_OR_PLAYBACK)
         requestsToRecord.size() == 1
         requestsToRecord[0].recordingSpecification.journalModeOverride == JournalMode.RECORD
-        requestsToRecord[0].calculateRecordingDirectory(globalScope).file.absolutePath == globalScope.recall('outputResourceRoot').resolvePotentialContainer("John_Smith").file.absolutePath
+        requestsToRecord[0].calculateRecordingDirectory(globalScope).file.absolutePath == globalScope.recall(Performance.OUTPUT_RESOURCE_ROOT).resolvePotentialContainer("John_Smith").file.absolutePath
         requestsToRecord[0].userInScopeId == 'John_Smith'
     }
     def 'should associate a playback recording mapping with the current ActorInScope'() throws Exception {
@@ -109,7 +106,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         then:
         def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.theActorInTheSpotlight().scopePath)
         mappings.size() == 0
-        def requestsToRecord = globalScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
+        def requestsToRecord = globalScope.enter(johnSmith).recall(WireMockScreenplayContext.REQUESTS_TO_RECORD_OR_PLAYBACK)
         requestsToRecord[0].calculateRecordingDirectory(globalScope).getFile().toString() == new File(tempDir.absolutePath,"John_Smith").toString()
         requestsToRecord.size() == 1
         requestsToRecord[0].recordingSpecification.journalModeOverride == JournalMode.PLAYBACK
@@ -134,10 +131,10 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         then:
         def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + theActorInTheSpotlight().scopePath)
         mappings.size() == 0
-        def requestsToRecord = nestedScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
+        def requestsToRecord = nestedScope.enter(johnSmith).recall(WireMockScreenplayContext.REQUESTS_TO_RECORD_OR_PLAYBACK)
         requestsToRecord.size() == 1
         requestsToRecord[0].recordingSpecification.journalModeOverride == JournalMode.PLAYBACK
-        requestsToRecord[0].calculateRecordingDirectory(nestedScope).file.absolutePath == globalScope.recall('inputResourceRoot').resolvePotentialContainer('John_Smith', 'nested1').file.absolutePath
+        requestsToRecord[0].calculateRecordingDirectory(nestedScope).file.absolutePath == globalScope.recall(Performance.INPUT_RESOURCE_ROOT).resolvePotentialContainer('John_Smith', 'nested1').file.absolutePath
         requestsToRecord[0].userInScopeId == 'John_Smith'
     }
     def 'should map responses to the current journal directory when no path is specified'() throws Exception {
@@ -157,11 +154,11 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         then:
         def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + theActorInTheSpotlight().scopePath)
         mappings.size() == 0
-        def requestsToRecord = nestedScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
+        def requestsToRecord = nestedScope.enter(johnSmith).recall(WireMockScreenplayContext.REQUESTS_TO_RECORD_OR_PLAYBACK)
         requestsToRecord.size() == 1
         requestsToRecord[0].recordingSpecification.enforceJournalModeInScope == true
         requestsToRecord[0].recordingSpecification.journalModeOverride == null
-        requestsToRecord[0].calculateRecordingDirectory(nestedScope).file.absolutePath == globalScope.recall('journalRoot').resolvePotentialContainer("John_Smith","nested1").file.absolutePath
+        requestsToRecord[0].calculateRecordingDirectory(nestedScope).file.absolutePath == globalScope.recall(WireMockScreenplayContext.JOURNAL_RESOURCE_ROOT).resolvePotentialContainer("John_Smith","nested1").file.absolutePath
         requestsToRecord[0].userInScopeId == 'John_Smith'
     }
     def 'should map responses to the current resource directory under the journal directory when no path is specified'() throws Exception {
@@ -181,7 +178,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         then:
         def mappings = wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.theActorInTheSpotlight().scopePath)
         mappings.size() == 0
-        def requestsToRecord = nestedScope.enter(johnSmith).recall("requestsToRecordOrPlayback")
+        def requestsToRecord = nestedScope.enter(johnSmith).recall(WireMockScreenplayContext.REQUESTS_TO_RECORD_OR_PLAYBACK)
         requestsToRecord.size() == 1
         requestsToRecord[0].recordingSpecification.enforceJournalModeInScope == true
         requestsToRecord[0].recordingSpecification.journalModeOverride == null

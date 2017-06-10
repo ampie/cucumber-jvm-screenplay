@@ -1,6 +1,7 @@
 package com.sbg.bdd.screenplay.wiremock
 
 import com.sbg.bdd.resource.file.RootDirectoryResource
+import com.sbg.bdd.screenplay.core.actors.Performance
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus
 import com.sbg.bdd.screenplay.core.internal.BaseCastingDirector
 import com.sbg.bdd.screenplay.core.internal.SimpleInstanceGetter
@@ -17,16 +18,7 @@ import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody
-import org.apache.http.ProtocolVersion
-import org.apache.http.client.methods.CloseableHttpResponse
-import org.apache.http.client.methods.HttpUriRequest
-import org.apache.http.entity.ContentType
-import org.apache.http.entity.StringEntity
-import org.apache.http.impl.client.CloseableHttpClient
-import org.apache.http.message.BasicStatusLine
 import spock.lang.Specification
-
-import java.io.File
 
 abstract class WhenWorkingWithWireMock extends Specification{
     public static final int MAX_LEVELS = 10;
@@ -34,7 +26,7 @@ abstract class WhenWorkingWithWireMock extends Specification{
     static final int EVERYBODY_PRIORITY_DECREMENT = PRIORITIES_PER_LEVEL / 2;
     def initializeWireMock(GlobalScope globalScope) {
         def wireMockServer = new ScopedWireMockServer()
-        globalScope.remember('recordingWireMockClient', new RecordingWireMockClient(wireMockServer))
+        globalScope.remember(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT, new RecordingWireMockClient(wireMockServer))
         wireMockServer.start()
         wireMockServer
     }
@@ -76,14 +68,14 @@ abstract class WhenWorkingWithWireMock extends Specification{
             }
         }
         def globalScope = new GlobalScope(name, castingDirector, eventBus)
-        globalScope.remember('endpointConfigRegistry', new RemoteEndPointConfigRegistry(httpMock, 'http://localhost:8080/base'))
-        globalScope.remember('personaClient', personaClient)
+        globalScope.remember(WireMockScreenplayContext.ENDPOINT_CONFIG_REGISTRY, new RemoteEndPointConfigRegistry(httpMock, 'http://localhost:8080/base'))
+        globalScope.remember(WireMockScreenplayContext.PERSONA_CLIENT, personaClient)
         globalScope.remember('runId', runId)
 
-        globalScope.remember('outputResourceRoot', outputResourceRoot)
-        globalScope.remember('inputResourceRoot', inputResourceRoot)
-        globalScope.remember('journalRoot', new RootDirectoryResource(new File('build', 'journal')))
-        globalScope.remember('baseUrlOfServiceUnderTest', 'http://service.com/under/test')
+        globalScope.remember(Performance.OUTPUT_RESOURCE_ROOT, outputResourceRoot)
+        globalScope.remember(Performance.INPUT_RESOURCE_ROOT, inputResourceRoot)
+        globalScope.remember(WireMockScreenplayContext.JOURNAL_RESOURCE_ROOT, new RootDirectoryResource(new File('build', 'journal')))
+        globalScope.remember(WireMockScreenplayContext.BASE_URL_OF_SERVICE_UNDER_TEST, 'http://service.com/under/test')
         globalScope
     }
 }

@@ -1,11 +1,12 @@
 package com.sbg.bdd.screenplay.wiremock;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.resource.file.RootDirectoryResource;
+import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.Scene;
+import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.util.NameConverter;
 import com.sbg.bdd.wiremock.scoped.integration.HeaderName;
 import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
@@ -17,7 +18,7 @@ import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.EndpointConfigRegist
 
 import java.io.File;
 
-import static com.sbg.bdd.screenplay.wiremock.WireMockScopeContext.calculatePriorityFor;
+import static com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext.calculatePriorityFor;
 
 
 public class RecordingMappingForUser {
@@ -25,7 +26,7 @@ public class RecordingMappingForUser {
     private String userInScopeId;
 
     public RecordingMappingForUser(String userScopeName, ExtendedMappingBuilder mappingBuilder) {
-        if (userScopeName.equals("everybody")) {
+        if (userScopeName.equals(Actor.EVERYBODY)) {
             throw new IllegalArgumentException();
         }
         this.userInScopeId = NameConverter.filesystemSafe(userScopeName);
@@ -43,13 +44,13 @@ public class RecordingMappingForUser {
     public void saveRecordings(Scene scope) {
         ExtendedRequestPatternBuilder requestPatternBuilder = new ExtendedRequestPatternBuilder(this.mappingBuilder.getRequestPatternBuilder());
         RecordingWireMockClient wireMock = getWireMock(scope);
-        requestPatternBuilder.prepareForBuild((EndpointConfigRegistry) scope.recall("endpointConfigRegistry"));
+        requestPatternBuilder.prepareForBuild((EndpointConfigRegistry) scope.recall(WireMockScreenplayContext.ENDPOINT_CONFIG_REGISTRY));
         wireMock.saveRecordingsForRequestPattern(deriveCorrelationPath(scope), requestPatternBuilder.build(), calculateRecordingDirectory(scope));
     }
 
 
     public RecordingWireMockClient getWireMock(Scene scope) {
-        return scope.getPerformance().recall("recordingWireMockClient");
+        return scope.getPerformance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
     }
     
     public void loadRecordings(Scene scope) {
@@ -124,11 +125,11 @@ public class RecordingMappingForUser {
 
     private ResourceContainer getResourceRoot(Scene scope) {
         if (getRecordingSpecification().enforceJournalModeInScope()) {
-            return scope.getPerformance().recall("journalRoot");
+            return scope.getPerformance().recall(WireMockScreenplayContext.JOURNAL_RESOURCE_ROOT);
         } else if (getRecordingSpecification().getJournalModeOverride() == JournalMode.RECORD) {
-            return scope.getPerformance().recall("outputResourceRoot");
+            return scope.getPerformance().recall(Performance.OUTPUT_RESOURCE_ROOT);
         } else {
-            return scope.getPerformance().recall("inputResourceRoot");
+            return scope.getPerformance().recall(Performance.INPUT_RESOURCE_ROOT);
         }
     }
 

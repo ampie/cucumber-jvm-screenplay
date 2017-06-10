@@ -4,9 +4,10 @@ package com.sbg.bdd.screenplay.core.actors;
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 
-import java.io.File;
-
 public interface Performance {
+
+    String INPUT_RESOURCE_ROOT = "inputResourceRoot";
+    String OUTPUT_RESOURCE_ROOT = "outputResourceRoot";
 
     Cast getCast();
 

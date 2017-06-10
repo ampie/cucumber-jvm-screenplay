@@ -1,1 +1,2 @@
 com.sbg.bdd.serenity.cucumber.ExchangeEmbeddingHandler
+com.sbg.bdd.serenity.cucumber.StubMappingEmbeddingHandler

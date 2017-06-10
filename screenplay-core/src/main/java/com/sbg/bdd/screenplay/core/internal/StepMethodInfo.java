@@ -3,6 +3,7 @@ package com.sbg.bdd.screenplay.core.internal;
 import com.sbg.bdd.screenplay.core.*;
 import com.sbg.bdd.screenplay.core.annotations.Step;
 import com.sbg.bdd.screenplay.core.util.AnnotatedTitle;
+import com.sbg.bdd.screenplay.core.util.NameConverter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -30,7 +31,7 @@ public class StepMethodInfo {
     }
 
     public String getStepPath() {
-        return stepParentPath == null ? getName() : stepParentPath + "/" + getName();
+        return stepParentPath == null ? getName() : stepParentPath + "/" + NameConverter.filesystemSafe(getName());
     }
 
     public String getKeyword() {

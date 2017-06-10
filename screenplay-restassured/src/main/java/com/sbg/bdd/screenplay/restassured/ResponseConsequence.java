@@ -45,13 +45,15 @@ public class ResponseConsequence extends BaseConsequence implements Consequence,
         description.appendText("see that ");
         boolean hasAdded=false;
         if(specFields.get("bodyMatchers")!=null){
-            description.appendText("the body of the response ");
             BodyMatcherGroup bmg = (BodyMatcherGroup) specFields.get("bodyMatchers");
             Collection<BodyMatcher> bodyAssertions = (Collection<BodyMatcher>) Fields.of(bmg).asMap().get("bodyAssertions");
-            for (BodyMatcher matcher : bodyAssertions) {
-                matcher.getMatcher().describeTo(description);
+            if(bodyAssertions.size()>0) {
+                description.appendText("the body of the response ");
+                for (BodyMatcher matcher : bodyAssertions) {
+                    matcher.getMatcher().describeTo(description);
+                }
+                hasAdded = true;
             }
-            hasAdded=true;
         }
         if(specFields.get("headerAssertions")!=null){
             Collection<HeaderMatcher> headerAssertions = (Collection<HeaderMatcher>) specFields.get("headerAssertions");

@@ -22,7 +22,7 @@ public abstract class CorrelationPath {
 
     public static String of(Scene scope) {
         Integer runId = scope.getPerformance().recall("runId");
-        RecordingWireMockClient wireMock = scope.getPerformance().recall("recordingWireMockClient");
+        RecordingWireMockClient wireMock = scope.getPerformance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
         String hostPrefix = wireMock.host() + "/" + wireMock.port() + "/";
         String base = (runId == null ? "" : runId.toString() + "/") + scope.getPerformance().getName();
         if (scope.getSceneIdentifier().isEmpty()) {

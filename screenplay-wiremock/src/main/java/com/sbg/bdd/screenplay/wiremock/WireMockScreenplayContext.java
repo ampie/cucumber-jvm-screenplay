@@ -7,8 +7,10 @@ import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.resource.ResourceFilter;
 import com.sbg.bdd.resource.file.ReadableFileResource;
 import com.sbg.bdd.resource.file.RootDirectoryResource;
+import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Scene;
+import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.internal.BaseActorOnStage;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.util.Optional;
@@ -23,10 +25,18 @@ import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.EndpointConfigRegist
 import java.io.File;
 import java.util.*;
 
-public class WireMockScopeContext implements WireMockContext {
+public class WireMockScreenplayContext implements WireMockContext {
     private static final int MAX_LEVELS = 10;
     private static final int PRIORITIES_PER_LEVEL = 10;
     private static final int EVERYBODY_PRIORITY_DECREMENT = PRIORITIES_PER_LEVEL / 2;
+    public static final String RECORDING_WIRE_MOCK_CLIENT = "recordingWireMockClient";
+    public static final String ENDPOINT_CONFIG_REGISTRY = "endpointConfigRegistry";
+    public static final String REQUESTS_TO_RECORD_OR_PLAYBACK = "requestsToRecordOrPlayback";
+    public static final String BASE_URL_OF_SERVICE_UNDER_TEST = "baseUrlOfServiceUnderTest";
+    public static final String PERSONA_CLIENT = "personaClient";
+    public static final String JOURNAL_RESOURCE_ROOT = "journalRoot";
+    public static final String CORRELATION_STATE = "correlationState";
+    public static final String PROXY_UNMAPPED_ENDPOINGS = "proxyUnmappedEndpoings";
 
     public static Integer calculatePriorityFor(int scopeLevel, int localLevel) {
         return ((MAX_LEVELS - scopeLevel) * PRIORITIES_PER_LEVEL) + localLevel;
@@ -38,15 +48,15 @@ public class WireMockScopeContext implements WireMockContext {
     private final EndpointConfigRegistry endpointConfigRegistry;
     private List<RecordingMappingForUser> requestsToRecordOrPlayback;
     
-    public WireMockScopeContext(ActorOnStage userInScope) {
-        this.wireMock = userInScope.recall("recordingWireMockClient");
-        this.endpointConfigRegistry = userInScope.recall("endpointConfigRegistry");
+    public WireMockScreenplayContext(ActorOnStage userInScope) {
+        this.wireMock = userInScope.recall(RECORDING_WIRE_MOCK_CLIENT);
+        this.endpointConfigRegistry = userInScope.recall(ENDPOINT_CONFIG_REGISTRY);
         this.userInScope = userInScope;
-        this.inputResourceRoot = this.userInScope.getScene().getPerformance().recall("inputResourceRoot");
-        this.requestsToRecordOrPlayback = userInScope.recall("requestsToRecordOrPlayback");
+        this.inputResourceRoot = this.userInScope.getScene().getPerformance().recall(Performance.INPUT_RESOURCE_ROOT);
+        this.requestsToRecordOrPlayback = userInScope.recall(REQUESTS_TO_RECORD_OR_PLAYBACK);
         if (this.requestsToRecordOrPlayback == null) {
             this.requestsToRecordOrPlayback = new ArrayList<>();
-            userInScope.remember("requestsToRecordOrPlayback", this.requestsToRecordOrPlayback);
+            userInScope.remember(REQUESTS_TO_RECORD_OR_PLAYBACK, this.requestsToRecordOrPlayback);
         }
     }
 
@@ -80,7 +90,7 @@ public class WireMockScopeContext implements WireMockContext {
 
     @Override
     public String getBaseUrlOfServiceUnderTest() {
-        return userInScope.recall("baseUrlOfServiceUnderTest");
+        return userInScope.recall(BASE_URL_OF_SERVICE_UNDER_TEST);
     }
     
     @Override
@@ -122,7 +132,7 @@ public class WireMockScopeContext implements WireMockContext {
 
 
     protected void processRecordingSpecs(ExtendedMappingBuilder builder, String personaIdToUse) {
-        if (personaIdToUse.equals("everybody")) {
+        if (personaIdToUse.equals(Actor.EVERYBODY)) {
             for (String personaDir : allPersonaIds()) {
                 processRecordingSpecs(builder, personaDir);
             }
@@ -144,15 +154,15 @@ public class WireMockScopeContext implements WireMockContext {
     }
 
     private Set<String> allPersonaIds() {
-        final PersonaClient personaClient = userInScope.getScene().getPerformance().recall("personaClient");
+        final PersonaClient personaClient = userInScope.getScene().getPerformance().recall(PERSONA_CLIENT);
         List<Resource> list = Arrays.asList(inputResourceRoot.list(new ResourceFilter() {
             @Override
             public boolean accept(ResourceContainer dir, String name) {
                 Resource file = dir.resolveExisting(name);
-                if (file.getName().equals("everybody")) {
+                if (file.getName().equals(Actor.EVERYBODY)) {
                     return false;
                 } else if (file instanceof ResourceContainer) {
-                    return file.getName().equals("guest") || ((ResourceContainer) file).resolveExisting(personaClient.getDefaultPersonaFileName()) != null;
+                    return file.getName().equals(Actor.GUEST) || ((ResourceContainer) file).resolveExisting(personaClient.getDefaultPersonaFileName()) != null;
                 } else {
                     return false;
                 }

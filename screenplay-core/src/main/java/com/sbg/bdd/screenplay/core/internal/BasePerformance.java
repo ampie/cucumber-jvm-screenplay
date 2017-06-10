@@ -32,7 +32,7 @@ public class BasePerformance implements Performance {
         eventBus = new ScreenPlayEventBus(instanceGetter);
         castingDirector = new BaseCastingDirector(eventBus, personaClient, inputResourceRoot);
         cast = new Cast(castingDirector);
-        memory.remember("inputResourceRoot",inputResourceRoot);
+        memory.remember(INPUT_RESOURCE_ROOT,inputResourceRoot);
         this.name=name;
     }
 

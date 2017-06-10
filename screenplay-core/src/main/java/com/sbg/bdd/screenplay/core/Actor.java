@@ -1,6 +1,9 @@
 package com.sbg.bdd.screenplay.core;
 
 public interface Actor extends Memory {
+    String PERSONA="persona";
+    String EVERYBODY="everybody";
+    String GUEST="guest";
     void useKeyword(String format);
 
     void wasAbleTo(Performable... todos);

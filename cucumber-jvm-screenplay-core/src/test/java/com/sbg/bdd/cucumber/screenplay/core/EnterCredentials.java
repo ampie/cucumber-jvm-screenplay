@@ -4,9 +4,7 @@ import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.Task;
 import com.sbg.bdd.screenplay.core.annotations.Step;
 
-/**
- * Created by ampie on 2017/05/18.
- */
+
 public class EnterCredentials implements Task {
     private String userName;
     private String password;

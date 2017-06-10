@@ -27,7 +27,8 @@ public class StubMappingEmbeddingHandler implements EmbeddingHandler {
     public boolean attemptHandling(String mimeType, byte[] data) {
         if (mimeType.endsWith("json")) {
             String json = new String(data);
-            if (json.contains("\"request\" : {") && json.contains("\"response\" : {") && json.contains("\"uuid\" : {")) {
+            System.out.println(json);
+            if (json.contains("\"request\" : {") && json.contains("\"response\" : {") && json.contains("\"id\" : ")) {
                 CollectionLikeType type = Json.getObjectMapper().getTypeFactory().constructCollectionType(List.class, StubMapping.class);
                 ObjectMapper mapper = Json.getObjectMapper();
                 try {
@@ -59,8 +60,10 @@ public class StubMappingEmbeddingHandler implements EmbeddingHandler {
         RequestPattern request = stubMapping.getRequest();
         ResponseDefinition response = stubMapping.getResponse();
         Map<String, String> parameters = new HashMap<>();
-        for (Map.Entry<String, MultiValuePattern> entry : request.getQueryParameters().entrySet()) {
-            parameters.put(entry.getKey(), entry.getValue().getValuePattern().getExpected());
+        if (request.getQueryParameters() != null) {
+            for (Map.Entry<String, MultiValuePattern> entry : request.getQueryParameters().entrySet()) {
+                parameters.put(entry.getKey(), entry.getValue().getValuePattern().getExpected());
+            }
         }
         RestQuery result = RestQuery.withMethod(RestMethod.valueOf(request.getMethod().getName()))
                 .andPath(request.getUrl())

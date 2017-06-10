@@ -7,9 +7,7 @@ import static OnStage.theActorInTheSpotlight
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed
 import static com.sbg.bdd.screenplay.scoped.ScopingPhrases.everybody
 
-/**
- * Created by ampie on 2017/05/23.
- */
+
 class WhenManagingState extends WhenUsingScopes {
     def 'should keep track of the actor in the spotlight irrespective of how deep the scope stack is'() {
         def globalScope = buildGlobalScope("GS")

@@ -4,9 +4,7 @@ import com.sbg.bdd.screenplay.core.internal.BaseActor
 
 import static java.util.Arrays.asList
 
-/**
- * Created by ampie on 2017/05/17.
- */
+
 class WhenPerformingActorTasksSuccessfully extends WhenPerformingChildSteps {
     def 'the tasks should reflect as child steps to the steps from which they were executed'() {
         given:

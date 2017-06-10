@@ -48,16 +48,16 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
             @Override
             @Step('step1')
             void performOnStage(ActorOnStage actorOnStage) {
-                innerStep=theCurrentScene().recall('correlationState').currentStep
+                innerStep=theCurrentScene().recall(WireMockScreenplayContext.CORRELATION_STATE).currentStep
             }
         })
         def userScope = scope.shineSpotlightOn(actorNamed('John Smith'))
         scope.completeNestedScope('scenario1')
         then:
-        scope.everybodyScope.recall('correlationState').correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1'
-        userScope.recall('correlationState').correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1/John_Smith'
+        scope.everybodyScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1'
+        userScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1/John_Smith'
         innerStep == 'For_requests_from_John_Smith_comma__allow/step1'
-        scenarioScope.everybodyScope.recall('correlationState').currentStep == null
+        scenarioScope.everybodyScope.recall(WireMockScreenplayContext.CORRELATION_STATE).currentStep == null
     }
 
 

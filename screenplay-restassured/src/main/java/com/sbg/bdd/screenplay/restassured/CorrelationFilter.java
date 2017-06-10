@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.wiremock.CorrelationPath;
+import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
 import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory;
 import com.sbg.bdd.wiremock.scoped.integration.HeaderName;
 import com.sbg.bdd.wiremock.scoped.integration.WireMockCorrelationState;
@@ -28,7 +29,7 @@ public class CorrelationFilter implements Filter {
 
     @Override
     public Response filter(FilterableRequestSpecification requestSpecification, FilterableResponseSpecification responseSpec, FilterContext filterContext) {
-        RecordingWireMockClient wm = OnStage.performance().recall("recordingWireMockClient");
+        RecordingWireMockClient wm = OnStage.performance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
         StubMapping mapping = buildProxyMapping(URI.create(requestSpecification.getURI()));
         wm.register(mapping);
         propagateCorrelationState(requestSpecification);

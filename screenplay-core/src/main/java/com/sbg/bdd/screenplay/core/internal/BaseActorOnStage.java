@@ -25,7 +25,7 @@ public class BaseActorOnStage implements ActorOnStage {
     }
 
     public static boolean isEverybody(ActorOnStage a) {
-        return a.getId().equals("everybody");
+        return a.getId().equals(Actor.EVERYBODY);
     }
 
     @Override

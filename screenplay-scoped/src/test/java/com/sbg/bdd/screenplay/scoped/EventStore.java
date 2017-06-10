@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
-/**
- * Created by ampie on 2017/05/23.
- */
+
 public class EventStore {
     static private List<EventObject> events = new ArrayList<>();
 

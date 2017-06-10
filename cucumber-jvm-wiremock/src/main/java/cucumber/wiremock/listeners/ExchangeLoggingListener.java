@@ -12,6 +12,7 @@ import com.sbg.bdd.screenplay.scoped.ScenarioScope;
 import com.sbg.bdd.screenplay.scoped.StepScope;
 import com.sbg.bdd.screenplay.scoped.VerificationScope;
 import com.sbg.bdd.screenplay.wiremock.CorrelationPath;
+import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
 import com.sbg.bdd.screenplay.wiremock.listeners.ScopeManagementListener;
 import com.sbg.bdd.wiremock.scoped.admin.model.RecordedExchange;
 import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
@@ -33,6 +34,6 @@ public class ExchangeLoggingListener {
     }
 
     public RecordingWireMockClient getWireMock(Scene scope) {
-        return scope.recall("recordingWireMockClient");
+        return scope.recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
     }
 }

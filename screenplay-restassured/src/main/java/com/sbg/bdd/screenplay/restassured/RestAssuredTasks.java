@@ -14,20 +14,36 @@ import io.restassured.specification.RequestSpecification;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 import static com.sbg.bdd.screenplay.core.actors.OnStage.*;
 
 public class RestAssuredTasks {
+
+    public static final String LAST_RESPONSE = "lastResponse";
+
     public static Task get(final String urii, final RequestSpecification spec) {
         return new Task() {
-            String uri=urii;
+            String uri= getUriAndParams();
+
+            private String getUriAndParams() {
+                Map<String, String> queryParams = ((FilterableRequestSpecification) spec).getQueryParams();
+                if(queryParams.isEmpty()) {
+                    return urii;
+                }else if(queryParams.size()==1){
+                    return urii + " and parameter: " + queryParams;
+                }else{
+                    return urii + " and parameters: " + queryParams;
+                }
+            }
+
             @Override
             @Step("send a GET request to #uri")
             public <T extends Actor> T performAs(T actor) {
                 ActorOnStage actorOnStage = shineSpotlightOn(actor);
                 Response response = spec.config(RestAssuredConfig.config())
-                        .filter(new CorrelationFilter()).get(uri);
-                actorOnStage.remember("lastResponse", response);
+                        .filter(new CorrelationFilter()).get(urii);
+                actorOnStage.remember(LAST_RESPONSE, response);
                 return actor;
             }
         };
@@ -43,7 +59,7 @@ public class RestAssuredTasks {
                 Response response = spec.config(RestAssuredConfig.config())
                         .filter(new CorrelationFilter())
                         .put(uri);
-                actorOnStage.remember("lastResponse", response);
+                actorOnStage.remember(LAST_RESPONSE, response);
                 return actor;
             }
         };
@@ -58,7 +74,7 @@ public class RestAssuredTasks {
                 ActorOnStage actorOnStage = shineSpotlightOn(actor);
                 Response response = spec.config(RestAssuredConfig.config())
                         .filter(new CorrelationFilter()).post(uri);
-                actorOnStage.remember("lastResponse", response);
+                actorOnStage.remember(LAST_RESPONSE, response);
                 return actor;
             }
         };
@@ -74,7 +90,7 @@ public class RestAssuredTasks {
                 ActorOnStage actorOnStage = shineSpotlightOn(actor);
                 Response response = spec.config(RestAssuredConfig.config())
                         .filter(new CorrelationFilter()).delete(uri);
-                actorOnStage.remember("lastResponse", response);
+                actorOnStage.remember(LAST_RESPONSE, response);
                 return actor;
             }
         };
@@ -89,7 +105,7 @@ public class RestAssuredTasks {
             @Override
             public T answeredBy(Actor actor) {
                 ActorOnStage actorOnStage = callActorToStage(actor);
-                Response response = actorOnStage.recall("lastResponse");
+                Response response = actorOnStage.recall(LAST_RESPONSE);
                 ValidatableResponse then = response.then();
                 return then.extract().body().as(clss);
             }
@@ -100,7 +116,7 @@ public class RestAssuredTasks {
 
     public static ValidatableResponse theLastResponse() {
         ActorOnStage actorOnStage = theActorInTheSpotlight();
-        Response response = actorOnStage.recall("lastResponse");
+        Response response = actorOnStage.recall(LAST_RESPONSE);
         ValidatableResponse then = response.then();
         return then;
     }

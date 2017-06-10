@@ -25,13 +25,13 @@ public class BaseCastingDirector implements CastingDirector {
     public Actor recruitActor(String name) {
         BaseActor result = new BaseActor(eventBus, name);
         if (hasPersona(name)) {
-            result.remember("persona", personaClient.preparePersona(name, getPersonaResource(name)));
+            result.remember(Actor.PERSONA, personaClient.preparePersona(name, getPersonaResource(name)));
         }
         return result;
     }
 
     private boolean hasPersona(String name) {
-        return !(name.equals("everybody") || name.equals("guest"));
+        return !(name.equals(Actor.EVERYBODY) || name.equals(Actor.GUEST));
     }
 
     private ReadableResource getPersonaResource(String name) {
@@ -42,7 +42,7 @@ public class BaseCastingDirector implements CastingDirector {
     public Actor findCandidate(String name) {
         BaseActor result = new BaseActor(eventBus, name);
         if (hasPersona(name)) {
-            result.remember("persona", personaClient.installPersona(name, getPersonaResource(name)));
+            result.remember(Actor.PERSONA, personaClient.installPersona(name, getPersonaResource(name)));
         }
         return result;
     }

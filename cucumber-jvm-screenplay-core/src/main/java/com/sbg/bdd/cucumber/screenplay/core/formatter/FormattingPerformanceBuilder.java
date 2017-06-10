@@ -2,6 +2,7 @@ package com.sbg.bdd.cucumber.screenplay.core.formatter;
 
 import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
+import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.internal.BasePerformance;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.persona.properties.PropertiesPersonaClient;
@@ -49,7 +50,7 @@ public abstract class FormattingPerformanceBuilder {
             }
             BasePerformance performance = new BasePerformance(name, inputResourceRoot,personaClient,new CucumberInstanceGetter(getObjectFactory()));
             performance.getEventBus().scanClasses(classes);
-            performance.remember("outputResourceRoot", outputResourceRoot);
+            performance.remember(Performance.OUTPUT_RESOURCE_ROOT, outputResourceRoot);
             OnStage.present(performance);
         }
     }

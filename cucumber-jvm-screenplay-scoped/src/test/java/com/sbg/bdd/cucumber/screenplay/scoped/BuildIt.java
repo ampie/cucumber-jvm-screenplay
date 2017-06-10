@@ -3,6 +3,7 @@ package com.sbg.bdd.cucumber.screenplay.scoped;
 import com.sbg.bdd.cucumber.screenplay.scoped.gsonpersona.GsonPersonaClient;
 import com.sbg.bdd.cucumber.screenplay.scoped.plugin.GlobalScopeBuilder;
 import com.sbg.bdd.resource.ResourceContainer;
+import com.sbg.bdd.screenplay.core.actors.Performance;
 import cucumber.api.java8.GlueBase;
 
 public class BuildIt extends GlobalScopeBuilder implements GlueBase {
@@ -16,7 +17,7 @@ public class BuildIt extends GlobalScopeBuilder implements GlueBase {
 
     public BuildIt() {
         super("RunAll", inputResourceRoot, new GsonPersonaClient());
-        getGlobalScope().remember("outputResourceRoot",outputResourceRoot);
+        getGlobalScope().remember(Performance.OUTPUT_RESOURCE_ROOT,outputResourceRoot);
         getGlobalScope().start();
     }
 }

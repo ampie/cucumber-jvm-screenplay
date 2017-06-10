@@ -3,6 +3,7 @@ package com.sbg.bdd.screenplay.restassured
 import com.sbg.bdd.resource.file.RootDirectoryResource
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.core.internal.BasePerformance
+import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext
 import com.sbg.bdd.screenplay.wiremock.listeners.ScopeManagementListener
 import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import com.sbg.bdd.wiremock.scoped.integration.BaseDependencyInjectorAdaptor
@@ -29,7 +30,7 @@ abstract class WhenUsingRestAssured extends Specification {
         OnStage.present(performance)
         def server = new ScopedWireMockServer()
         server.start()
-        performance.remember('recordingWireMockClient', new RecordingWireMockClient(server))
+        performance.remember(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT, new RecordingWireMockClient(server))
         server
     }
 

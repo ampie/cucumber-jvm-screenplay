@@ -13,9 +13,7 @@ import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.forRequestsFrom
 import static com.sbg.bdd.screenplay.core.actors.OnStage.callActorToStage
 import static com.sbg.bdd.screenplay.core.actors.OnStage.shineSpotlightOn
 
-/**
- * Created by ampie on 2017/05/23.
- */
+
 class WhenSubscribingToEvents extends WhenUsingScopes {
     def 'should issue events in a consistent and predicable sequence'() {
         given:

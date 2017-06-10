@@ -7,13 +7,11 @@ import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.persona.CharacterType;
 import com.sbg.bdd.screenplay.core.persona.Persona;
+import com.sbg.bdd.screenplay.core.util.NameConverter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by ampie on 2017/05/24.
- */
 public class BaseScene implements Scene {
     private String name;
     private BasePerformance performance;
@@ -30,7 +28,7 @@ public class BaseScene implements Scene {
 
     @Override
     public String getSceneIdentifier() {
-        return name;
+        return NameConverter.filesystemSafe(name);
     }
 
     @Override
@@ -67,7 +65,7 @@ public class BaseScene implements Scene {
         BaseActorOnStage actorOnStage = actorsOnStage.remove(actor);
         if (actorOnStage != null) {
             actorsOnStage.get(actor.getName()).exitStage();
-            Persona<?> persona = actor.recall("persona");
+            Persona<?> persona = actor.recall(Actor.PERSONA);
             if (persona != null && persona.getCharacterType() == CharacterType.DYNAMIC) {
                 //Data may have changed, needs to be reloaded
                 getPerformance().getCast().dismiss(actor);
@@ -84,7 +82,7 @@ public class BaseScene implements Scene {
     @Override
     public <T> T recall(String variableName) {
         T localVal = memory.recall(variableName);
-        if(localVal==null){
+        if (localVal == null) {
             return getPerformance().recall(variableName);
         }
         return localVal;

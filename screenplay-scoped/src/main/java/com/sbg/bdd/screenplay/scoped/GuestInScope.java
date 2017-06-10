@@ -11,11 +11,11 @@ public class GuestInScope extends UserInScope implements ActorOnStage {
 
 
     public static Actor guest(GlobalScope globalScope) {
-        return globalScope.getCast().candidateActor("guest");
+        return globalScope.getCast().candidateActor(Actor.GUEST);
     }
 
 
     public static boolean isGuest(Actor actor) {
-        return actor.getName().equals("guest");
+        return actor.getName().equals(Actor.GUEST);
     }
 }

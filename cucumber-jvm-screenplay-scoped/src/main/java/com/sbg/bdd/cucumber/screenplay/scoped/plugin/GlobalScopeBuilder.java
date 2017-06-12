@@ -9,9 +9,7 @@ import com.sbg.bdd.screenplay.core.internal.SimpleInstanceGetter;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.util.Fields;
 import com.sbg.bdd.screenplay.scoped.GlobalScope;
-import com.sbg.bdd.screenplay.scoped.listeners.ScreenplayLifecycleSync;
 import cucumber.api.java.ObjectFactory;
-import cucumber.api.java8.GlueBase;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.RuntimeGlue;
 import cucumber.runtime.StepDefinition;
@@ -28,7 +26,6 @@ public abstract class GlobalScopeBuilder {
         if (!(OnStage.performance() instanceof GlobalScope)) {
             Map<String, Object> backendState = Fields.of(JavaBackend.INSTANCE.get()).asMap();
             final ObjectFactory objectFactory = (ObjectFactory) backendState.get("objectFactory");
-            objectFactory.addClass(ScreenplayLifecycleSync.class);
             for (Class aClass : extraClasses) {
             objectFactory.addClass(aClass);
 
@@ -59,7 +56,6 @@ public abstract class GlobalScopeBuilder {
                     }
                 }
             }
-            classes.add(ScreenplayLifecycleSync.class);
             classes.addAll(Arrays.<Class<?>>asList(extraClasses));
             scopeEventBus.scanClasses(classes);
             globalScope = new GlobalScope(name, new BaseCastingDirector(scopeEventBus, personaClient, inputResourceRoot), scopeEventBus);

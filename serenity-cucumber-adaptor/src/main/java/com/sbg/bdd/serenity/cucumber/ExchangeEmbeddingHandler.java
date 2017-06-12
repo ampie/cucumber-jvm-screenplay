@@ -32,7 +32,12 @@ public class ExchangeEmbeddingHandler implements EmbeddingHandler {
                 ObjectMapper mapper = Json.getObjectMapper();
                 try {
                     List<RecordedExchange> exchanges = mapper.readValue(json, type);
-                    logExchanges(exchanges);
+                    if(exchanges.size()==1){
+                        StepEventBus.getEventBus().getBaseStepListener().addRestQuery(toRestQuery(exchanges.get(0)));
+                        logExchanges(exchanges.get(0).getNestedExchanges());
+                    }else {
+                        logExchanges(exchanges);
+                    }
                     return true;
                 } catch (Exception e) {
                     LOGGer.log(Level.WARNING, "Could not read embedding", e);

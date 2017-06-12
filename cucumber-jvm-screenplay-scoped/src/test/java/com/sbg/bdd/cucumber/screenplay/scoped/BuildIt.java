@@ -1,5 +1,6 @@
 package com.sbg.bdd.cucumber.screenplay.scoped;
 
+import com.sbg.bdd.cucumber.screenplay.core.formatter.FormattingStepListener;
 import com.sbg.bdd.cucumber.screenplay.scoped.gsonpersona.GsonPersonaClient;
 import com.sbg.bdd.cucumber.screenplay.scoped.plugin.GlobalScopeBuilder;
 import com.sbg.bdd.resource.ResourceContainer;
@@ -16,7 +17,7 @@ public class BuildIt extends GlobalScopeBuilder implements GlueBase {
     }
 
     public BuildIt() {
-        super("RunAll", inputResourceRoot, new GsonPersonaClient());
+        super("RunAll", inputResourceRoot, new GsonPersonaClient(),FormattingStepListener.class);
         getGlobalScope().remember(Performance.OUTPUT_RESOURCE_ROOT,outputResourceRoot);
         getGlobalScope().start();
     }

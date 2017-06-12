@@ -17,12 +17,12 @@ class WhenImportingPreviouslyLoggedExchanges extends Specification {
         outcomes[0].testSteps[1].children.size() == 1
 
         def givenStep = outcomes[0].testSteps[1].children[0]
+        givenStep.restQuery !=null
+        givenStep.restQuery.path.endsWith("/resource?name=John")
         givenStep.children.size() == 1
 
         givenStep.children[0].restQuery !=null
-        givenStep.children[0].restQuery.path.endsWith("/resource?name=John")
-        givenStep.children[0].children[0].restQuery !=null
-        givenStep.children[0].children[0].restQuery.path.endsWith("/HelloWorldService")
+        givenStep.children[0].restQuery.path.endsWith("/HelloWorldService")
 
         outcomes[0].testSteps[2].children.size() == 1
     }

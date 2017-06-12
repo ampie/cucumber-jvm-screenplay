@@ -104,7 +104,7 @@ public class RestAssuredTasks {
         return new Question<T>() {
             @Override
             public T answeredBy(Actor actor) {
-                ActorOnStage actorOnStage = callActorToStage(actor);
+                ActorOnStage actorOnStage = actor.onStagePresence();
                 Response response = actorOnStage.recall(LAST_RESPONSE);
                 ValidatableResponse then = response.then();
                 return then.extract().body().as(clss);

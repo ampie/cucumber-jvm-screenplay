@@ -65,7 +65,13 @@ public class StubMappingEmbeddingHandler implements EmbeddingHandler {
                 parameters.put(entry.getKey(), entry.getValue().getValuePattern().getExpected());
             }
         }
-        RestQuery result = RestQuery.withMethod(RestMethod.valueOf(request.getMethod().getName()))
+        RestMethod method = RestMethod.OPTIONS;
+        try {
+            method = RestMethod.valueOf(request.getMethod().getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        RestQuery result = RestQuery.withMethod(method)
                 .andPath(request.getUrl())
                 .withContent(Json.write(request.getBodyPatterns()))
                 .withRequestHeaders(Json.write(request.getHeaders()))

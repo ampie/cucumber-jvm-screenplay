@@ -1,5 +1,6 @@
 package com.sbg.bdd.screenplay.wiremock
 
+import com.sbg.bdd.screenplay.core.Actor
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.core.actors.Performance
 import com.sbg.bdd.screenplay.scoped.GlobalScope

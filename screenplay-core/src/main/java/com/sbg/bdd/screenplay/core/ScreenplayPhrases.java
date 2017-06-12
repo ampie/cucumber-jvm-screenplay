@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScreenplayPhrases {
-    public static <T extends Actor> T actorNamed(String actorName) {
-        return (T) OnStage.performance().getCast().actorNamed(actorName);
+    public static Actor actorNamed(String actorName) {
+        return OnStage.performance().getCast().actorNamed(actorName);
     }
 
     public static <T extends Actor> T givenThat(T actor) {
@@ -27,11 +27,15 @@ public class ScreenplayPhrases {
         return actor;
     }
     
-    public static <T extends Actor> T when(T actor) {
+    public static Actor when(Actor actor) {
         actor.useKeyword("When");
         return actor;
     }
-    
+    public static Actor when(ActorOnStage actor) {
+        actor.getActor().useKeyword("When");
+        return actor.getActor();
+    }
+
     public static <T extends Actor> T then(T actor) {
         actor.useKeyword("Then");
         return actor;

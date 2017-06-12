@@ -33,7 +33,7 @@ public class ResponseConsequence extends BaseConsequence implements Consequence,
 
     @Override
     public void evaluateFor(Actor actor) {
-        ActorOnStage actorOnStage = callActorToStage(actor);
+        ActorOnStage actorOnStage = actor.onStagePresence();
         Response response = actorOnStage.recall("lastResponse");
         specification.validate(response);
 

@@ -1,15 +1,42 @@
+implement recording on server
+
+implement stubmappinglogging on server
+
+implement Cucumber reporting on server
+    embedding
+    scenarioOutline
+    examples
+
+implement playback on server
+
 NB!!! include the original URL of a service as part of the header and mapping criteria to avoid overlapping paths This causes nasty recursion currently
-
-
 get the global journal to work again
+implement file reading and templating on server
+implement implement Resource API on WireMOck\s HTTP (GET/PUT)
+
+
 
 Android:
 Android ability
 Read output files from android using ADB
 log screenshots as embeddings - make this configurable
-Slow down the Android playback with the cucumber formatter
 
 Done:
+implement Cucumber reporting on server
+    uri
+    feature
+    scenario
+    background
+    step
+    match
+    result
+    childStep
+    childResult
+
+implement exchangelogging on server
+
+don't log a new childtep for top-level restQueries
+Slow down the Android playback with the cucumber formatter
 Import child steps in the Serenity Adaptor
 RestAssured ability
 Remember to let WireMock intercept first

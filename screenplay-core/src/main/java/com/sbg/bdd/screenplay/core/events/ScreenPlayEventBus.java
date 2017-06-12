@@ -6,6 +6,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class ScreenPlayEventBus {
@@ -62,7 +63,9 @@ public class ScreenPlayEventBus {
 
     public void scanClasses(Set<Class<?>> classes) {
         for (Class<?> aClass : classes) {
-            scanMethods(aClass);
+            if(!Modifier.isAbstract(aClass.getModifiers())) {
+                scanMethods(aClass);
+            }
         }
     }
 
@@ -142,7 +145,6 @@ public class ScreenPlayEventBus {
             }
             iterator.remove();
         }
-        System.out.println(registeredCallbacks);
 
     }
 }

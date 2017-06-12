@@ -1,21 +1,59 @@
 package com.sbg.bdd.cucumber.screenplay.scoped.plugin;
 
-import com.sbg.bdd.cucumber.screenplay.core.formatter.ReportingFormatter;
+import com.sbg.bdd.cucumber.screenplay.core.formatter.StepQueueingReportingFormatter;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
+import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
+import com.sbg.bdd.screenplay.core.annotations.StepEventType;
+import com.sbg.bdd.screenplay.core.events.SceneEvent;
+import com.sbg.bdd.screenplay.core.events.StepEvent;
+import com.sbg.bdd.screenplay.core.internal.BaseActor;
 import com.sbg.bdd.screenplay.scoped.*;
-import cucumber.runtime.StepDefinitionMatch;
 import gherkin.formatter.model.*;
 
-import java.util.List;
+import java.util.*;
 
 
-public class CucumberScopeLifecycleSync implements ReportingFormatter {
-    private String currentStep;
+public class CucumberScopeLifecycleSync extends StepQueueingReportingFormatter {
+    private static CucumberScopeLifecycleSync instance;
     private boolean hasRunRootScope;
     private String currentUri;
     private String featureName;
+    private GherkinStepMethodInfo currentStep;
+    private Map<String, StepEventType> stepEventTypeMap = new HashMap<>();
+    private Feature currentFeature;
+    private BasicStatement currentFeatureElement;
+    private Scenario currentScenarioLifecycle;
+    private Examples currentExamples;
+
+    {
+        stepEventTypeMap.put(Result.FAILED, StepEventType.FAILED);
+        stepEventTypeMap.put(Result.PASSED, StepEventType.SUCCESSFUL);
+        stepEventTypeMap.put(Result.SKIPPED.getStatus(), StepEventType.SKIPPED);
+        stepEventTypeMap.put(Result.UNDEFINED.getStatus(), StepEventType.PENDING);
+    }
 
     public CucumberScopeLifecycleSync() {
+        instance=this;
+    }
+
+    public static CucumberScopeLifecycleSync getInstance() {
+        return instance;
+    }
+
+    public BasicStatement getCurrentFeatureElement() {
+        return currentFeatureElement;
+    }
+
+    public Examples getCurrentExamples() {
+        return currentExamples;
+    }
+
+    public Scenario getCurrentScenarioLifecycle() {
+        return currentScenarioLifecycle;
+    }
+
+    public Feature getCurrentFeature() {
+        return currentFeature;
     }
 
     @Override
@@ -26,10 +64,31 @@ public class CucumberScopeLifecycleSync implements ReportingFormatter {
     @Override
     public void feature(Feature f) {
         featureName = f.getName();
+        this.currentFeature=f;
+    }
+
+    @Override
+    public void background(Background background) {
+        this.currentFeatureElement=background;
+        getGlobalScope().getEventBus().broadcast(new SceneEvent(getInnerMostActive(ScenarioScope.class), SceneEventType.ON_PHASE_ENTERED,"background"));
+    }
+
+    @Override
+    public void scenario(Scenario scenario) {
+        this.currentFeatureElement=scenario;
+        getGlobalScope().getEventBus().broadcast(new SceneEvent(getInnerMostActive(ScenarioScope.class), SceneEventType.ON_PHASE_ENTERED,"scenario"));
+    }
+
+    @Override
+    public void scenarioOutline(ScenarioOutline scenarioOutline) {
+        super.scenarioOutline(scenarioOutline);
+        this.currentFeatureElement=scenarioOutline;
     }
 
     @Override
     public void startOfScenarioLifeCycle(Scenario s) {
+        super.startOfScenarioLifeCycle(s);
+        currentScenarioLifecycle=s;
         try {
             if (featureName != null) {
                 scenarioContainer(featureName);
@@ -45,36 +104,37 @@ public class CucumberScopeLifecycleSync implements ReportingFormatter {
     public void endOfScenarioLifeCycle(Scenario scenario) {
         ScenarioScope srs = getInnerMostActive(ScenarioScope.class);
         getInnerMostActive(FunctionalScope.class).completeNestedScope(srs.getName());
+        currentScenarioLifecycle=null;
     }
-
     @Override
     public void done() {
         getGlobalScope().complete();
     }
 
-    @Override
-    public void scenarioOutline(ScenarioOutline scenarioOutline) {
-    }
-
 
     @Override
     public void result(Result result) {
-        getInnerMostActive(ScenarioScope.class).completeStep(currentStep);
+        long duration = result.getDuration() == null ? 0 : result.getDuration();
+        StepEvent event = new StepEvent(null, currentStep, stepEventTypeMap.get(result.getStatus()), duration, result.getError());
+        //just fire the event, the ScreenplaytLifecycleSync class will do the rest
+        getGlobalScope().getEventBus().broadcast(event);
     }
 
     @Override
-    public void match(Match match) {
+    public void stepMatch(final Step step, final Match match) {
         try {
-            if (match instanceof StepDefinitionMatch) {
-                StepDefinitionMatch sdm = (StepDefinitionMatch) match;
-                this.currentStep = sdm.getStepName();
-                getInnerMostActive(ScenarioScope.class).startStep(currentStep);
-            }
+            this.currentStep = new GherkinStepMethodInfo(step, match);
+            BaseActor.setCurrentStep(this.currentStep.getName());
+            //just fire the event, the ScreenplaytLifecycleSync class will do the rest
+            StepEvent event = new StepEvent(null, currentStep,StepEventType.STARTED);
+            //just fire the event, the ScreenplaytLifecycleSync class will do the rest
+            getGlobalScope().getEventBus().broadcast(event);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
 
     private VerificationScope getCurrentScope() {
         return getGlobalScope().getInnerMostActive(VerificationScope.class);
@@ -153,24 +213,9 @@ public class CucumberScopeLifecycleSync implements ReportingFormatter {
 
     @Override
     public void examples(Examples examples) {
-
+        currentExamples=examples;
     }
 
-
-    @Override
-    public void background(Background background) {
-
-    }
-
-    @Override
-    public void scenario(Scenario scenario) {
-
-    }
-
-    @Override
-    public void step(Step step) {
-
-    }
 
 
     @Override
@@ -204,4 +249,9 @@ public class CucumberScopeLifecycleSync implements ReportingFormatter {
     public void write(String text) {
 
     }
+
+    public String getCurrentUri() {
+        return currentUri;
+    }
+
 }

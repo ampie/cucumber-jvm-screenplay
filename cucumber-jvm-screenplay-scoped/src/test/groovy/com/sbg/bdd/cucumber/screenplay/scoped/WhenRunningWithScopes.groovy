@@ -13,7 +13,7 @@ import spock.lang.Specification
 
 import static java.util.Arrays.asList
 
-class WhenRunningWithScopes  extends Specification{
+class WhenRunningWithScopes  extends WhenScopeXYZ{
 
 
 
@@ -29,7 +29,7 @@ class WhenRunningWithScopes  extends Specification{
         }
         then:
         report.size() == 1
-        report[0].elements.size() == 2
+        report[0].elements.size() == 4
         report[0].elements[0].steps.size() == 1
         StepDefs.SCOPE_CALLBACKS.keySet().size()==5
         StepDefs.SCOPE_CALLBACKS['RunAll/cucumber'][0] == SceneEventType.BEFORE_START
@@ -45,35 +45,8 @@ class WhenRunningWithScopes  extends Specification{
         StepDefs.VARIABLE_AFTER_COMPLETE.keySet().size()==5
         StepDefs.VARIABLE_AFTER_START['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else']==4
         StepDefs.VARIABLE_AFTER_COMPLETE['RunAll/cucumber/scoping/Basic_Screen_Flow/Flow_through_the_screens_something_else']==4//Because we retain the everybody scope's memory
-        println( StepDefs.SCOPE_CALLBACKS.keySet())
 
     }
 
-    def runFeaturesWithScreenplayPlugin(List<String> featurePaths) throws IOException {
-        def report = File.createTempFile("cucumber-scope", ".json");
-        def classLoader = Thread.currentThread().getContextClassLoader();
-        def markerFile = new File(classLoader.getResource('cucumber-jvm-screenplay-scoped-marker.txt').file)
 
-        def inputResourceRoot = new RootDirectoryResource(markerFile.getParentFile())
-        def outputResourceRoot = new RootDirectoryResource(new File(markerFile.getParentFile().getParentFile().getParentFile(),"output_root"))
-        BuildIt.useResourceRoots(inputResourceRoot,outputResourceRoot)
-        def resourceLoader = new MultiLoader(classLoader)
-        def args = new ArrayList<String>()
-        args.add("--plugin")
-        args.add(ScopingPlugin.class.getName() +  ":" + report.getAbsolutePath())
-        args.add("--glue")
-        args.add(StepDefs.class.getPackage().getName())
-        args.addAll(featurePaths)
-
-        RuntimeOptions runtimeOptions = new RuntimeOptions(args)
-
-        Backend backend = new JavaBackend(resourceLoader)
-        RuntimeGlue glue=null//new RuntimeGlue();
-        final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new StopWatch.Stub(1234), glue)
-        runtime.run()
-        def actual = new Scanner(report, "UTF-8").useDelimiter("\\A").next()
-        def jsonSlurper = new JsonSlurper()
-        return jsonSlurper.parseText(actual)
-
-    }
 }

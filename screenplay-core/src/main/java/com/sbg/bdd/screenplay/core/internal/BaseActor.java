@@ -9,35 +9,64 @@ import com.sbg.bdd.screenplay.core.util.NameConverter;
 
 import java.util.*;
 
+import static java.lang.String.format;
+
 public class BaseActor implements Actor {
     protected static StopWatch stopWatch;
+    private static String currentStep;
     protected final String name;
     private Memory memory = new SimpleMemory();
     private Map<Class<?>, Ability> abilities = new HashMap<>();
     private ScreenPlayEventBus eventBus;
     private Deque<String> stepPaths = new ArrayDeque<>();
     private String precedingKeyword;
+    private ActorOnStage onStagePresence;
 
     public BaseActor(ScreenPlayEventBus eventBus, String name) {
         this.eventBus = eventBus;
         this.name = name;
     }
 
+    public static void setCurrentStep(String currentStep) {
+        BaseActor.currentStep = currentStep;
+    }
+
+
     @Override
     public String getPrecedingKeyword() {
         return precedingKeyword;
     }
 
-    protected StepMethodInfo[] extractInfo(String methodName, Object performer, Object[] stepObjects) {
-        StepMethodInfo[] result = new StepMethodInfo[stepObjects.length];
+    public void onStage(ActorOnStage onStagePresence) {
+        this.onStagePresence = onStagePresence;
+    }
+
+    @Override
+    public ActorOnStage onStagePresence() throws IllegalStateException {
+        if (onStagePresence == null) {
+            throw new IllegalStateException(format("Actor %s is not currently on stage", name));
+        }
+        return onStagePresence;
+    }
+
+    protected ScreenplayStepMethodInfo[] extractInfo(String methodName, Object performer, Object[] stepObjects) {
+        ScreenplayStepMethodInfo[] result = new ScreenplayStepMethodInfo[stepObjects.length];
         for (int i = 0; i < stepObjects.length; i++) {
-            result[i] = new StepMethodInfo(getParentStepPath(), methodName, performer, stepObjects[i]);
+            result[i] = new ScreenplayStepMethodInfo(getParentStepPath(), methodName, performer, stepObjects[i]);
         }
         return result;
     }
 
     String getParentStepPath() {
-        return stepPaths.isEmpty() ? null : stepPaths.peekLast();
+        if (stepPaths.isEmpty()) {
+            if (currentStep == null) {
+                return null;
+            } else {
+                return currentStep;
+            }
+        } else {
+            return stepPaths.peekLast();
+        }
     }
 
     public void useKeyword(String format) {
@@ -46,9 +75,10 @@ public class BaseActor implements Actor {
 
     @Override
     public void should(final Consequence... consequences) {
-        performSteps(new StepMethodInfo[]{new StepMethodInfo(getParentStepPath(), "should", this, new Object() {
+        performSteps(new ScreenplayStepMethodInfo[]{new ScreenplayStepMethodInfo(getParentStepPath(), "should", this, new Object() {
             String keyword = BaseActor.this.precedingKeyword;
             String name = BaseActor.this.name;
+
             @Step("#keyword #name should ")
             public void should(Actor me) {
                 performSteps("evaluateFor", BaseActor.this, consequences);
@@ -58,9 +88,10 @@ public class BaseActor implements Actor {
 
     @Override
     public void wasAbleTo(final Performable... tasks) {
-        performSteps(new StepMethodInfo[]{new StepMethodInfo(getParentStepPath(), "wasAbleTo", this, new Object() {
+        performSteps(new ScreenplayStepMethodInfo[]{new ScreenplayStepMethodInfo(getParentStepPath(), "wasAbleTo", this, new Object() {
             String keyword = BaseActor.this.precedingKeyword;
             String name = BaseActor.this.name;
+
             @Step("#keyword #name was able to ")
             public void wasAbleTo(Actor me) {
                 performSteps("performAs", BaseActor.this, tasks);
@@ -70,9 +101,10 @@ public class BaseActor implements Actor {
 
     @Override
     public void attemptsTo(final Performable... tasks) {
-        performSteps(new StepMethodInfo[]{new StepMethodInfo(getParentStepPath(), "attemptsTo", this, new Object() {
+        performSteps(new ScreenplayStepMethodInfo[]{new ScreenplayStepMethodInfo(getParentStepPath(), "attemptsTo", this, new Object() {
             String keyword = BaseActor.this.precedingKeyword;
             String name = BaseActor.this.name;
+
             @Step("#keyword #name attempts to ")
             public void attemptsTo(Actor me) {
                 performSteps("performAs", BaseActor.this, tasks);
@@ -84,15 +116,15 @@ public class BaseActor implements Actor {
         performSteps(extractInfo(methodName, performer, stepObjects));
     }
 
-    public void performSteps(StepMethodInfo[] steps) {
+    public void performSteps(ScreenplayStepMethodInfo[] steps) {
         StepErrorTally errorTally = new StepErrorTally(getStopWatch());
-        for (StepMethodInfo stepMethodInfo : steps) {
+        for (ScreenplayStepMethodInfo stepMethodInfo : steps) {
             performStep(errorTally, stepMethodInfo);
         }
         errorTally.reportAnyErrors();
     }
 
-    private void performStep(StepErrorTally errorTally, StepMethodInfo stepMethodInfo) {
+    private void performStep(StepErrorTally errorTally, ScreenplayStepMethodInfo stepMethodInfo) {
         errorTally.startStopWatch();
         try {
             pushStepPath(stepMethodInfo);

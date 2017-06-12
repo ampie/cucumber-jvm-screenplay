@@ -20,9 +20,11 @@ public class BaseActorOnStage implements ActorOnStage {
     public BaseActorOnStage(Scene scene, Actor actor) {
         this.scene = scene;
         this.actor = actor;
+        ((BaseActor)this.actor).onStage(this);
         this.id = NameConverter.filesystemSafe(actor.getName());
 
     }
+
 
     public static boolean isEverybody(ActorOnStage a) {
         return a.getId().equals(Actor.EVERYBODY);
@@ -35,7 +37,7 @@ public class BaseActorOnStage implements ActorOnStage {
 
     @Override
     public void allow(final DownstreamStub... downstreamStubs) {
-        ((BaseActor) actor).performSteps(new StepMethodInfo[]{new StepMethodInfo(((BaseActor) actor).getParentStepPath(), "allow", this, new Object() {
+        ((BaseActor) actor).performSteps(new ScreenplayStepMethodInfo[]{new ScreenplayStepMethodInfo(((BaseActor) actor).getParentStepPath(), "allow", this, new Object() {
             String keyword = actor.getPrecedingKeyword();
             String name = actor.getName();
 
@@ -48,7 +50,7 @@ public class BaseActorOnStage implements ActorOnStage {
 
     @Override
     public void verifyThat(final DownstreamVerification... downstreamVerifications) {
-        ((BaseActor) actor).performSteps(new StepMethodInfo[]{new StepMethodInfo(((BaseActor) actor).getParentStepPath(), "verifyThat", this, new Object() {
+        ((BaseActor) actor).performSteps(new ScreenplayStepMethodInfo[]{new ScreenplayStepMethodInfo(((BaseActor) actor).getParentStepPath(), "verifyThat", this, new Object() {
             String keyword = actor.getPrecedingKeyword();
             String name = actor.getName();
 

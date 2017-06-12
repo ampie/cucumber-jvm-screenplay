@@ -20,4 +20,6 @@ public interface Actor extends Memory {
     void performSteps(String keyword, Object performer, Object ... steps);
 
     String getPrecedingKeyword();
+
+    ActorOnStage onStagePresence() throws IllegalStateException;
 }

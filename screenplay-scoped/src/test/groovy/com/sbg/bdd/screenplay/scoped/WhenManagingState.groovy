@@ -13,7 +13,7 @@ class WhenManagingState extends WhenUsingScopes {
         def globalScope = buildGlobalScope("GS")
         given:
         OnStage.present(globalScope)
-        globalScope.startFunctionalScope("nested1").startScenario("scenario1").startStep("step1")
+        globalScope.startFunctionalScope("nested1").startScenario("scenario1")
         when:
         shineSpotlightOn(actorNamed('John Smith'))
         then:
@@ -29,7 +29,7 @@ class WhenManagingState extends WhenUsingScopes {
         shineSpotlightOn(actorNamed("John Smith"))
         theActorInTheSpotlight().remember("var","nested1Value")
         when:
-        scope.startScenario("scenario1").startStep("step1")
+        scope.startScenario("scenario1")
         shineSpotlightOn(actorNamed("John Smith"))
         then:
         def value = theActorInTheSpotlight().recall("var")
@@ -43,7 +43,7 @@ class WhenManagingState extends WhenUsingScopes {
         shineSpotlightOn(actorNamed("John Smith"))
         theActorInTheSpotlight().remember("var","nested1Value")
         when:
-        scope.startScenario("scenario1").startStep("step1")
+        scope.startScenario("scenario1")
         shineSpotlightOn(actorNamed("John Smith"))
         theActorInTheSpotlight().remember("var","step1Value")
         then:
@@ -58,7 +58,7 @@ class WhenManagingState extends WhenUsingScopes {
         shineSpotlightOn(everybody())
         theActorInTheSpotlight().remember("var","everybodyValue")
         when:
-        scope.startScenario("scenario1").startStep("step1")
+        scope.startScenario("scenario1")
         shineSpotlightOn(actorNamed("John Smith"))
         then:
         def value = theActorInTheSpotlight().recall("var")
@@ -72,7 +72,7 @@ class WhenManagingState extends WhenUsingScopes {
         shineSpotlightOn(everybody())
         theActorInTheSpotlight().remember("var","everybodyValue")
         when:
-        scope.startScenario("scenario1").startStep("step1")
+        scope.startScenario("scenario1")
         shineSpotlightOn(actorNamed("John Smith"))
         theActorInTheSpotlight().remember("var","johnSmithValue")
         then:

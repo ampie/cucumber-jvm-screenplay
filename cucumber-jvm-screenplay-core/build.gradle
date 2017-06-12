@@ -5,6 +5,7 @@ dependencies {
     compile 'info.cukes:cucumber-java:1.2.6-SNAPSHOT'
     compile project (':screenplay-core')
 
+    testCompile 'info.cukes:cucumber-junit:1.2.6-SNAPSHOT'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.10.19'
     testCompile 'org.codehaus.groovy:groovy-all:2.4.5'

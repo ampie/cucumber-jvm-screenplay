@@ -34,7 +34,6 @@ abstract class WhenPerformingChildSteps extends Specification {
         final Runtime runtime = new Runtime(resourceLoader, classLoader, asList(backend), runtimeOptions, new StopWatch.Stub(1234), glue);
         runtime.run();
         def actual = new Scanner(report, "UTF-8").useDelimiter("\\A").next();
-        System.out.println(actual);
         def jsonSlurper = new JsonSlurper()
         return jsonSlurper.parseText(actual)
 

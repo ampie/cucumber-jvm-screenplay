@@ -6,25 +6,17 @@ public class ScenarioScope extends UserTrackingScope {
         super(functionalScope, name);
     }
 
-    public StepScope startStep(String name){
-        return setupChild(new StepScope(this,name));
-    }
-
     @Override
     protected void completeWithoutEvents() {
         evaluateVerificationRules();
         super.completeWithoutEvents();
     }
 
-    public void evaluateVerificationRules(){
+    public void evaluateVerificationRules() {
         for (UserInScope userInScope : getUsersInScope().values()) {
             userInScope.evaluateExpectations();
         }
     }
 
-
-    public void completeStep(String name) {
-        super.completeNestedScope(name);
-    }
 
 }

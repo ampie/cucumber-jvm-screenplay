@@ -1,13 +1,14 @@
 package com.sbg.bdd.android.screenplay.asset;
 
 import android.content.Context;
+import com.sbg.bdd.resource.ResourceRoot;
 
 
-public class RootAssetResourceContainer extends AssetResourceContainer {
+public class RootAssetResourceContainer extends AssetResourceContainer implements ResourceRoot{
     private final Context context;
 
     public RootAssetResourceContainer(Context context) {
-        super(null, "");
+        super(null, "assets");
         this.context = context;
     }
 
@@ -27,5 +28,10 @@ public class RootAssetResourceContainer extends AssetResourceContainer {
 
     public Context getContext() {
         return context;
+    }
+
+    @Override
+    public String getRootName() {
+        return "assets";
     }
 }

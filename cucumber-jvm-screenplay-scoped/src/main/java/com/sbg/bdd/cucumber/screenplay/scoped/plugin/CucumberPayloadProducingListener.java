@@ -1,6 +1,5 @@
 package com.sbg.bdd.cucumber.screenplay.scoped.plugin;
 
-import com.sbg.bdd.cucumber.screenplay.core.formatter.ScreenPlayFormatter;
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
 import com.sbg.bdd.screenplay.core.annotations.SceneListener;
@@ -18,7 +17,6 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -2,14 +2,13 @@ package com.sbg.bdd.cucumber.screenplay.scoped.gsonpersona;
 
 import com.sbg.bdd.resource.ReadableResource;
 import com.sbg.bdd.resource.WritableResource;
-import com.sbg.bdd.resource.file.WritableFileResource;
 import com.sbg.bdd.screenplay.core.persona.Persona;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import gherkin.deps.com.google.gson.JsonObject;
 import gherkin.deps.com.google.gson.JsonParser;
-import gherkin.deps.com.google.gson.stream.JsonWriter;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 
 public class GsonPersonaClient implements PersonaClient<JsonObject> {
 

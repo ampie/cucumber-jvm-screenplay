@@ -1,6 +1,8 @@
 package com.sbg.bdd.android.screenplay.fileserver;
 
-public class FileServerResourceRoot extends FileServerResourceContainer {
+import com.sbg.bdd.resource.ResourceRoot;
+
+public class FileServerResourceRoot extends FileServerResourceContainer implements ResourceRoot {
     private final FileClient client;
 
     public FileServerResourceRoot(FileClient client) {
@@ -10,7 +12,7 @@ public class FileServerResourceRoot extends FileServerResourceContainer {
 
     @Override
     public String getName() {
-        return "";
+        return getRootName();
     }
 
     public FileClient getClient() {
@@ -25,5 +27,10 @@ public class FileServerResourceRoot extends FileServerResourceContainer {
     @Override
     public String getPath() {
         return "";
+    }
+
+    @Override
+    public String getRootName() {
+        return client.host + ":" + client.port;
     }
 }

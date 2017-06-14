@@ -1,8 +1,6 @@
 package com.sbg.bdd.android.screenplay.fileserver;
 
-import com.sbg.bdd.android.screenplay.asset.RootAssetResourceContainer;
 import com.sbg.bdd.resource.Resource;
-import com.sbg.bdd.resource.ResourceContainer;
 
 public abstract class FileServerResource implements Resource {
     private String name;

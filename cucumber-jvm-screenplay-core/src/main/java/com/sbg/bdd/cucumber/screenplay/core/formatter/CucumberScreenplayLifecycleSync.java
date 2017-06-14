@@ -1,7 +1,7 @@
 package com.sbg.bdd.cucumber.screenplay.core.formatter;
 
+import com.sbg.bdd.cucumber.common.ReportingFormatter;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
-import com.sbg.bdd.screenplay.core.internal.BaseScene;
 import gherkin.formatter.model.*;
 
 import java.util.ArrayDeque;
@@ -111,6 +111,16 @@ public class CucumberScreenplayLifecycleSync implements ReportingFormatter {
 
     @Override
     public void write(String text) {
+
+    }
+
+    @Override
+    public void childStep(Step step, Match match) {
+
+    }
+
+    @Override
+    public void childResult(Result result) {
 
     }
 }

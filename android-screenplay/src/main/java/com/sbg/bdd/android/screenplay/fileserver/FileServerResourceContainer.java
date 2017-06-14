@@ -1,18 +1,10 @@
 package com.sbg.bdd.android.screenplay.fileserver;
 
-import com.sbg.bdd.android.screenplay.asset.AssetResource;
-import com.sbg.bdd.android.screenplay.asset.ReadableAssetResource;
 import com.sbg.bdd.resource.Resource;
 import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.resource.ResourceFilter;
-import com.sbg.bdd.resource.WritableResource;
 import com.sbg.bdd.resource.file.DirectoryResource;
-import com.sbg.bdd.resource.file.FileSystemResource;
-import com.sbg.bdd.resource.file.ReadableFileResource;
-import com.sbg.bdd.resource.file.WritableFileResource;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;

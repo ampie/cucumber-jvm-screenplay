@@ -1,5 +1,6 @@
 package com.sbg.bdd.cucumber.screenplay.core.formatter;
 
+import com.sbg.bdd.cucumber.common.ScreenPlayFormatter;
 import com.sbg.bdd.screenplay.core.annotations.StepListener;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.core.internal.Embeddings;

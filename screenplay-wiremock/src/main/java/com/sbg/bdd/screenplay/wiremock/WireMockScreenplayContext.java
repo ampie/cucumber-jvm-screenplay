@@ -5,8 +5,8 @@ import com.sbg.bdd.resource.ReadableResource;
 import com.sbg.bdd.resource.Resource;
 import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.resource.ResourceFilter;
+import com.sbg.bdd.resource.file.DirectoryResourceRoot;
 import com.sbg.bdd.resource.file.ReadableFileResource;
-import com.sbg.bdd.resource.file.RootDirectoryResource;
 import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Scene;
@@ -14,11 +14,11 @@ import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.internal.BaseActorOnStage;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.util.Optional;
+import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
 import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
 import com.sbg.bdd.wiremock.scoped.recording.WireMockContext;
 import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedMappingBuilder;
 import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedRequestPatternBuilder;
-import com.sbg.bdd.wiremock.scoped.recording.builders.JournalMode;
 import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.EndpointConfig;
 import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.EndpointConfigRegistry;
 
@@ -74,7 +74,7 @@ public class WireMockScreenplayContext implements WireMockContext {
     public ReadableResource resolveInputResource(String fileName) {
         if (!inputResourceRoot.fallsWithin(fileName)) {
             File file = new File(fileName);
-            return new ReadableFileResource(new RootDirectoryResource(file.getParentFile()), file);
+            return new ReadableFileResource(new DirectoryResourceRoot("inputRoot", file.getParentFile()), file);
         } else {
             ResourceContainer personaRoot = (ResourceContainer) inputResourceRoot.resolveExisting(userInScope.getId());
             String scopePath = userInScope.getScene().getSceneIdentifier();

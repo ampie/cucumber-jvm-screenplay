@@ -1,14 +1,12 @@
 package com.sbg.bdd.screenplay.core.internal;
 
-import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.resource.ReadableResource;
+import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.actors.CastingDirector;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.util.NameConverter;
-
-import java.io.IOException;
 
 public class BaseCastingDirector implements CastingDirector {
     private ScreenPlayEventBus eventBus;

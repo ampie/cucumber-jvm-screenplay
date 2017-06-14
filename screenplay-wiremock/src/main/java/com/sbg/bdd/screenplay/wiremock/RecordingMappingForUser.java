@@ -3,16 +3,16 @@ package com.sbg.bdd.screenplay.wiremock;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.sbg.bdd.resource.ResourceContainer;
-import com.sbg.bdd.resource.file.RootDirectoryResource;
+import com.sbg.bdd.resource.file.DirectoryResourceRoot;
 import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.util.NameConverter;
+import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
 import com.sbg.bdd.wiremock.scoped.integration.HeaderName;
 import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
 import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedMappingBuilder;
 import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedRequestPatternBuilder;
-import com.sbg.bdd.wiremock.scoped.recording.builders.JournalMode;
 import com.sbg.bdd.wiremock.scoped.recording.builders.RecordingSpecification;
 import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.EndpointConfigRegistry;
 
@@ -60,7 +60,7 @@ public class RecordingMappingForUser {
             RecordingWireMockClient wireMock = getWireMock(scope);
             ExtendedRequestPatternBuilder requestPatternBuilder = new ExtendedRequestPatternBuilder(mappingBuilder.getRequestPatternBuilder());
             requestPatternBuilder.withHeader(HeaderName.ofTheCorrelationKey(), deriveCorrelationPath(scope));
-            wireMock.serveRecordedMappingsAt(recordingDirectory, requestPatternBuilder, priorityFor(scope));
+            wireMock.serveRecordedMappingsAt(recordingDirectory, requestPatternBuilder.build(), priorityFor(scope));
         }
     }
 
@@ -118,8 +118,8 @@ public class RecordingMappingForUser {
         }
     }
 
-    private RootDirectoryResource getAbsoluteRecordingDir() {
-        return new RootDirectoryResource(new File(getRecordingSpecification().getRecordingDirectory()));
+    private DirectoryResourceRoot getAbsoluteRecordingDir() {
+        return new DirectoryResourceRoot("absoluteDir", new File(getRecordingSpecification().getRecordingDirectory()));
     }
 
 

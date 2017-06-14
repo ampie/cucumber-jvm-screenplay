@@ -4,9 +4,6 @@ import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.scoped.GlobalScope
 import com.sbg.bdd.screenplay.wiremock.listeners.RecordingManagementListener
 import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient
-import org.apache.commons.lang3.StringUtils
-
-import java.io.File
 
 import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed

@@ -3,9 +3,6 @@ package com.sbg.bdd.screenplay.core.persona;
 import com.sbg.bdd.resource.ReadableResource;
 import com.sbg.bdd.resource.WritableResource;
 
-import java.io.File;
-import java.io.IOException;
-
 public interface PersonaClient<DATAOBJECT> {
     /**
      * Prepares the given persona for testing in the deployed environment.

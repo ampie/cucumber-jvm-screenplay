@@ -1,6 +1,7 @@
 package com.sbg.bdd.screenplay.core.internal;
 
-import com.sbg.bdd.screenplay.core.*;
+import com.sbg.bdd.screenplay.core.Consequence;
+import com.sbg.bdd.screenplay.core.Question;
 import com.sbg.bdd.screenplay.core.annotations.Step;
 import com.sbg.bdd.screenplay.core.util.AnnotatedTitle;
 import com.sbg.bdd.screenplay.core.util.NameConverter;

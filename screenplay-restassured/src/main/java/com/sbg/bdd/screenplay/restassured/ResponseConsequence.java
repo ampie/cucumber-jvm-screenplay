@@ -1,7 +1,6 @@
 package com.sbg.bdd.screenplay.restassured;
 
 import com.sbg.bdd.screenplay.core.*;
-import com.sbg.bdd.screenplay.core.annotations.Step;
 import com.sbg.bdd.screenplay.core.annotations.Subject;
 import com.sbg.bdd.screenplay.core.util.Fields;
 import io.restassured.assertion.BodyMatcher;
@@ -20,8 +19,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static com.sbg.bdd.screenplay.core.actors.OnStage.callActorToStage;
 
 public class ResponseConsequence extends BaseConsequence implements Consequence, ResponseSpecification {
     private ResponseSpecification specification;

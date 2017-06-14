@@ -1,7 +1,6 @@
 package com.sbg.bdd.android.screenplay.fileserver;
 
 import com.sbg.bdd.resource.ReadableResource;
-import com.sbg.bdd.resource.WritableResource;
 
 public class FileServerReadableResource extends FileServerResource implements ReadableResource {
     private boolean writable;

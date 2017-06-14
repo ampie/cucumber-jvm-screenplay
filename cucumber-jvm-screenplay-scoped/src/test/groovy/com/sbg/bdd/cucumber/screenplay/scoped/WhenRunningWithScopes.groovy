@@ -1,15 +1,8 @@
 package com.sbg.bdd.cucumber.screenplay.scoped
 
-import com.sbg.bdd.cucumber.screenplay.scoped.plugin.ScopingPlugin
-import com.sbg.bdd.resource.file.RootDirectoryResource
 import com.sbg.bdd.screenplay.core.annotations.ActorInvolvement
 import com.sbg.bdd.screenplay.core.annotations.SceneEventType
 import com.sbg.bdd.screenplay.core.internal.BaseActor
-import cucumber.runtime.*
-import cucumber.runtime.io.MultiLoader
-import cucumber.runtime.java.JavaBackend
-import groovy.json.JsonSlurper
-import spock.lang.Specification
 
 import static java.util.Arrays.asList
 

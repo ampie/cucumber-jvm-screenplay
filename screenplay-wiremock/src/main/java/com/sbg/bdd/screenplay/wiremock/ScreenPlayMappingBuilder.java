@@ -6,7 +6,8 @@ import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.DownstreamStub;
 import com.sbg.bdd.screenplay.core.annotations.ProducesAttachment;
 import com.sbg.bdd.screenplay.core.annotations.Step;
-import com.sbg.bdd.wiremock.scoped.recording.builders.*;
+import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedMappingBuilder;
+import com.sbg.bdd.wiremock.scoped.recording.builders.ResponseStrategy;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,7 +3,6 @@ implement recording on server
 implement stubmappinglogging on server
 
 implement Cucumber reporting on server
-    embedding
     scenarioOutline
     examples
 
@@ -32,6 +31,7 @@ implement Cucumber reporting on server
     result
     childStep
     childResult
+    embedding
 
 implement exchangelogging on server
 

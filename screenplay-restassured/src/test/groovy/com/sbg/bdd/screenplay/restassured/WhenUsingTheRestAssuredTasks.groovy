@@ -6,15 +6,12 @@ import com.github.tomakehurst.wiremock.core.Options
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.core.annotations.StepEventType
 import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
-import io.restassured.RestAssured
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.is
-import static io.restassured.RestAssured.with;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.givenThat
 import static com.sbg.bdd.screenplay.restassured.RestAssuredTasks.*
-import static org.hamcrest.Matchers.isEmptyOrNullString
+import static io.restassured.RestAssured.with
 
 class WhenUsingTheRestAssuredTasks extends WhenUsingRestAssured {
     ScopedWireMockServer server

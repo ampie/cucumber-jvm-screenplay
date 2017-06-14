@@ -4,8 +4,8 @@ import com.sbg.bdd.screenplay.core.Actor
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.core.actors.Performance
 import com.sbg.bdd.screenplay.scoped.GlobalScope
+import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode
 import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
-import com.sbg.bdd.wiremock.scoped.recording.builders.JournalMode
 
 import static OnStage.shineSpotlightOn
 import static OnStage.theActorInTheSpotlight

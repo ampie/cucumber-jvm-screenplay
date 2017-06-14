@@ -1,7 +1,6 @@
 package com.sbg.bdd.screenplay.core.internal;
 
 import com.sbg.bdd.resource.ResourceContainer;
-import com.sbg.bdd.resource.file.RootDirectoryResource;
 import com.sbg.bdd.screenplay.core.Memory;
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.actors.Cast;
@@ -11,8 +10,6 @@ import com.sbg.bdd.screenplay.core.events.SceneEvent;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.persona.properties.PropertiesPersonaClient;
-
-import java.io.File;
 
 public class BasePerformance implements Performance {
     private final String name

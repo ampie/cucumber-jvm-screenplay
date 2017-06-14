@@ -1,8 +1,8 @@
 package com.sbg.bdd.cucumber.screenplay.scoped;
 
-import com.sbg.bdd.cucumber.screenplay.core.formatter.ScreenPlayFormatter;
+import com.sbg.bdd.cucumber.common.MapParser;
+import com.sbg.bdd.cucumber.common.ScreenPlayFormatter;
 import com.sbg.bdd.cucumber.screenplay.scoped.plugin.CucumberPayloadProducingListener;
-import com.sbg.bdd.cucumber.screenplay.scoped.plugin.MapParser;
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 

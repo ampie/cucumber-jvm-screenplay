@@ -1,18 +1,14 @@
 package com.sbg.bdd.screenplay.wiremock
 
-import com.github.tomakehurst.wiremock.common.Json
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.scoped.GlobalScope
 import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
-import groovy.json.JsonSlurper
 
 import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.forRequestsFrom
 import static com.sbg.bdd.screenplay.wiremock.RequestStrategies.a
 import static com.sbg.bdd.wiremock.scoped.recording.strategies.CountMatcher.between
-import static com.sbg.bdd.wiremock.scoped.recording.strategies.ProxyStrategies.*
-import static com.sbg.bdd.wiremock.scoped.recording.strategies.ResponseBodyStrategies.returnTheBody
 
 class WhenVerifyingDownstreamInvocations extends WhenWorkingWithWireMock {
 

@@ -1,6 +1,10 @@
 package com.sbg.bdd.cucumber.screenplay.core.formatter;
 
-import gherkin.formatter.model.*;
+import com.sbg.bdd.cucumber.common.ReportingFormatter;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Scenario;
+import gherkin.formatter.model.ScenarioOutline;
+import gherkin.formatter.model.Step;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

@@ -1,10 +1,9 @@
 package com.sbg.bdd.screenplay.cucumber.java8;
 
 import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
-import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 import com.sbg.bdd.screenplay.core.events.SceneEvent;
 import com.sbg.bdd.screenplay.core.events.SceneEventCallback;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 
 import java.lang.reflect.Method;
 

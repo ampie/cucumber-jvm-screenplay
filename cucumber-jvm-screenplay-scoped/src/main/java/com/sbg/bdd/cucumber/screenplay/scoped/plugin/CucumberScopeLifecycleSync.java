@@ -10,7 +10,9 @@ import com.sbg.bdd.screenplay.core.internal.BaseActor;
 import com.sbg.bdd.screenplay.scoped.*;
 import gherkin.formatter.model.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class CucumberScopeLifecycleSync extends StepQueueingReportingFormatter {
@@ -254,4 +256,13 @@ public class CucumberScopeLifecycleSync extends StepQueueingReportingFormatter {
         return currentUri;
     }
 
+    @Override
+    public void childStep(Step step, Match match) {
+
+    }
+
+    @Override
+    public void childResult(Result result) {
+
+    }
 }

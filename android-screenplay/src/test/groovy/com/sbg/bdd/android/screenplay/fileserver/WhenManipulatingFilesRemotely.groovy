@@ -3,7 +3,7 @@ package com.sbg.bdd.android.screenplay.fileserver
 import spock.lang.Specification
 
 
-class When extends Specification {
+class WhenManipulatingFilesRemotely extends Specification {
     static FileServer server
     static File rootFile
 

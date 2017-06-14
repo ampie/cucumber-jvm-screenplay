@@ -1,23 +1,17 @@
 package com.sbg.bdd.screenplay.wiremock
 
-import com.sbg.bdd.resource.file.RootDirectoryResource
+import com.sbg.bdd.resource.file.DirectoryResourceRoot
 import com.sbg.bdd.screenplay.core.actors.Performance
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus
 import com.sbg.bdd.screenplay.core.internal.BaseCastingDirector
 import com.sbg.bdd.screenplay.core.internal.SimpleInstanceGetter
 import com.sbg.bdd.screenplay.core.persona.properties.PropertiesPersonaClient
 import com.sbg.bdd.screenplay.scoped.GlobalScope
-import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient
 import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.RemoteEndPointConfigRegistry
+import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import groovy.json.JsonOutput
-import okhttp3.Call
-import okhttp3.MediaType
-import okhttp3.OkHttpClient
-import okhttp3.Protocol
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.ResponseBody
+import okhttp3.*
 import spock.lang.Specification
 
 abstract class WhenWorkingWithWireMock extends Specification{
@@ -27,6 +21,8 @@ abstract class WhenWorkingWithWireMock extends Specification{
     def initializeWireMock(GlobalScope globalScope) {
         def wireMockServer = new ScopedWireMockServer()
         globalScope.remember(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT, new RecordingWireMockClient(wireMockServer))
+        wireMockServer.registerResourceRoot(Performance.OUTPUT_RESOURCE_ROOT,globalScope.recall(Performance.OUTPUT_RESOURCE_ROOT))
+        wireMockServer.registerResourceRoot(Performance.INPUT_RESOURCE_ROOT,globalScope.recall(Performance.INPUT_RESOURCE_ROOT))
         wireMockServer.start()
         wireMockServer
     }
@@ -39,10 +35,10 @@ abstract class WhenWorkingWithWireMock extends Specification{
 
     def  buildGlobalScopeWithoutStarting(String name, int runId,Class<?>... glue) {
         def markerFile = new File(Thread.currentThread().contextClassLoader.getResource("screenplay-wiremock-marker.txt").file)
-        def inputResourceRoot = new RootDirectoryResource(markerFile.getParentFile())
+        def inputResourceRoot = new DirectoryResourceRoot("inputRoot", markerFile.getParentFile())
         def outputResourceDir = new File(markerFile.getParentFile().getParent(), "output_resource_root")
         outputResourceDir.mkdirs();
-        def outputResourceRoot = new RootDirectoryResource(outputResourceDir)
+        def outputResourceRoot = new DirectoryResourceRoot("outputRoot", outputResourceDir)
         def eventBus = new ScreenPlayEventBus(new SimpleInstanceGetter())
         def personaClient = new PropertiesPersonaClient()
         def castingDirector = new BaseCastingDirector(eventBus, personaClient, inputResourceRoot)
@@ -74,7 +70,7 @@ abstract class WhenWorkingWithWireMock extends Specification{
 
         globalScope.remember(Performance.OUTPUT_RESOURCE_ROOT, outputResourceRoot)
         globalScope.remember(Performance.INPUT_RESOURCE_ROOT, inputResourceRoot)
-        globalScope.remember(WireMockScreenplayContext.JOURNAL_RESOURCE_ROOT, new RootDirectoryResource(new File('build', 'journal')))
+        globalScope.remember(WireMockScreenplayContext.JOURNAL_RESOURCE_ROOT, new DirectoryResourceRoot('journalRoot', new File('build', 'journal')))
         globalScope.remember(WireMockScreenplayContext.BASE_URL_OF_SERVICE_UNDER_TEST, 'http://service.com/under/test')
         globalScope
     }

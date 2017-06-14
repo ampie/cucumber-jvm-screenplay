@@ -8,7 +8,7 @@ import com.sbg.bdd.screenplay.core.annotations.SceneListener;
 import com.sbg.bdd.screenplay.core.util.Optional;
 import com.sbg.bdd.screenplay.wiremock.RecordingMappingForUser;
 import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
-import com.sbg.bdd.wiremock.scoped.recording.builders.JournalMode;
+import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
 
 import java.util.ArrayList;
 import java.util.List;

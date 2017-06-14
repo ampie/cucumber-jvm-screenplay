@@ -3,7 +3,6 @@ package com.sbg.bdd.screenplay.core
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.core.annotations.Step
 import com.sbg.bdd.screenplay.core.internal.BaseActor
-import com.sbg.bdd.screenplay.core.internal.BasePerformance
 
 import static OnStage.callActorToStage
 import static OnStage.raiseTheCurtain

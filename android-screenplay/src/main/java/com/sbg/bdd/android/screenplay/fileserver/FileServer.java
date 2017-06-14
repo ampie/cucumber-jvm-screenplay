@@ -3,7 +3,6 @@ package com.sbg.bdd.android.screenplay.fileserver;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.*;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;

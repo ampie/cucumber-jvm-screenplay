@@ -1,15 +1,7 @@
 package com.sbg.bdd.screenplay.restassured;
 
-import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.annotations.Scene;
 import org.junit.Test;
-
-import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.*;
-import static com.sbg.bdd.screenplay.restassured.RestAssuredTasks.*;
-import static io.restassured.RestAssured.with;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.core.Is.is;
 
 public class ATest {
     @Test()

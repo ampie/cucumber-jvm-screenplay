@@ -4,7 +4,6 @@ import com.sbg.bdd.screenplay.core.annotations.ActorInvolvement;
 import com.sbg.bdd.screenplay.core.events.ActorEvent;
 import com.sbg.bdd.screenplay.core.events.ActorEventCallback;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.lang.reflect.Method;
 

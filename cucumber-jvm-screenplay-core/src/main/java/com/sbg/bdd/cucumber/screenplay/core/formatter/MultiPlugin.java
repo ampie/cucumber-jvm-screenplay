@@ -1,5 +1,6 @@
 package com.sbg.bdd.cucumber.screenplay.core.formatter;
 
+import com.sbg.bdd.cucumber.common.ReportingFormatter;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;
@@ -13,6 +14,16 @@ public abstract class MultiPlugin implements ReportingFormatter {
 
     public MultiPlugin(ReportingFormatter ... delegates) {
         this.delegates= Arrays.asList(delegates);
+    }
+
+    @Override
+    public void childStep(Step step, Match match) {
+
+    }
+
+    @Override
+    public void childResult(Result result) {
+
     }
 
     @Override

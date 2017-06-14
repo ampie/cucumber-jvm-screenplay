@@ -12,11 +12,10 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.RequestSpecification;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Map;
 
-import static com.sbg.bdd.screenplay.core.actors.OnStage.*;
+import static com.sbg.bdd.screenplay.core.actors.OnStage.shineSpotlightOn;
+import static com.sbg.bdd.screenplay.core.actors.OnStage.theActorInTheSpotlight;
 
 public class RestAssuredTasks {
 

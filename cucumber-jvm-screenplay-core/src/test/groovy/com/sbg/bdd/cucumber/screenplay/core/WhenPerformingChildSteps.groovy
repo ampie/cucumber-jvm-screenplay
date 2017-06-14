@@ -1,7 +1,7 @@
 package com.sbg.bdd.cucumber.screenplay.core
 
 import com.sbg.bdd.cucumber.screenplay.core.formatter.SimpleScreenplayPlugin
-import com.sbg.bdd.resource.file.RootDirectoryResource
+import com.sbg.bdd.resource.file.DirectoryResourceRoot
 import cucumber.runtime.*
 import cucumber.runtime.io.MultiLoader
 import cucumber.runtime.java.JavaBackend
@@ -18,7 +18,7 @@ abstract class WhenPerformingChildSteps extends Specification {
         def markerFile = new File(classLoader.getResource("cucumber-jvm-screenplay-core-marker.txt").file)
         def outputDir = new File(markerFile.getParentFile().getParentFile().getParentFile(), "screenplay_output")
         outputDir.mkdirs()
-        SamplePerformanceBuilder.useResourceRoots(new RootDirectoryResource(markerFile.getParentFile()), new RootDirectoryResource(outputDir))
+        SamplePerformanceBuilder.useResourceRoots(new DirectoryResourceRoot('input', markerFile.getParentFile()), new DirectoryResourceRoot('output', outputDir))
         def resourceLoader = new MultiLoader(classLoader);
         def args = new ArrayList<String>();
         args.add("--plugin");

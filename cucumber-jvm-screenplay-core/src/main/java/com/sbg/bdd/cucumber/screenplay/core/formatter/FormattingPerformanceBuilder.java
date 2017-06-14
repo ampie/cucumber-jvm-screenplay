@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+
 public abstract class FormattingPerformanceBuilder {
     private static ObjectFactory objectFactory;
     private static Map<String, Object> backendState;

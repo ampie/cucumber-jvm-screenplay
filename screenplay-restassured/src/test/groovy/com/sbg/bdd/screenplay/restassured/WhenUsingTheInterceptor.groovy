@@ -1,22 +1,14 @@
 package com.sbg.bdd.screenplay.restassured
 
-import com.sbg.bdd.resource.file.RootDirectoryResource
 import com.sbg.bdd.screenplay.core.actors.OnStage
-import com.sbg.bdd.screenplay.core.internal.BasePerformance
-import com.sbg.bdd.screenplay.wiremock.listeners.ScopeManagementListener
-import com.sbg.bdd.wiremock.scoped.ScopedWireMock
-import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import com.sbg.bdd.wiremock.scoped.integration.BaseDependencyInjectorAdaptor
-import com.sbg.bdd.wiremock.scoped.integration.BaseWireMockCorrelationState
-import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory
 import com.sbg.bdd.wiremock.scoped.integration.HeaderName
-import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient
+import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import io.restassured.RestAssured
 import io.restassured.filter.FilterContext
 import io.restassured.http.Header
 import io.restassured.http.Headers
 import io.restassured.response.Response
-import spock.lang.Specification
 
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed
 

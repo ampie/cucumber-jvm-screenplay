@@ -1,7 +1,6 @@
 package com.sbg.bdd.android.screenplay.asset;
 
 import android.content.res.AssetManager;
-
 import com.sbg.bdd.resource.Resource;
 
 

@@ -1,6 +1,6 @@
 package com.sbg.bdd.cucumber.screenplay.core;
 
-import com.sbg.bdd.cucumber.screenplay.core.formatter.ScreenPlayFormatter;
+import com.sbg.bdd.cucumber.common.ScreenPlayFormatter;
 import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.Performable;
 import com.sbg.bdd.screenplay.core.Task;

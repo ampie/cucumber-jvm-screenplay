@@ -8,8 +8,6 @@ import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.events.SceneEvent;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 
-import java.io.File;
-
 public class GlobalScope extends UserTrackingScope implements Performance {
     private final ScreenPlayEventBus scopeEventBus;
     private Cast cast;

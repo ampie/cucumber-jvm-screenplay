@@ -13,6 +13,10 @@ subprojects {
     repositories {
         mavenLocal()
         maven { url "http://repo.maven.apache.org/maven2" }
+        maven {
+            name 'releases'
+            url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/releases/'
+        }
     }
 
     group = 'com.sbg.bdd'
@@ -39,6 +43,12 @@ subprojects {
         archives sourcesJar, javadocJar
     }
     publishing {
+        repositories {
+            maven {
+                name 'releases'
+                url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/releases/'
+            }
+        }
         publications {
             mavenJava(MavenPublication) {
 

@@ -17,6 +17,10 @@ subprojects {
             name 'releases'
             url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/releases/'
         }
+        maven {
+            name 'snapshots'
+            url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/snapshots/'
+        }
     }
 
     group = 'com.sbg.bdd'

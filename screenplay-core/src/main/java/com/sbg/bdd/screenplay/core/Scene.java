@@ -4,7 +4,7 @@ import com.sbg.bdd.screenplay.core.actors.Performance;
 
 import java.util.Map;
 
-public interface Scene {
+public interface Scene extends Memory {
     String PARENT_SCENE = "parentScene";
 
     String getSceneIdentifier();
@@ -20,10 +20,6 @@ public interface Scene {
     void dismissActorFromStage(Actor actor);
 
     String getName();
-
-    <T> T recall(String variableName);
-
-    void remember(String variableName, Object value);
 
     ActorOnStage shineSpotlightOn(Actor actor);
 

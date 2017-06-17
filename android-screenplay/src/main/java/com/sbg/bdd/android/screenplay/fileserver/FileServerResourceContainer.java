@@ -3,13 +3,13 @@ package com.sbg.bdd.android.screenplay.fileserver;
 import com.sbg.bdd.resource.Resource;
 import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.resource.ResourceFilter;
+import com.sbg.bdd.resource.ResourceSupport;
 import com.sbg.bdd.resource.file.DirectoryResource;
 
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static com.sbg.bdd.resource.file.DirectoryResource.flatten;
 
 public class FileServerResourceContainer extends FileServerResource implements ResourceContainer {
     private Map<String, FileServerResource> children;
@@ -50,17 +50,17 @@ public class FileServerResourceContainer extends FileServerResource implements R
 
     @Override
     public Resource[] list(ResourceFilter filter) {
-        return DirectoryResource.list(filter, getChildren(), this);
+        return ResourceSupport.list(filter, getChildren(), this);
     }
 
     @Override
     public Resource resolveExisting(String... segments) {
-        return DirectoryResource.resolveExisting(this, segments);
+        return ResourceSupport.resolveExisting(this, segments);
     }
 
     @Override
     public FileServerResourceContainer resolvePotentialContainer(String... segments) {
-        String[] flattened = flatten(segments);
+        String[] flattened = ResourceSupport.flatten(segments);
         FileServerResource previous = resolvePotential(flattened, flattened.length);
         if (previous instanceof FileServerResourceContainer) {
             return (FileServerResourceContainer) previous;
@@ -71,7 +71,7 @@ public class FileServerResourceContainer extends FileServerResource implements R
 
     @Override
     public FileServerWritableResource resolvePotential(String... segments) {
-        String[] flattened = flatten(segments);
+        String[] flattened = ResourceSupport.flatten(segments);
         FileServerResource previous = resolvePotential(flattened, flattened.length - 1);
         if (previous instanceof FileServerWritableResource) {
             return (FileServerWritableResource) previous;

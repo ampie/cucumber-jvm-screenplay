@@ -56,7 +56,7 @@ public class ScopeManagementListener {
             CorrelationState state = userInScope.recall(WireMockScreenplayContext.CORRELATION_STATE);
             WireMockCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
             currentCorrelationState.clear();
-            currentCorrelationState.set(state.getCorrelationPath(), Boolean.TRUE.equals(userInScope.recall(WireMockScreenplayContext.PROXY_UNMAPPED_ENDPOINGS)));
+            currentCorrelationState.set(state.getCorrelationPath(), Boolean.TRUE.equals(userInScope.recall(WireMockScreenplayContext.PROXY_UNMAPPED_ENDPOINTS)));
             for (Map.Entry<String, Integer> entry : state.getServiceInvocationCounts().entrySet()) {
                 currentCorrelationState.initSequenceNumberFor(entry.getKey(), entry.getValue());
             }

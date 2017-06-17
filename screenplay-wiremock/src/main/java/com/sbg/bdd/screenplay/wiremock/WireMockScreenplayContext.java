@@ -34,10 +34,14 @@ public class WireMockScreenplayContext implements WireMockContext {
     public static final String REQUESTS_TO_RECORD_OR_PLAYBACK = "requestsToRecordOrPlayback";
     public static final String BASE_URL_OF_SERVICE_UNDER_TEST = "baseUrlOfServiceUnderTest";
     public static final String PERSONA_CLIENT = "personaClient";
-    public static final String JOURNAL_RESOURCE_ROOT = "journalRoot";
+    public static final String JOURNAL_RESOURCE_ROOT = "journalResourceRoot";
     public static final String CORRELATION_STATE = "correlationState";
-    public static final String PROXY_UNMAPPED_ENDPOINGS = "proxyUnmappedEndpoings";
-
+    public static final String PROXY_UNMAPPED_ENDPOINTS = "proxyUnmappedEndpoints";
+    public static final String JOURNAL_MODE = "journalMode";
+    public static final String WIRE_MOCK_ADMIN = "wireMockAdmin";
+    public static final String WIRE_MOCK_PUBLIC_ADDRESS = "wireMockPublicAddress";
+    public static final String RUN_ID = "runId";
+    
     public static Integer calculatePriorityFor(int scopeLevel, int localLevel) {
         return ((MAX_LEVELS - scopeLevel) * PRIORITIES_PER_LEVEL) + localLevel;
     }

@@ -25,11 +25,11 @@ class WhenBuildingReponseBodies extends WhenWorkingWithWireMock{
                 a(PUT).to("/home/path").to(returnTheFile("somefile.json"))
         )
         then:
-        def mappings =wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.enter(johnSmith).getScopePath())
+        def mappings =wireMockServer.getMappingsInScope(CorrelationPath.of( globalScope.enter(johnSmith)))
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['urlPath'] == '/home/path'
-        mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
+        mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == publicAddress + '/'+wireMockServer.port()+'/TestRun/5/.*John_Smith'
         mapping['response']['headers']['Content-Type'] == 'application/json'
         mapping['response']['headers']['foo-header'] == 'bar-header-value'
         mapping['response']['body'] == "{\"foo\":\"bar\"}"
@@ -48,11 +48,11 @@ class WhenBuildingReponseBodies extends WhenWorkingWithWireMock{
                         merge(theTemplate("some_template.xml").with("value", "thisValue").andReturnIt()))
         )
         then:
-        def mappings =wireMockServer.getMappingsInScope("localhost/"+wireMockServer.port()+"/5/" + globalScope.enter(johnSmith).getScopePath())
+        def mappings =wireMockServer.getMappingsInScope(CorrelationPath.of( globalScope.enter(johnSmith)))
         mappings.size() == 1
         def mapping = new JsonSlurper().parseText(Json.write(mappings[0]))
         mapping['request']['urlPath'] == '/home/path'
-        mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == 'localhost/'+wireMockServer.port()+'/5/TestRun/.*John_Smith'
+        mapping['request']['headers']['x-sbg-messageTraceId']['matches'] == publicAddress + '/'+wireMockServer.port()+'/TestRun/5/.*John_Smith'
         mapping['response']['headers']['Content-Type'] == 'text/xml'
         mapping['response']['headers']['foo-header'] == 'bar-header-value'
         mapping['response']['body'] == "<root>thisValue</root>"

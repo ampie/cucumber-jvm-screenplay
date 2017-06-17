@@ -101,7 +101,7 @@ public class BaseActorOnStage implements ActorOnStage {
 
     @Override
     public void remember(Object value) {
-        memory.remember(value);
+        memory.remember(value.getClass().getName(), value);
     }
 
     @Override

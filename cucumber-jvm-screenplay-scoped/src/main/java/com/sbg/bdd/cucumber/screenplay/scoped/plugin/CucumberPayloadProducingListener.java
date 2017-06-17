@@ -1,6 +1,7 @@
 package com.sbg.bdd.cucumber.screenplay.scoped.plugin;
 
 import com.sbg.bdd.screenplay.core.Scene;
+import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
 import com.sbg.bdd.screenplay.core.annotations.SceneListener;
 import com.sbg.bdd.screenplay.core.annotations.StepEventType;
@@ -9,6 +10,7 @@ import com.sbg.bdd.screenplay.core.events.SceneEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.core.internal.Embeddings;
 import com.sbg.bdd.screenplay.core.internal.ScreenplayStepMethodInfo;
+import com.sbg.bdd.screenplay.scoped.FunctionalScope;
 import com.sbg.bdd.screenplay.scoped.ScenarioScope;
 import gherkin.deps.net.iharder.Base64;
 import gherkin.formatter.Argument;
@@ -28,9 +30,10 @@ import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
 public abstract class CucumberPayloadProducingListener {
 
     protected abstract void scopeStarted(Scene scene);
-    protected abstract void featureStarted(Scene scene, Map<String, Object> map);
 
-    protected abstract void scenarioPhaseEntered(Scene scene, Map<String, Object> payload);
+    protected abstract void featureStarted(FunctionalScope scene, Map<String, Object> map);
+
+    protected abstract void scenarioPhaseEntered(ScenarioScope scene, Map<String, Object> payload);
 
     protected abstract void stepStarted(StepEvent event, Map<String, Object> payload);
 
@@ -42,7 +45,7 @@ public abstract class CucumberPayloadProducingListener {
         if (event.getScene() instanceof ScenarioScope) {
             Map<String, Object> map = sync.getCurrentFeatureElement().toMap();
             map.put("method", "featureElement");
-            scenarioPhaseEntered(event.getScene(), map);
+            scenarioPhaseEntered((ScenarioScope) event.getScene(), map);
         }
     }
 
@@ -54,29 +57,31 @@ public abstract class CucumberPayloadProducingListener {
             Map<String, Object> map = sync.getCurrentFeature().toMap();
             map.put("uri", sync.getCurrentUri());
             map.put("method", "feature");
-            featureStarted(scene, map);
-        }else{
+            featureStarted((FunctionalScope) scene, map);
+        } else {
             scopeStarted(scene);
         }
     }
 
 
-
     @StepListener(eventTypes = StepEventType.STARTED)
     public void registerStep(StepEvent event) {
-        Map<String, Object> stepAndMatch;
-        if (event.getStepLevel() == 0) {
-            GherkinStepMethodInfo mi = (GherkinStepMethodInfo) event.getInfo();
-            stepAndMatch = mi.getStep().toMap();
-            stepAndMatch.put("match", mi.getMatch().toMap());
-            stepAndMatch.put("method", "stepAndMatch");
-        } else {
-            Step step = new Step(null, event.getInfo().getKeyword(), event.getInfo().getName(), null, null, null);
-            List<Argument> arguments = extractArguments(event.getInfo().getNameExpression(), ((ScreenplayStepMethodInfo) event.getInfo()).getImplementation());
-            Match match = new Match(arguments, event.getInfo().getLocation());
-            stepAndMatch = step.toMap();
-            stepAndMatch.put("match", match.toMap());
-            stepAndMatch.put("method", "childStepAndMatch");
+        Map<String, Object> stepAndMatch = null;
+        if (OnStage.theCurrentScene() instanceof ScenarioScope) {
+            //Don't generate events for features or capabilities
+            if (event.getStepLevel() == 0 && event.getInfo() instanceof GherkinStepMethodInfo) {
+                GherkinStepMethodInfo mi = (GherkinStepMethodInfo) event.getInfo();
+                stepAndMatch = mi.getStep().toMap();
+                stepAndMatch.put("match", mi.getMatch().toMap());
+                stepAndMatch.put("method", "stepAndMatch");
+            } else {
+                Step step = new Step(null, event.getInfo().getKeyword(), event.getInfo().getName(), null, null, null);
+                List<Argument> arguments = extractArguments(event.getInfo().getNameExpression(), ((ScreenplayStepMethodInfo) event.getInfo()).getImplementation());
+                Match match = new Match(arguments, event.getInfo().getLocation());
+                stepAndMatch = step.toMap();
+                stepAndMatch.put("match", match.toMap());
+                stepAndMatch.put("method", "childStepAndMatch");
+            }
         }
         stepStarted(event, stepAndMatch);
     }
@@ -87,14 +92,14 @@ public abstract class CucumberPayloadProducingListener {
         if (event.getStepLevel() == 0) {
             map.put("method", "result");
         } else {
-            List<Map<String,Object>> embeddings = new ArrayList<>();
-            for (Pair<String, byte[]> embedding : Embeddings.producedBy(((ScreenplayStepMethodInfo)event.getInfo()).getImplementation())) {
+            List<Map<String, Object>> embeddings = new ArrayList<>();
+            for (Pair<String, byte[]> embedding : Embeddings.producedBy(((ScreenplayStepMethodInfo) event.getInfo()).getImplementation())) {
                 HashMap<String, Object> embeddingMap = new HashMap<>();
-                embeddingMap.put("mime_type",embedding.getKey());
+                embeddingMap.put("mime_type", embedding.getKey());
                 embeddingMap.put("data", Base64.encodeBytes(embedding.getValue()));
                 embeddings.add(embeddingMap);
             }
-            map.put("embeddings",embeddings);
+            map.put("embeddings", embeddings);
             map.put("method", "childResult");
         }
         stepCompleted(event, map);

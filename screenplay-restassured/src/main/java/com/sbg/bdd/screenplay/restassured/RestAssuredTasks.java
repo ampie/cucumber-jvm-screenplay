@@ -4,102 +4,59 @@ import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Question;
 import com.sbg.bdd.screenplay.core.Task;
-import com.sbg.bdd.screenplay.core.annotations.Step;
 import io.restassured.RestAssured;
-import io.restassured.config.RestAssuredConfig;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
-import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.RequestSpecification;
 
-import java.util.Map;
-
-import static com.sbg.bdd.screenplay.core.actors.OnStage.shineSpotlightOn;
 import static com.sbg.bdd.screenplay.core.actors.OnStage.theActorInTheSpotlight;
+import static io.restassured.RestAssured.with;
 
 public class RestAssuredTasks {
+    public static interface HttpTask extends Task {
+        HttpTask to(String uri);
+    }
 
     public static final String LAST_RESPONSE = "lastResponse";
 
-    public static Task get(final String urii, final RequestSpecification spec) {
-        return new Task() {
-            String uri= getUriAndParams();
-
-            private String getUriAndParams() {
-                Map<String, String> queryParams = ((FilterableRequestSpecification) spec).getQueryParams();
-                if(queryParams.isEmpty()) {
-                    return urii;
-                }else if(queryParams.size()==1){
-                    return urii + " and parameter: " + queryParams;
-                }else{
-                    return urii + " and parameters: " + queryParams;
-                }
-            }
-
-            @Override
-            @Step("send a GET request to #uri")
-            public <T extends Actor> T performAs(T actor) {
-                ActorOnStage actorOnStage = shineSpotlightOn(actor);
-                Response response = spec.config(RestAssuredConfig.config())
-                        .filter(new CorrelationFilter()).get(urii);
-                actorOnStage.remember(LAST_RESPONSE, response);
-                return actor;
-            }
-        };
+    public static Task get(final String uri, final RequestSpecification spec) {
+        return new GetTask(uri, spec);
     }
-    public static Task put(final String urii, final RequestSpecification spec) {
-        return new Task() {
-            String uri=urii;
-            String body=((FilterableRequestSpecification)spec).getBody().toString();
-            @Override
-            @Step("send a PUT request to #uri with body '#body'")
-            public <T extends Actor> T performAs(T actor) {
-                ActorOnStage actorOnStage = shineSpotlightOn(actor);
-                Response response = spec.config(RestAssuredConfig.config())
-                        .filter(new CorrelationFilter())
-                        .put(uri);
-                actorOnStage.remember(LAST_RESPONSE, response);
-                return actor;
-            }
-        };
+
+    public static Task get(final String uri) {
+        return new GetTask(uri);
     }
-    public static Task post(final String urii, final RequestSpecification spec) {
-        return new Task() {
-            String uri=urii;
-            String body=((FilterableRequestSpecification)spec).getBody().toString();
-            @Override
-            @Step("send a POST request to #uri with body '#body'")
-            public <T extends Actor> T performAs(T actor) {
-                ActorOnStage actorOnStage = shineSpotlightOn(actor);
-                Response response = spec.config(RestAssuredConfig.config())
-                        .filter(new CorrelationFilter()).post(uri);
-                actorOnStage.remember(LAST_RESPONSE, response);
-                return actor;
-            }
-        };
+
+    public static HttpTask get() {
+        return new GetTask();
+    }
+
+    public static Task put(final String uri, final RequestSpecification spec) {
+        return new PutTask(uri, spec);
+    }
+
+    public static HttpTask  put(Object payload) {
+        return new PutTask(with().body(payload));
+    }
+
+    public static Task post(final String uri, final RequestSpecification spec) {
+        return new PostTask(uri, spec);
+    }
+    public static HttpTask post(Object payload) {
+        return new PostTask(with().body(payload));
     }
 
 
     public static Task delete(final String urii, final RequestSpecification spec) {
-        return new Task() {
-            String uri=urii;
-            @Override
-            @Step("send a DELETE request to #uri")
-            public <T extends Actor> T performAs(T actor) {
-                ActorOnStage actorOnStage = shineSpotlightOn(actor);
-                Response response = spec.config(RestAssuredConfig.config())
-                        .filter(new CorrelationFilter()).delete(uri);
-                actorOnStage.remember(LAST_RESPONSE, response);
-                return actor;
-            }
-        };
+        return new DeleteTask(urii, spec);
     }
 
     public static void thenFor(Actor actor, ResponseConsequence... consequences) {
         actor.useKeyword("Then");
         actor.should(consequences);
     }
-    public static <T> Question<T> bodyAs(final Class<T> clss){
+
+    public static <T> Question<T> bodyAs(final Class<T> clss) {
         return new Question<T>() {
             @Override
             public T answeredBy(Actor actor) {
@@ -123,6 +80,7 @@ public class RestAssuredTasks {
     public static ResponseConsequence expect() {
         return new ResponseConsequence(RestAssured.expect());
     }
+
     public static ResponseConsequence assertThat() {
         return new ResponseConsequence(RestAssured.expect());
     }

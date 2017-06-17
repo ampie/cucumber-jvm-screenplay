@@ -5,6 +5,8 @@ import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Scene;
 
+import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed;
+
 public class OnStage {
 
     private static final ThreadLocal<Performance> performance = new ThreadLocal<>();
@@ -21,9 +23,15 @@ public class OnStage {
     public static ActorOnStage shineSpotlightOn(Actor actor) {
         return theCurrentScene().shineSpotlightOn(actor);
     }
+    public static ActorOnStage shineSpotlightOn(String name) {
+        return theCurrentScene().shineSpotlightOn(actorNamed(name));
+    }
 
     public static ActorOnStage callActorToStage(Actor actor) {
         return performance().currentScene().callActorToStage(actor);
+    }
+    public static ActorOnStage callActorToStage(String name) {
+        return performance().currentScene().callActorToStage(actorNamed(name));
     }
 
     public static void dismissActorFromStage(Actor actor) {

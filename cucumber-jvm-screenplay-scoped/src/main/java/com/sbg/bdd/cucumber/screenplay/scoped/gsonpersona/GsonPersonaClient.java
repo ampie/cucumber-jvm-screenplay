@@ -9,12 +9,18 @@ import gherkin.deps.com.google.gson.JsonParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 public class GsonPersonaClient implements PersonaClient<JsonObject> {
 
     @Override
     public Persona preparePersona(String personaName, ReadableResource file) {
         return readPersona(personaName, file);
+    }
+
+    @Override
+    public Persona<JsonObject> preparePersona(String name, ReadableResource personaFile, Map<String, Object> loginContext) {
+        return readPersona(name, personaFile);
     }
 
     private Persona readPersona(String name, ReadableResource file) {

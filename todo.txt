@@ -1,4 +1,3 @@
-implement recording on server
 
 implement stubmappinglogging on server
 
@@ -9,7 +8,6 @@ implement Cucumber reporting on server
 implement playback on server
 
 NB!!! include the original URL of a service as part of the header and mapping criteria to avoid overlapping paths This causes nasty recursion currently
-get the global journal to work again
 implement file reading and templating on server
 implement implement Resource API on WireMOck\s HTTP (GET/PUT)
 
@@ -21,6 +19,8 @@ Read output files from android using ADB
 log screenshots as embeddings - make this configurable
 
 Done:
+get the global journal to work again
+implement recording on server
 implement Cucumber reporting on server
     uri
     feature

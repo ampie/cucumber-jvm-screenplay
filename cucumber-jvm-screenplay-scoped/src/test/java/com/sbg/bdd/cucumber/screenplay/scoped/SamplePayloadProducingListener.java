@@ -5,6 +5,9 @@ import com.sbg.bdd.cucumber.common.ScreenPlayFormatter;
 import com.sbg.bdd.cucumber.screenplay.scoped.plugin.CucumberPayloadProducingListener;
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
+import com.sbg.bdd.screenplay.scoped.FunctionalScope;
+import com.sbg.bdd.screenplay.scoped.ScenarioScope;
+import com.sun.org.apache.xpath.internal.functions.Function;
 
 import java.io.IOException;
 import java.util.Map;
@@ -17,7 +20,7 @@ public class SamplePayloadProducingListener extends CucumberPayloadProducingList
     }
 
     @Override
-    protected void scenarioPhaseEntered(Scene scene, Map<String, Object> payload) {
+    protected void scenarioPhaseEntered(ScenarioScope scene, Map<String, Object> payload) {
         if (formatter != null) {
             formatter.replayFeatureElement(payload);
         }
@@ -30,7 +33,7 @@ public class SamplePayloadProducingListener extends CucumberPayloadProducingList
     }
 
     @Override
-    protected void featureStarted(Scene scene, Map<String, Object> map) {
+    protected void featureStarted(FunctionalScope scene, Map<String, Object> map) {
         if (formatter != null) {
             formatter.replayFeature(map);
         }

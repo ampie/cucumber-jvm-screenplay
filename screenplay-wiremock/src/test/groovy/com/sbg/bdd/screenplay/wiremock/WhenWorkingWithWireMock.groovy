@@ -17,10 +17,15 @@ import spock.lang.Specification
 abstract class WhenWorkingWithWireMock extends Specification{
     public static final int MAX_LEVELS = 10;
     public static final int PRIORITIES_PER_LEVEL = 10;
+
     static final int EVERYBODY_PRIORITY_DECREMENT = PRIORITIES_PER_LEVEL / 2;
+    def publicAddress
+
     def initializeWireMock(GlobalScope globalScope) {
         def wireMockServer = new ScopedWireMockServer()
-        globalScope.remember(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT, new RecordingWireMockClient(wireMockServer))
+        publicAddress = new IpHelper().findFirstNonExcludedNetworkInterface()
+
+        WireMockMemories.rememberFor(globalScope).toUseWireMock(wireMockServer).withPublicAddress(publicAddress)
         wireMockServer.registerResourceRoot(Performance.OUTPUT_RESOURCE_ROOT,globalScope.recall(Performance.OUTPUT_RESOURCE_ROOT))
         wireMockServer.registerResourceRoot(Performance.INPUT_RESOURCE_ROOT,globalScope.recall(Performance.INPUT_RESOURCE_ROOT))
         wireMockServer.start()
@@ -64,14 +69,14 @@ abstract class WhenWorkingWithWireMock extends Specification{
             }
         }
         def globalScope = new GlobalScope(name, castingDirector, eventBus)
-        globalScope.remember(WireMockScreenplayContext.ENDPOINT_CONFIG_REGISTRY, new RemoteEndPointConfigRegistry(httpMock, 'http://localhost:8080/base'))
-        globalScope.remember(WireMockScreenplayContext.PERSONA_CLIENT, personaClient)
-        globalScope.remember('runId', runId)
-
-        globalScope.remember(Performance.OUTPUT_RESOURCE_ROOT, outputResourceRoot)
-        globalScope.remember(Performance.INPUT_RESOURCE_ROOT, inputResourceRoot)
-        globalScope.remember(WireMockScreenplayContext.JOURNAL_RESOURCE_ROOT, new DirectoryResourceRoot('journalRoot', new File('build', 'journal')))
-        globalScope.remember(WireMockScreenplayContext.BASE_URL_OF_SERVICE_UNDER_TEST, 'http://service.com/under/test')
+        WireMockMemories.rememberFor(globalScope)
+            .toUseThePersonaClient(personaClient)
+            .theRunId(runId)
+            .toWriteResourcesTo(outputResourceRoot)
+            .toReadResourcesFrom(inputResourceRoot)
+            .toUseTheJournalAt(new DirectoryResourceRoot('journalRoot', new File('build', 'journal')))
+            .toPointTo('http://service.com/under/test')
+              .toUseTheEndpointConfigRegistry(new RemoteEndPointConfigRegistry(httpMock, 'http://localhost:8080/base'))
         globalScope
     }
 }

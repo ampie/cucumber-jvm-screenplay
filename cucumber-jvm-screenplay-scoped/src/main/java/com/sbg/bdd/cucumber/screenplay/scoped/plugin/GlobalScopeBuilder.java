@@ -8,6 +8,7 @@ import com.sbg.bdd.screenplay.core.internal.InstanceGetter;
 import com.sbg.bdd.screenplay.core.internal.SimpleInstanceGetter;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.util.Fields;
+import com.sbg.bdd.screenplay.core.util.ScreenplayMemories;
 import com.sbg.bdd.screenplay.scoped.GlobalScope;
 import cucumber.api.java.ObjectFactory;
 import cucumber.runtime.ClassFinder;
@@ -22,13 +23,12 @@ import java.util.*;
 public abstract class GlobalScopeBuilder {
     private GlobalScope globalScope;
 
-    public GlobalScopeBuilder(String name, ResourceContainer inputResourceRoot,PersonaClient personaClient, Class ... extraClasses) {
+    public GlobalScopeBuilder(String name, ResourceContainer inputResourceRoot, PersonaClient personaClient, Class... extraClasses) {
         if (!(OnStage.performance() instanceof GlobalScope)) {
             Map<String, Object> backendState = Fields.of(JavaBackend.INSTANCE.get()).asMap();
             final ObjectFactory objectFactory = (ObjectFactory) backendState.get("objectFactory");
             for (Class aClass : extraClasses) {
-            objectFactory.addClass(aClass);
-
+                objectFactory.addClass(aClass);
             }
             RuntimeGlue glue = (RuntimeGlue) backendState.get("glue");
             ClassFinder classFinder = (ClassFinder) backendState.get("classFinder");
@@ -36,7 +36,7 @@ public abstract class GlobalScopeBuilder {
                 @Override
                 public <T> T getInstance(Class<T> type) {
                     T instance = objectFactory.getInstance(type);
-                    return instance==null?super.getInstance(type):instance;
+                    return instance == null ? super.getInstance(type) : instance;
                 }
             };
             ScreenPlayEventBus scopeEventBus = new ScreenPlayEventBus(objectFactory1);
@@ -47,11 +47,10 @@ public abstract class GlobalScopeBuilder {
                 if (method != null) {
                     Collection<Class<?>> descendants = classFinder.getDescendants(Object.class, method.getDeclaringClass().getPackage().getName());
                     for (Class<?> descendant : descendants) {
-                        try{
+                        try {
                             descendant.getConstructor();
                             classes.add(descendant);
-                        }catch (Exception e){
-
+                        } catch (Exception e) {
                         }
                     }
                 }
@@ -59,6 +58,9 @@ public abstract class GlobalScopeBuilder {
             classes.addAll(Arrays.<Class<?>>asList(extraClasses));
             scopeEventBus.scanClasses(classes);
             globalScope = new GlobalScope(name, new BaseCastingDirector(scopeEventBus, personaClient, inputResourceRoot), scopeEventBus);
+            ScreenplayMemories.rememberFor(globalScope.getEverybodyScope())
+                    .toReadResourcesFrom(inputResourceRoot)
+                    .toUseThePersonaClient(personaClient);
             OnStage.present(globalScope);
         }
 

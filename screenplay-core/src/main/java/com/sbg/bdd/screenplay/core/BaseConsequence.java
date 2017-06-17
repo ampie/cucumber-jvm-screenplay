@@ -2,8 +2,6 @@ package com.sbg.bdd.screenplay.core;
 
 
 import com.sbg.bdd.screenplay.core.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class BaseConsequence<T> implements Consequence<T> {
 
@@ -13,8 +11,6 @@ public abstract class BaseConsequence<T> implements Consequence<T> {
     protected Optional<Performable> optionalPrecondition = Optional.absent();
     protected Optional<String> explanation = Optional.absent();
     protected Optional<String> subjectText = Optional.absent();
-
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     protected Error errorFrom(Throwable actualError) {
         if (actualError instanceof Error) {

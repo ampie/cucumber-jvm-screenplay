@@ -1,7 +1,7 @@
 package com.sbg.bdd.screenplay.core;
 
 
-public interface ActorOnStage extends Memory {
+public interface ActorOnStage extends LayeredMemory {
     void allow(DownstreamStub... downstreamStubs);
 
     void expect(DownstreamExpectation... downstreamExpectations);
@@ -14,7 +14,5 @@ public interface ActorOnStage extends Memory {
 
     Scene getScene();
 
-    <T> T recallImmediately(String variableName);
-    
     String getId();
 }

@@ -1,6 +1,7 @@
 package com.sbg.bdd.screenplay.core;
 
 import com.sbg.bdd.screenplay.core.actors.OnStage;
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 
@@ -21,7 +22,20 @@ public class ScreenplayPhrases {
         actor.getActor().useKeyword("Given that");
         return actor;
     }
-    
+
+    public static <T> Consequence<T> assertThat(String subject, final T value, Matcher<T> matcher) {
+        return new QuestionConsequence<T>(subject, new Question<T>() {
+            @Override
+            public T answeredBy(Actor actor) {
+                return value;
+            }
+        }, matcher);
+    }
+
+    public static <T> Consequence<T> seeThat(String subject, final T value, Matcher<T> matcher) {
+        return assertThat(subject, value,matcher);
+    }
+
     public static <T extends Actor> T andThat(T actor) {
         actor.useKeyword("And that");
         return actor;
@@ -31,6 +45,7 @@ public class ScreenplayPhrases {
         actor.useKeyword("When");
         return actor;
     }
+
     public static Actor when(ActorOnStage actor) {
         actor.getActor().useKeyword("When");
         return actor.getActor();
@@ -40,10 +55,14 @@ public class ScreenplayPhrases {
         actor.useKeyword("Then");
         return actor;
     }
+    public static ActorOnStage forRequestsFrom(ActorOnStage actorOnStage){
+        actorOnStage.getActor().useKeyword("Then for requests from");
+        return actorOnStage;
+    }
 
-    public static <T extends ActorOnStage> T then(T actor) {
+    public static  Actor then(ActorOnStage actor) {
         actor.getActor().useKeyword("Then");
-        return actor;
+        return actor.getActor();
     }
 
     public static <T extends Actor> T and(T actor) {

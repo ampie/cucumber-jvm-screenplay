@@ -9,6 +9,7 @@ import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 public class PropertiesPersonaClient implements PersonaClient<Properties> {
@@ -16,6 +17,11 @@ public class PropertiesPersonaClient implements PersonaClient<Properties> {
     @Override
     public Persona preparePersona(String personaName, ReadableResource file) {
         return readPersona(personaName, file);
+    }
+
+    @Override
+    public Persona<Properties> preparePersona(String name, ReadableResource personaFile, Map<String, Object> loginContext) {
+        return readPersona(name, personaFile);
     }
 
     private Persona readPersona(String name, ReadableResource file) {

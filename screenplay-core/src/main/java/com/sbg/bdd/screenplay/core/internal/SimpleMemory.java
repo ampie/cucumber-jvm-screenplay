@@ -7,19 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleMemory implements Memory {
-    private final Map<String, Object> storage=new HashMap<>();
+    private final Map<String, Object> storage = new HashMap<>();
 
     @Override
     public void remember(String name, Object value) {
-        storage.put(name,value);
+        storage.put(name, value);
     }
 
-    @Override
-    public void remember(Object value) {
-        storage.put(value.getClass().getName(),value);
-    }
-
-    @Override
     public void forget(String name) {
         storage.remove(name);
     }
@@ -29,10 +23,6 @@ public class SimpleMemory implements Memory {
         return (T) storage.get(name);
     }
 
-    @Override
-    public <T> T recall(Class<T> clzz) {
-        return recall(clzz.getName());
-    }
 
     public void clear() {
         storage.clear();

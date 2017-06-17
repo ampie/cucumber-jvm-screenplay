@@ -1,10 +1,14 @@
 package com.sbg.bdd.screenplay.wiremock;
 
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
+import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.DownstreamVerification;
 import com.sbg.bdd.screenplay.core.annotations.Step;
 import com.sbg.bdd.wiremock.scoped.recording.WireMockContext;
+import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedMappingBuilder;
 import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedRequestPatternBuilder;
 import com.sbg.bdd.wiremock.scoped.recording.builders.ResponseStrategy;
 import org.hamcrest.Description;
@@ -52,6 +56,11 @@ public class ScreenPlayRequestPatternBuilder extends ExtendedRequestPatternBuild
     }
 
     @Override
+    public ScreenPlayRequestPatternBuilder withQueryParam(String key, StringValuePattern valuePattern) {
+        return (ScreenPlayRequestPatternBuilder) super.withQueryParam(key, valuePattern);
+    }
+
+    @Override
     public ScreenPlayMappingBuilder will(ResponseStrategy strategy) {
         ScreenPlayMappingBuilder builder = new ScreenPlayMappingBuilder(this);
         builder.will(strategy);
@@ -60,6 +69,14 @@ public class ScreenPlayRequestPatternBuilder extends ExtendedRequestPatternBuild
 
     public ScreenPlayMappingBuilder to(ResponseStrategy responseStrategy) {
         return will(responseStrategy);
+    }
+    public ScreenPlayMappingBuilder toReturn(ResponseDefinitionBuilder response) {
+        ScreenPlayMappingBuilder ruleBuilder = new ScreenPlayMappingBuilder(this);
+        ruleBuilder.willReturn(response);
+        return ruleBuilder;
+    }
+    public ScreenPlayMappingBuilder willReturn(ResponseDefinitionBuilder response) {
+        return toReturn(response);
     }
 
 }

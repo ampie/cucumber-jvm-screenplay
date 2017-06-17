@@ -7,6 +7,8 @@ import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
 
+import static com.sbg.bdd.screenplay.core.util.NameConverter.filesystemSafe;
+
 public abstract class CorrelationPath {
     public static final String of(ActorOnStage actorOnStage) {
         return ofUserInScope(actorOnStage.getScene(), actorOnStage.getId());
@@ -21,15 +23,24 @@ public abstract class CorrelationPath {
     }
 
     public static String of(Scene scope) {
-        Integer runId = scope.getPerformance().recall("runId");
-        RecordingWireMockClient wireMock = scope.getPerformance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
-        String hostPrefix = wireMock.host() + "/" + wireMock.port() + "/";
-        String base = (runId == null ? "" : runId.toString() + "/") + scope.getPerformance().getName();
-        if (scope.getSceneIdentifier().isEmpty()) {
-            return hostPrefix + base;
+        StringBuilder path = new StringBuilder();
+        WireMockMemories recall = WireMockMemories.recallFrom(scope);
+        RecordingWireMockClient wireMock = recall.theWireMockClient();
+        String publicAddress = recall.thePublicAddressOfWireMock();
+        if (publicAddress == null) {
+            path.append(wireMock.host());
         } else {
-            return hostPrefix + base + "/" + scope.getSceneIdentifier();
+            path.append(publicAddress);
         }
+        path.append("/").append(wireMock.port()).append("/").append(filesystemSafe(scope.getPerformance().getName()));
+        Integer runId = recall.theRunId();
+        if (runId != null) {
+            path.append("/").append(runId);
+        }
+        if (!scope.getSceneIdentifier().isEmpty()) {
+            path.append("/").append(scope.getSceneIdentifier());
+        }
+        return path.toString();
     }
 
 }

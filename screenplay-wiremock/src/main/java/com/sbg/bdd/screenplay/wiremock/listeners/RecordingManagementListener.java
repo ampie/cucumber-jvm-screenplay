@@ -7,6 +7,7 @@ import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
 import com.sbg.bdd.screenplay.core.annotations.SceneListener;
 import com.sbg.bdd.screenplay.core.util.Optional;
 import com.sbg.bdd.screenplay.wiremock.RecordingMappingForUser;
+import com.sbg.bdd.screenplay.wiremock.WireMockMemories;
 import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
 import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
 
@@ -56,6 +57,6 @@ public class RecordingManagementListener {
     }
 
     private JournalMode getJournalModeInScope(ActorOnStage userInScope) {
-        return Optional.fromNullable(userInScope.recall(JournalMode.class)).or(JournalMode.NONE);
+        return Optional.fromNullable(WireMockMemories.recallFrom(userInScope).theJournalModeToUse()).or(JournalMode.NONE);
     }
 }

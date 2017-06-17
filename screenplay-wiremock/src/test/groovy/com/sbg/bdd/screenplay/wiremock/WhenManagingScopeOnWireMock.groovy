@@ -37,8 +37,8 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
         def userScope = scope.shineSpotlightOn(actorNamed('John Smith'))
         scope.completeNestedScope('scenario1')
         then:
-        scope.everybodyScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1'
-        userScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == 'localhost/'+wireMockServer.port()+'/5/TestRun/nested1/John_Smith'
+        scope.everybodyScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == publicAddress + '/'+wireMockServer.port()+'/TestRun/5/nested1'
+        userScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == publicAddress + '/'+wireMockServer.port()+'/TestRun/5/nested1/John_Smith'
         innerStep == 'For_requests_from_John_Smith_comma__allow/step1'
         scenarioScope.everybodyScope.recall(WireMockScreenplayContext.CORRELATION_STATE).currentStep == null
     }

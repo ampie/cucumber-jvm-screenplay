@@ -1,8 +1,11 @@
+
+
 apply plugin: 'groovy'
 dependencies {
     compile 'com.sbg.bdd:common-resource-api:0.0.1'
-    compile('com.google.android:android:4.1.1.4'){
-        exclude module:'commons-logging'
+    compile(project(':screenplay-core'))
+    compile('com.google.android:android:4.1.1.4') {
+        exclude module: 'commons-logging'
     }
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.10.19'

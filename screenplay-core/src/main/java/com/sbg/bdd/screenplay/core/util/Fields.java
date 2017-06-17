@@ -1,14 +1,14 @@
 package com.sbg.bdd.screenplay.core.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Fields {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Fields.class);
+    private static final Logger LOGGER = Logger.getLogger(Fields.class.getName());
     private final Class<?> clazz;
 
     public static Fields of(final Class<?> testClass) {
@@ -50,7 +50,7 @@ public class Fields {
                         fieldValues.put(field.getName(), fieldValueFrom(field));
                     }
                 } catch (IllegalAccessException e) {
-                    LOGGER.warn("Failed to inject the field " + field.getName(), e);
+                    LOGGER.log(Level.WARNING, "Failed to inject the field " + field.getName(), e);
                 }
             }
             fieldValues.put("self", object);

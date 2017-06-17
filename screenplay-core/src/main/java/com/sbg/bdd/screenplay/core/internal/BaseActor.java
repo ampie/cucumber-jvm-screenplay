@@ -198,31 +198,13 @@ public class BaseActor implements Actor {
 
     @Override
     public void remember(String name, Object value) {
-        getMemoryToUse().remember(name, value);
-    }
-
-    @Override
-    public void remember(Object value) {
-        getMemoryToUse().remember(value);
-    }
-
-    private Memory getMemoryToUse() {
-        return memory;
-    }
-
-    @Override
-    public void forget(String name) {
-        getMemoryToUse().forget(name);
+        memory.remember(name, value);
     }
 
     @Override
     public <T> T recall(String name) {
-        return getMemoryToUse().recall(name);
+        return memory.recall(name);
     }
 
-    @Override
-    public <T> T recall(Class<T> clzz) {
-        return getMemoryToUse().recall(clzz);
-    }
 
 }

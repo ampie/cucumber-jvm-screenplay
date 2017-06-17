@@ -7,8 +7,8 @@ import com.sbg.bdd.screenplay.core.util.Original;
 
 import java.lang.reflect.Method;
 
+import static com.sbg.bdd.screenplay.core.util.NameConverter.decapitalize;
 import static com.sbg.bdd.screenplay.core.util.NameConverter.humanize;
-import static java.beans.Introspector.decapitalize;
 
 public class QuestionSubject<T> {
 

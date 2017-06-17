@@ -1,9 +1,6 @@
 package com.sbg.bdd.android.screenplay.asset;
 
-import com.sbg.bdd.resource.Resource;
-import com.sbg.bdd.resource.ResourceContainer;
-import com.sbg.bdd.resource.ResourceFilter;
-import com.sbg.bdd.resource.WritableResource;
+import com.sbg.bdd.resource.*;
 import com.sbg.bdd.resource.file.DirectoryResource;
 
 import java.io.IOException;
@@ -61,12 +58,12 @@ public class AssetResourceContainer extends AssetResource implements ResourceCon
 
     @Override
     public Resource[] list(ResourceFilter filter) {
-        return DirectoryResource.list(filter, getChildren(), this);
+        return ResourceSupport.list(filter, getChildren(), this);
     }
 
     @Override
     public Resource resolveExisting(String... segments) {
-        return DirectoryResource.resolveExisting(this, segments);
+        return ResourceSupport.resolveExisting(this, segments);
     }
 
     @Override

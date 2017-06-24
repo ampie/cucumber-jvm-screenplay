@@ -8,6 +8,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
 import static com.sbg.bdd.screenplay.core.actors.OnStage.shineSpotlightOn;
+import static com.sbg.bdd.screenplay.restassured.PutTask.prependBaseUrl;
 
 public class DeleteTask implements RestAssuredTasks.HttpTask {
     final RequestSpecification spec;
@@ -29,8 +30,8 @@ public class DeleteTask implements RestAssuredTasks.HttpTask {
     @Step("send a DELETE request to #uri")
     public <T extends Actor> T performAs(T actor) {
         ActorOnStage actorOnStage = shineSpotlightOn(actor);
-        Response response = spec.config(RestAssuredConfig.config())
-                .filter(new CorrelationFilter()).delete(uri);
+        prependBaseUrl(actorOnStage, uri, spec);
+        Response response = spec.filter(new CorrelationFilter()).delete(uri);
         actorOnStage.remember(RestAssuredTasks.LAST_RESPONSE, response);
         return actor;
     }

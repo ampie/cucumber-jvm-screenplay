@@ -17,7 +17,7 @@ class WhenManagingActors extends WhenUsingScopes {
         OnStage.present(globalScope)
         globalScope.startFunctionalScope("nested1").startScenario("scenario1")
         def john = shineSpotlightOn(actorNamed('John Smith')).actor
-        def persona = (Persona) john.recall(Actor.PERSONA)
+        def persona = (Persona) john.getPersona()
         persona.characterType = CharacterType.DYNAMIC
         when:
         dismissActorFromStage(john)

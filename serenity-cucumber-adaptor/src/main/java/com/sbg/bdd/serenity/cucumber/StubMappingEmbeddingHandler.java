@@ -21,7 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class StubMappingEmbeddingHandler implements EmbeddingHandler {
-    Logger LOGGer = Logger.getLogger(StubMappingEmbeddingHandler.class.getName());
+    Logger LOGGER = Logger.getLogger(StubMappingEmbeddingHandler.class.getName());
 
     @Override
     public boolean attemptHandling(String mimeType, byte[] data) {
@@ -40,7 +40,7 @@ public class StubMappingEmbeddingHandler implements EmbeddingHandler {
                     }
                     return true;
                 } catch (Exception e) {
-                    LOGGer.log(Level.WARNING, "Could not read embedding", e);
+                    LOGGER.log(Level.WARNING, "Could not read embedding", e);
                     return false;
                 }
             }
@@ -69,7 +69,7 @@ public class StubMappingEmbeddingHandler implements EmbeddingHandler {
         try {
             method = RestMethod.valueOf(request.getMethod().getName());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING,e.toString());
         }
         RestQuery result = RestQuery.withMethod(method)
                 .andPath(request.getUrl())

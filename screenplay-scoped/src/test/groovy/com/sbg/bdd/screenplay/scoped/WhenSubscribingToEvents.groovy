@@ -54,19 +54,19 @@ class WhenSubscribingToEvents extends WhenUsingScopes {
         events[6].involvement== ActorInvolvement.BEFORE_ENTER_STAGE
         events[7].source.name == 'John Smith'
         events[7].involvement== ActorInvolvement.AFTER_ENTER_STAGE
-        events[8].source.name == 'For requests from John Smith, allow '
-        events[8].type==StepEventType.STARTED
-        events[9].source.name == 'step1'
-        events[10].source.name == 'For requests from John Smith, allow '
-        events[11].source.name == 'childStep'
+        events[8].source.name == 'John Smith'
+        events[8].involvement==ActorInvolvement.INTO_SPOTLIGHT
+        events[9].source.name == 'For requests from John Smith, allow '
+        events[9].type==StepEventType.STARTED
+        events[10].source.name == 'step1'
+        events[11].source.name == 'For requests from John Smith, allow '
         events[12].source.name == 'childStep'
-        events[13].source.name == 'For requests from John Smith, allow '
-        events[13].type==StepEventType.SUCCESSFUL
-        events[14].source.name == 'step1'
-        events[15].source.name == 'For requests from John Smith, allow '
+        events[13].source.name == 'childStep'
+        events[14].source.name == 'For requests from John Smith, allow '
         events[15].type==StepEventType.SUCCESSFUL
-        events[16].source.name == 'John Smith'
-        events[16].involvement == ActorInvolvement.INTO_SPOTLIGHT
+        events[15].source.name == 'step1'
+        events[16].source.name == 'For requests from John Smith, allow '
+        events[16].type==StepEventType.SUCCESSFUL
         events[17].source.name == 'scenario1'
         events[17].sceneEventType== SceneEventType.BEFORE_COMPLETE
         //Exiting the actors is part of the completion process

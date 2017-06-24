@@ -73,7 +73,7 @@ public abstract class UserTrackingScope extends VerificationScope implements Sce
             spotlightOperator.actorOutOfSpotlight();
         }
         dismissRecursively(actor);
-        Persona<?> persona = actor.recall(Actor.PERSONA);
+        Persona<?> persona = actor.getPersona();
         if (persona != null && persona.getCharacterType() == CharacterType.DYNAMIC) {
             //TODO do we want the parentScopes to remain in tact, but just reload the actor?
             //Data may have changed, needs to be reloaded

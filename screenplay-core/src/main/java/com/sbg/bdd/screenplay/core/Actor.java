@@ -1,5 +1,7 @@
 package com.sbg.bdd.screenplay.core;
 
+import com.sbg.bdd.screenplay.core.persona.Persona;
+
 public interface Actor extends Memory {
     String PERSONA="persona";
     String EVERYBODY="everybody";
@@ -22,4 +24,6 @@ public interface Actor extends Memory {
     String getPrecedingKeyword();
 
     ActorOnStage onStagePresence() throws IllegalStateException;
+
+    Persona<?> getPersona();
 }

@@ -94,7 +94,7 @@ public class RecordingMappingForUser {
             //hence runscope1/runscope1.1/scenarioscope1.1.1/userInScopeId
             if (getRecordingSpecification().recordToCurrentResourceDir()) {
                 //Record to journalRoot in scope
-                return toFile(getResourceRoot(scope), userScopeIdToUse, scope.getSceneIdentifier());
+                return toFile(getResourceRoot(scope), scope.getSceneIdentifier(), userScopeIdToUse);
             } else if (!getResourceRoot(scope).fallsWithin(getRecordingSpecification().getRecordingDirectory())) {
                 return toFile(getAbsoluteRecordingDir(), scope.getSceneIdentifier(), userScopeIdToUse);
             } else {

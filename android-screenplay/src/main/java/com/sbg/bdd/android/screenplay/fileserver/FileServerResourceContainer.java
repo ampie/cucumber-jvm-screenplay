@@ -54,8 +54,13 @@ public class FileServerResourceContainer extends FileServerResource implements R
     }
 
     @Override
+    public Resource resolveOrFail(String... segments) throws IllegalArgumentException {
+        return ResourceSupport.resolveExisting(this, segments, true);
+    }
+
+    @Override
     public Resource resolveExisting(String... segments) {
-        return ResourceSupport.resolveExisting(this, segments);
+        return ResourceSupport.resolveExisting(this, segments,false);
     }
 
     @Override

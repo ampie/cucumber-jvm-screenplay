@@ -9,6 +9,7 @@ import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.RequestSpecification;
 
 import static com.sbg.bdd.screenplay.core.actors.OnStage.shineSpotlightOn;
+import static com.sbg.bdd.screenplay.restassured.PutTask.prependBaseUrl;
 
 public class PostTask implements RestAssuredTasks.HttpTask {
     private RequestSpecification spec;
@@ -36,8 +37,8 @@ public class PostTask implements RestAssuredTasks.HttpTask {
     @Step("send a POST request to #uri with body '#body'")
     public <T extends Actor> T performAs(T actor) {
         ActorOnStage actorOnStage = shineSpotlightOn(actor);
-        Response response = spec.config(RestAssuredConfig.config())
-                .filter(new CorrelationFilter()).post(uri);
+        prependBaseUrl(actorOnStage, uri, spec);
+        Response response = spec.filter(new CorrelationFilter()).post(uri);
         actorOnStage.remember(RestAssuredTasks.LAST_RESPONSE, response);
         return actor;
     }

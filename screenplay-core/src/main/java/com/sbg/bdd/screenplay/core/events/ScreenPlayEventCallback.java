@@ -5,9 +5,12 @@ import com.sbg.bdd.screenplay.core.util.NameConverter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.EventObject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public abstract class ScreenPlayEventCallback {
+    private static Logger LOGGER = Logger.getLogger(ScreenPlayEventCallback.class.getName());
     private Method method;
     private String namePattern;
     private Object target;
@@ -47,14 +50,12 @@ public abstract class ScreenPlayEventCallback {
             } else if (method.getParameterTypes().length == 2 && method.getParameterTypes()[0].isInstance(eventObject.getSource()) && method.getParameterTypes()[1].isInstance(qualifier)) {
                 method.invoke(target, eventObject.getSource(), qualifier);
             }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
-            if (e.getTargetException() instanceof RuntimeException) {
-                throw (RuntimeException) e.getTargetException();
-            } else {
-                throw new RuntimeException(e.getTargetException());
-            }
+            //NB!!! We find ourselves in a position where we may have to change the flow in a context where we do not control the flow.
+            //Log the errror and move on.
+            LOGGER.log(Level.SEVERE, "Could not invoke " + method.getDeclaringClass().getName() + "." +  method.getName(), e.getTargetException());
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Could not invoke " + method.getDeclaringClass().getName() + "." +  method.getName(), e);
         }
     }
     protected boolean namesMatch(String nameToMatch) {

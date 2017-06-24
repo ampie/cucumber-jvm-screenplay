@@ -11,6 +11,7 @@ import io.restassured.specification.RequestSpecification;
 import java.util.Map;
 
 import static com.sbg.bdd.screenplay.core.actors.OnStage.shineSpotlightOn;
+import static com.sbg.bdd.screenplay.restassured.PutTask.prependBaseUrl;
 import static io.restassured.RestAssured.with;
 
 public class GetTask implements RestAssuredTasks.HttpTask {
@@ -54,8 +55,9 @@ public class GetTask implements RestAssuredTasks.HttpTask {
     @Step("send a GET request to #descriptiveUri")
     public <T extends Actor> T performAs(T actor) {
         ActorOnStage actorOnStage = shineSpotlightOn(actor);
-        Response response = spec.config(RestAssuredConfig.config())
-                .filter(new CorrelationFilter()).get(uri);
+        prependBaseUrl(actorOnStage, uri, spec);
+
+        Response response = spec.filter(new CorrelationFilter()).get(uri);
         actorOnStage.remember(RestAssuredTasks.LAST_RESPONSE, response);
         return actor;
     }

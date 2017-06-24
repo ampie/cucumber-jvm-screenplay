@@ -16,6 +16,8 @@ class WhenDefininingTasksForActors extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
         when:
         givenThat(actorNamed('John')).wasAbleTo(performATask())
@@ -32,6 +34,8 @@ class WhenDefininingTasksForActors extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
         when:
         def error = null
@@ -65,6 +69,8 @@ class WhenDefininingTasksForActors extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
         when:
         def error = null
@@ -97,6 +103,8 @@ class WhenDefininingTasksForActors extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
         when:
         def error = null

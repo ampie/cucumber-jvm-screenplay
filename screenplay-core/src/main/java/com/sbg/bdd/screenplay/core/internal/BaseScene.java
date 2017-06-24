@@ -65,7 +65,7 @@ public class BaseScene implements Scene {
         BaseActorOnStage actorOnStage = actorsOnStage.remove(actor);
         if (actorOnStage != null) {
             actorsOnStage.get(actor.getName()).exitStage();
-            Persona<?> persona = actor.recall(Actor.PERSONA);
+            Persona<?> persona = actor.getPersona();
             if (persona != null && persona.getCharacterType() == CharacterType.DYNAMIC) {
                 //Data may have changed, needs to be reloaded
                 getPerformance().getCast().dismiss(actor);

@@ -14,6 +14,8 @@ class WhenDefininingEventualQuestionsForActors extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
 
         def iDied = new IDiedAfterASecond()
@@ -37,6 +39,8 @@ class WhenDefininingEventualQuestionsForActors extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
 
         def iDied = new IDiedAfterASecond()

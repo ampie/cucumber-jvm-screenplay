@@ -15,6 +15,7 @@ class WhenMultipleTasksFail extends WithinBasePerformance {
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
+        OnStage.raiseTheCurtain("scene1")
         when:
         def error = null
         try {
@@ -46,6 +47,8 @@ class WhenMultipleTasksFail extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
         when:
         def error = null
@@ -72,6 +75,7 @@ class WhenMultipleTasksFail extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
         when:
         def error = null

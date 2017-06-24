@@ -159,7 +159,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         requestsToRecord.size() == 1
         requestsToRecord[0].recordingSpecification.enforceJournalModeInScope == true
         requestsToRecord[0].recordingSpecification.journalModeOverride == null
-        requestsToRecord[0].calculateRecordingDirectory(nestedScope).file.absolutePath == globalScope.recall(WireMockScreenplayContext.JOURNAL_RESOURCE_ROOT).resolvePotentialContainer("John_Smith","nested1").file.absolutePath
+        requestsToRecord[0].calculateRecordingDirectory(nestedScope).file.absolutePath == globalScope.recall(WireMockScreenplayContext.JOURNAL_RESOURCE_ROOT).resolvePotentialContainer("nested1","John_Smith").file.absolutePath
         requestsToRecord[0].userInScopeId == 'John_Smith'
     }
     def 'should map responses to the current resource directory under the journal directory when no path is specified'() throws Exception {

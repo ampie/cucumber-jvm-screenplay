@@ -82,13 +82,9 @@ public class WireMockScreenplayContext implements WireMockContext {
         } else {
             ResourceContainer personaRoot = (ResourceContainer) inputResourceRoot.resolveExisting(userInScope.getId());
             String scopePath = userInScope.getScene().getSceneIdentifier();
-            if (scopePath.indexOf("/") <= 0) {
-                return (ReadableResource) personaRoot.resolveExisting(fileName);
-            } else {
-                String resourcePath = scopePath.substring(scopePath.indexOf("/") + 1) + "/" + fileName;
-                String[] relativeScopePath = resourcePath.split("\\/");
-                return (ReadableResource) personaRoot.resolveExisting(relativeScopePath);
-            }
+            String resourcePath = scopePath + "/" + fileName;
+            String[] relativeScopePath = resourcePath.split("\\/");
+            return (ReadableResource) personaRoot.resolveOrFail(relativeScopePath);
         }
     }
 

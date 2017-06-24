@@ -16,6 +16,8 @@ class WhenDefininingQuestionsForActors extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
         def theAnswer = new TheAnswerOfFive()
         when:
@@ -36,6 +38,8 @@ class WhenDefininingQuestionsForActors extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
         def theAnswer = new TheAnswerOfFive()
         when:
@@ -57,6 +61,8 @@ class WhenDefininingQuestionsForActors extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
         def iDoExist = new IDoExist()
         when:
@@ -76,6 +82,8 @@ class WhenDefininingQuestionsForActors extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
         def error = null
         when:
@@ -101,6 +109,8 @@ class WhenDefininingQuestionsForActors extends WithinBasePerformance {
 
         def performanceStub = buildPerformance()
         OnStage.present(performanceStub)
+        OnStage.raiseTheCurtain("scene1")
+
         performanceStub.eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(ScreenPlayEventStore)))
         when:
             then(actorNamed('John')).should(seeThat(new QuestionTBDAcronym()))

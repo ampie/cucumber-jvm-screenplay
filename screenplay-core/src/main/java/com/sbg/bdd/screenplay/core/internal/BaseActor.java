@@ -1,10 +1,12 @@
 package com.sbg.bdd.screenplay.core.internal;
 
 import com.sbg.bdd.screenplay.core.*;
+import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.core.annotations.Step;
 import com.sbg.bdd.screenplay.core.annotations.StepEventType;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
+import com.sbg.bdd.screenplay.core.persona.Persona;
 import com.sbg.bdd.screenplay.core.util.NameConverter;
 
 import java.util.ArrayDeque;
@@ -33,8 +35,9 @@ public class BaseActor implements Actor {
     public static void setCurrentStep(String currentStep) {
         BaseActor.currentStep = currentStep;
     }
-
-
+    public Persona<?> getPersona(){
+        return recall(PERSONA);
+    }
     @Override
     public String getPrecedingKeyword() {
         return precedingKeyword;
@@ -120,6 +123,9 @@ public class BaseActor implements Actor {
     }
 
     public void performSteps(ScreenplayStepMethodInfo[] steps) {
+        OnStage.shineSpotlightOn(this);//TODO this belongs elsewhere.
+        // We don't want impl classed to have dependencies on static methods
+        //Maybe we do this in an event listener? - watch out for recursion
         StepErrorTally errorTally = new StepErrorTally(getStopWatch());
         for (ScreenplayStepMethodInfo stepMethodInfo : steps) {
             performStep(errorTally, stepMethodInfo);

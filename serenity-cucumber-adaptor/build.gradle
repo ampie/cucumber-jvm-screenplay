@@ -4,13 +4,9 @@ apply plugin: 'java'
 
 
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.5'
-    compile 'com.sbg.bdd:scoped-wiremock-client-recording:0.0.1'
+    compile 'com.sbg.bdd:scoped-wiremock-client-recording:0.0.2'
     compile 'net.serenity-bdd:serenity-cucumber:1.1.35-SNAPSHOT'
     compile 'com.github.tomakehurst:wiremock:2.6.0'
     testCompile group: 'junit', name: 'junit', version: '4.1'

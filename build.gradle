@@ -1,5 +1,5 @@
 group = 'com.sbg.bdd'
-version = '0.0.1'
+version = '0.0.2'
 buildscript {
     repositories {
         maven {
@@ -18,17 +18,21 @@ allprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'maven-publish-auth'
     group = 'com.sbg.bdd'
-    version = '0.0.1'
+    version = '0.0.2'
 }
 
 subprojects {
     repositories {
-        mavenLocal()
-        maven { url 'https://maven.google.com' }
-        maven { url "http://repo.maven.apache.org/maven2" }
+//        mavenLocal()
+//        maven { url 'https://maven.google.com' }
+//        maven { url "http://repo.maven.apache.org/maven2" }
         maven {
             name 'releases'
             url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/releases/'
+        }
+        maven {
+            name '3rdparty'
+            url 'http://nexus.standardbank.co.za:8090/nexus/content/groups/public/'
         }
         maven {
             name 'snapshots'
@@ -37,7 +41,7 @@ subprojects {
     }
 
     group = 'com.sbg.bdd'
-    version = '0.0.1'
+    version = '0.0.2'
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
     task packageSources(type: Jar) {

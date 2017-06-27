@@ -17,8 +17,6 @@ allprojects {
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'maven-publish-auth'
-    group = 'com.sbg.bdd'
-    version = '0.0.3'
 }
 
 subprojects {

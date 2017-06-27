@@ -1,5 +1,5 @@
 group = 'com.sbg.bdd'
-version = '0.0.2'
+version = '0.0.3'
 buildscript {
     repositories {
         maven {
@@ -18,7 +18,7 @@ allprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'maven-publish-auth'
     group = 'com.sbg.bdd'
-    version = '0.0.2'
+    version = '0.0.3'
 }
 
 subprojects {
@@ -41,7 +41,7 @@ subprojects {
     }
 
     group = 'com.sbg.bdd'
-    version = '0.0.2'
+    version = '0.0.3'
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
     task packageSources(type: Jar) {

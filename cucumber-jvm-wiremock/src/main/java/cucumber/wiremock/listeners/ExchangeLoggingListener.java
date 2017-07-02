@@ -12,7 +12,7 @@ import com.sbg.bdd.screenplay.wiremock.CorrelationPath;
 import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
 import com.sbg.bdd.screenplay.wiremock.listeners.ScopeManagementListener;
 import com.sbg.bdd.wiremock.scoped.admin.model.RecordedExchange;
-import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
+import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class ExchangeLoggingListener {
         ScreenPlayFormatter.getCurrent().embedding("application/json", Json.write(exchanges).getBytes());
     }
 
-    public RecordingWireMockClient getWireMock(Scene scope) {
+    public ScopedWireMockClient getWireMock(Scene scope) {
         return scope.recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
     }
 }

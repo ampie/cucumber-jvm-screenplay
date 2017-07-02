@@ -11,9 +11,9 @@ import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory
 import com.sbg.bdd.wiremock.scoped.integration.HeaderName;
 import com.sbg.bdd.wiremock.scoped.integration.URLHelper;
 import com.sbg.bdd.wiremock.scoped.integration.WireMockCorrelationState;
-import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
-import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedMappingBuilder;
-import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedRequestPatternBuilder;
+import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
+import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedMappingBuilder;
+import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedRequestPatternBuilder;
 import io.restassured.filter.Filter;
 import io.restassured.filter.FilterContext;
 import io.restassured.http.Headers;
@@ -33,7 +33,7 @@ public class CorrelationFilter implements Filter {
     @Override
     public Response filter(FilterableRequestSpecification requestSpecification, FilterableResponseSpecification responseSpec, FilterContext filterContext) {
         WireMockCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
-        RecordingWireMockClient wm = OnStage.performance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
+        ScopedWireMockClient wm = OnStage.performance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
         StubMapping mapping = buildProxyMapping(URI.create(requestSpecification.getURI()));
         wm.register(mapping);
         propagateCorrelationState(requestSpecification, currentCorrelationState);

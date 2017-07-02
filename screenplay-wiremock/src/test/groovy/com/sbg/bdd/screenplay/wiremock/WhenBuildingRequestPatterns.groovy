@@ -10,7 +10,7 @@ import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.forRequestsFrom
 import static com.sbg.bdd.screenplay.wiremock.RequestStrategies.*
-import static com.sbg.bdd.wiremock.scoped.recording.strategies.ResponseBodyStrategies.returnTheBody
+import static com.sbg.bdd.wiremock.scoped.client.strategies.ResponseBodyStrategies.returnTheBody
 
 class WhenBuildingRequestPatterns extends WhenWorkingWithWireMock {
     def 'should include the scope path of the current user as a header requirement'() throws Exception {

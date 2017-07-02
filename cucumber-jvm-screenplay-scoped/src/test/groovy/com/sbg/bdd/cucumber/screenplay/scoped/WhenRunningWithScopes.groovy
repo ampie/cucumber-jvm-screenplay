@@ -12,6 +12,7 @@ class WhenRunningWithScopes  extends WhenScopeXYZ{
 
     def 'the correct event should be fired in a predictable  sequence'() {
         given:
+        StepDefs.SCOPE_CALLBACKS.clear()
         BaseActor.useStopWatch(new StopWatchStub(9999))
         when:
         def report = null;

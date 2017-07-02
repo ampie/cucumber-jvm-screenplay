@@ -3,14 +3,14 @@ package com.sbg.bdd.screenplay.wiremock
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.scoped.GlobalScope
 import com.sbg.bdd.screenplay.wiremock.listeners.RecordingManagementListener
-import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient
+import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient
 
 import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.forRequestsFrom
 import static com.sbg.bdd.screenplay.scoped.ScopingPhrases.everybody
 import static com.sbg.bdd.screenplay.wiremock.RequestStrategies.a
-import static com.sbg.bdd.wiremock.scoped.recording.strategies.RecordingStrategies.playbackResponsesFrom
+import static com.sbg.bdd.wiremock.scoped.client.strategies.RecordingStrategies.playbackResponsesFrom
 
 class WhenPlayingBackResponses extends WhenWorkingWithWireMock{
 
@@ -19,7 +19,7 @@ class WhenPlayingBackResponses extends WhenWorkingWithWireMock{
         GlobalScope globalScope = buildGlobalScope('TestRun',5)
         def wireMockServer = initializeWireMock(globalScope)
 
-        def recordingWireMockClient = new RecordingWireMockClient(wireMockServer)
+        def recordingWireMockClient = new ScopedWireMockClient(wireMockServer)
         globalScope.everybodyScope.remember(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT, recordingWireMockClient)
         OnStage.present(globalScope)
         def outputPath = new File('src/test/resources').getAbsolutePath()

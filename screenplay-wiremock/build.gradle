@@ -1,25 +1,11 @@
-description = 'WireMock Screenplay'
-apply plugin: 'groovy'
 dependencies {
     compile project (':screenplay-core')
     compile project (':screenplay-scoped')//Need this for the listener dependency
-    compile 'com.sbg.bdd:common-resource-api:0.0.2'
-    compile 'com.sbg.bdd:scoped-wiremock-client-recording:0.0.2'
-    compile 'com.github.jknack:handlebars:4.0.6'
-    compileOnly 'com.github.tomakehurst:wiremock:2.6.0'
-    compile 'commons-io:commons-io:2.5'
-    testCompile 'org.codehaus.groovy:groovy-all:2.4.5'
-    testCompile 'com.sbg.bdd:scoped-wiremock-server:0.0.2'
-    testCompile('org.spockframework:spock-core:0.7-groovy-2.0') {
-        exclude group: 'junit'
-        exclude module: 'groovy-all'
-    }
-    testCompile('com.sbg.bdd:scoped-wiremock-server:0.0.2') {
-        exclude module:'asm'
-    }
-    testCompile('com.github.goldin:spock-extensions:0.1.4') {
-        exclude module: 'spock-core'
-        exclude module: 'slf4j-api'
-    }
+    compile "com.sbg.bdd:common-resource-api:$SCOPED_WIREMOCK_VERSION"
+    compile "com.sbg.bdd:scoped-wiremock-client:$SCOPED_WIREMOCK_VERSION"
+    compileOnly "com.github.tomakehurst:wiremock:$WIREMOCK_VERSION"
+//    compile 'commons-io:commons-io:2.5'
+    testCompile "com.sbg.bdd:scoped-wiremock-server:$SCOPED_WIREMOCK_VERSION"
     testCompile('cglib:cglib-nodep:2.2')
+    testCompile"com.github.tomakehurst:wiremock:$WIREMOCK_VERSION"
 }

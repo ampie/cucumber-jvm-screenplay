@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Scene;
-import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
+import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
 
 import static com.sbg.bdd.screenplay.core.util.NameConverter.filesystemSafe;
 
@@ -25,7 +25,7 @@ public abstract class CorrelationPath {
     public static String of(Scene scope) {
         StringBuilder path = new StringBuilder();
         WireMockMemories recall = WireMockMemories.recallFrom(scope);
-        RecordingWireMockClient wireMock = recall.theWireMockClient();
+        ScopedWireMockClient wireMock = recall.theWireMockClient();
         String publicAddress = recall.thePublicAddressOfWireMock();
         if (publicAddress == null) {
             path.append(wireMock.host());

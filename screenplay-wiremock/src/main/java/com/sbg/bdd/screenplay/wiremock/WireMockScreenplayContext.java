@@ -15,12 +15,12 @@ import com.sbg.bdd.screenplay.core.internal.BaseActorOnStage;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.util.Optional;
 import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
-import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
-import com.sbg.bdd.wiremock.scoped.recording.WireMockContext;
-import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedMappingBuilder;
-import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedRequestPatternBuilder;
-import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.EndpointConfig;
-import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.EndpointConfigRegistry;
+import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
+import com.sbg.bdd.wiremock.scoped.client.WireMockContext;
+import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedMappingBuilder;
+import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedRequestPatternBuilder;
+import com.sbg.bdd.wiremock.scoped.client.endpointconfig.EndpointConfig;
+import com.sbg.bdd.wiremock.scoped.client.endpointconfig.EndpointConfigRegistry;
 
 import java.io.File;
 import java.util.*;
@@ -29,7 +29,7 @@ public class WireMockScreenplayContext implements WireMockContext {
     private static final int MAX_LEVELS = 10;
     private static final int PRIORITIES_PER_LEVEL = 10;
     private static final int EVERYBODY_PRIORITY_DECREMENT = PRIORITIES_PER_LEVEL / 2;
-    public static final String RECORDING_WIRE_MOCK_CLIENT = "recordingWireMockClient";
+    public static final String RECORDING_WIRE_MOCK_CLIENT = "ScopedWireMockClient";
     public static final String ENDPOINT_CONFIG_REGISTRY = "endpointConfigRegistry";
     public static final String REQUESTS_TO_RECORD_OR_PLAYBACK = "requestsToRecordOrPlayback";
     public static final String BASE_URL_OF_SERVICE_UNDER_TEST = "baseUrlOfServiceUnderTest";
@@ -46,7 +46,7 @@ public class WireMockScreenplayContext implements WireMockContext {
         return ((MAX_LEVELS - scopeLevel) * PRIORITIES_PER_LEVEL) + localLevel;
     }
 
-    private final RecordingWireMockClient wireMock;
+    private final ScopedWireMockClient wireMock;
     private final ResourceContainer inputResourceRoot;
     private final ActorOnStage userInScope;
     private final EndpointConfigRegistry endpointConfigRegistry;

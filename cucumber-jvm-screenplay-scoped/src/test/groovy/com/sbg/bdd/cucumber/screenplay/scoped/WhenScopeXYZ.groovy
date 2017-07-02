@@ -12,6 +12,7 @@ import static java.util.Arrays.asList
 
 abstract class WhenScopeXYZ extends Specification {
     def runFeaturesWithScreenplayPlugin(List<String> featurePaths) throws IOException {
+        StepDefs.SCOPE_CALLBACKS.clear()
         def report = File.createTempFile('cucumber-scope', '.json');
         def classLoader = Thread.currentThread().getContextClassLoader();
         def markerFile = new File(classLoader.getResource('cucumber-jvm-screenplay-scoped-marker.txt').file)

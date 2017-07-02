@@ -8,7 +8,7 @@ import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.actorNamed
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.forRequestsFrom
 import static com.sbg.bdd.screenplay.wiremock.RequestStrategies.a
-import static com.sbg.bdd.wiremock.scoped.recording.strategies.ResponseBodyStrategies.returnTheFile
+import static com.sbg.bdd.wiremock.scoped.client.strategies.ResponseBodyStrategies.returnTheFile
 
 class WhenSubmittingMappings extends WhenWorkingWithWireMock{
 

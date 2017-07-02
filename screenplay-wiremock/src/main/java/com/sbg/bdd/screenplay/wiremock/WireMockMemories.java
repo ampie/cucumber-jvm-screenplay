@@ -1,17 +1,14 @@
 package com.sbg.bdd.screenplay.wiremock;
 
 import com.sbg.bdd.resource.ResourceContainer;
-import com.sbg.bdd.resource.ResourceRoot;
 import com.sbg.bdd.screenplay.core.Memory;
-import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.util.ScreenplayMemories;
-import com.sbg.bdd.wiremock.scoped.ScopedHttpAdminClient;
 import com.sbg.bdd.wiremock.scoped.admin.ScopedAdmin;
 import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
-import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
-import com.sbg.bdd.wiremock.scoped.recording.WireMockContext;
-import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.EndpointConfigRegistry;
-import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.RemoteEndPointConfigRegistry;
+import com.sbg.bdd.wiremock.scoped.client.ScopedHttpAdminClient;
+import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
+import com.sbg.bdd.wiremock.scoped.client.endpointconfig.EndpointConfigRegistry;
+import com.sbg.bdd.wiremock.scoped.client.endpointconfig.RemoteEndPointConfigRegistry;
 import okhttp3.OkHttpClient;
 
 import java.net.MalformedURLException;
@@ -76,7 +73,7 @@ public class WireMockMemories extends ScreenplayMemories<WireMockMemories> {
 
     public WireMockMemories toUseWireMock(ScopedAdmin admin) {
         memory.remember(WireMockScreenplayContext.WIRE_MOCK_ADMIN, admin);
-        memory.remember(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT, new RecordingWireMockClient(admin));
+        memory.remember(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT, new ScopedWireMockClient(admin));
         return this;
     }
 
@@ -85,7 +82,7 @@ public class WireMockMemories extends ScreenplayMemories<WireMockMemories> {
         return this;
     }
 
-    public RecordingWireMockClient theWireMockClient() {
+    public ScopedWireMockClient theWireMockClient() {
         return memory.recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
     }
     public ScopedAdmin theWireMockAdmin() {

@@ -17,7 +17,7 @@ import com.sbg.bdd.wiremock.scoped.admin.model.CorrelationState;
 import com.sbg.bdd.wiremock.scoped.common.ParentPath;
 import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory;
 import com.sbg.bdd.wiremock.scoped.integration.WireMockCorrelationState;
-import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
+import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
 
 import java.util.Collections;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class ScopeManagementListener extends CucumberPayloadProducingListener {
     }
 
     private void registerScope(Scene scene, Map<String, Object> map) {
-        RecordingWireMockClient wireMock = getWireMockFrom(scene);
+        ScopedWireMockClient wireMock = getWireMockFrom(scene);
         String scopePath = CorrelationPath.of(scene);
         CorrelationState correlationState;
         if (scene.getLevel() == 0) {
@@ -99,7 +99,7 @@ public class ScopeManagementListener extends CucumberPayloadProducingListener {
         }
     }
 
-    private RecordingWireMockClient getWireMockFrom(Scene scene) {
+    private ScopedWireMockClient getWireMockFrom(Scene scene) {
         return scene.getPerformance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
     }
 }

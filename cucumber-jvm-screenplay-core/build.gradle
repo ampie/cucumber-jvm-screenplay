@@ -1,21 +1,8 @@
-description = 'Screenplay Pattern for Cucumber'
-
-apply plugin: 'groovy'
 dependencies {
-    compile 'com.sbg.bdd:cucumber-common:0.0.2'
-    compile 'info.cukes:cucumber-java:1.2.5'
-    compile project (':screenplay-core')
+    compile('com.sbg.bdd:cucumber-common:0.0.2')
+    compile("info.cukes:cucumber-java:$CUKES_VERSION")
+    compile(project(':screenplay-core'))
 
-    testCompile 'info.cukes:cucumber-junit:1.2.5'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-all:1.10.19'
-    testCompile 'org.codehaus.groovy:groovy-all:2.4.5'
-    testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
-        exclude group: "junit"
-        exclude module: "groovy-all"
-    }
-    testCompile("com.github.goldin:spock-extensions:0.1.4") {
-        exclude module: "spock-core"
-        exclude module: "slf4j-api"
-    }
+    testCompile("info.cukes:cucumber-junit:$CUKES_VERSION")
+    testCompile('org.mockito:mockito-all:1.10.19')
 }

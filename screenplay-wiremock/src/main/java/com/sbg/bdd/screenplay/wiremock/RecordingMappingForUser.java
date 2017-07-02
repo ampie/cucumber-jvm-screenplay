@@ -10,11 +10,11 @@ import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.util.NameConverter;
 import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
 import com.sbg.bdd.wiremock.scoped.integration.HeaderName;
-import com.sbg.bdd.wiremock.scoped.recording.RecordingWireMockClient;
-import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedMappingBuilder;
-import com.sbg.bdd.wiremock.scoped.recording.builders.ExtendedRequestPatternBuilder;
-import com.sbg.bdd.wiremock.scoped.recording.builders.RecordingSpecification;
-import com.sbg.bdd.wiremock.scoped.recording.endpointconfig.EndpointConfigRegistry;
+import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
+import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedMappingBuilder;
+import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedRequestPatternBuilder;
+import com.sbg.bdd.wiremock.scoped.client.builders.RecordingSpecification;
+import com.sbg.bdd.wiremock.scoped.client.endpointconfig.EndpointConfigRegistry;
 
 import java.io.File;
 
@@ -43,13 +43,13 @@ public class RecordingMappingForUser {
 
     public void saveRecordings(Scene scope) {
         ExtendedRequestPatternBuilder requestPatternBuilder = new ExtendedRequestPatternBuilder(this.mappingBuilder.getRequestPatternBuilder());
-        RecordingWireMockClient wireMock = getWireMock(scope);
+        ScopedWireMockClient wireMock = getWireMock(scope);
         requestPatternBuilder.prepareForBuild((EndpointConfigRegistry) scope.recall(WireMockScreenplayContext.ENDPOINT_CONFIG_REGISTRY));
         wireMock.saveRecordingsForRequestPattern(deriveCorrelationPath(scope), requestPatternBuilder.build(), calculateRecordingDirectory(scope));
     }
 
 
-    public RecordingWireMockClient getWireMock(Scene scope) {
+    public ScopedWireMockClient getWireMock(Scene scope) {
         return scope.getPerformance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
     }
     
@@ -57,7 +57,7 @@ public class RecordingMappingForUser {
         ResourceContainer recordingDirectory = calculateRecordingDirectory(scope, userInScopeId);
         if(recordingDirectory!=null){
             //may not exist
-            RecordingWireMockClient wireMock = getWireMock(scope);
+            ScopedWireMockClient wireMock = getWireMock(scope);
             ExtendedRequestPatternBuilder requestPatternBuilder = new ExtendedRequestPatternBuilder(mappingBuilder.getRequestPatternBuilder());
             requestPatternBuilder.withHeader(HeaderName.ofTheCorrelationKey(), deriveCorrelationPath(scope));
             wireMock.serveRecordedMappingsAt(recordingDirectory, requestPatternBuilder.build(), priorityFor(scope));

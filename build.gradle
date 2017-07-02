@@ -1,9 +1,8 @@
-group = 'com.sbg.bdd'
-version = '0.0.3'
 buildscript {
     repositories {
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url 'http://nexus.standardbank.co.za:8090/nexus/content/groups/public/'
+//            url "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
@@ -20,8 +19,13 @@ allprojects {
 }
 
 subprojects {
+    ext {
+        CUKES_VERSION = '1.2.5'
+        WIREMOCK_VERSION = '2.6.0'
+        SCOPED_WIREMOCK_VERSION = '0.0.3'
+    }
     repositories {
-//        mavenLocal()
+        mavenLocal()
 //        maven { url 'https://maven.google.com' }
 //        maven { url "http://repo.maven.apache.org/maven2" }
         maven {
@@ -37,9 +41,20 @@ subprojects {
             url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/snapshots/'
         }
     }
-
+    dependencies{
+        testCompile 'junit:junit:4.12'
+        testCompile 'org.codehaus.groovy:groovy-all:2.4.5'
+        testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
+            exclude group: "junit"
+            exclude module: "groovy-all"
+        }
+        testCompile("com.github.goldin:spock-extensions:0.1.4") {
+            exclude module: "spock-core"
+            exclude module: "slf4j-api"
+        }
+    }
     group = 'com.sbg.bdd'
-    version = '0.0.3'
+    version = '0.0.4'
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
     task packageSources(type: Jar) {
@@ -103,6 +118,4 @@ subprojects {
             }
         }
     }
-
-
 }

@@ -1,47 +1,50 @@
 buildscript {
     repositories {
         maven {
-            url 'http://nexus.standardbank.co.za:8090/nexus/content/groups/public/'
-//            url "https://plugins.gradle.org/m2/"
+            if (System.getProperty("runExternally") == 'true') {
+                url "https://plugins.gradle.org/m2/"
+            } else {
+                url 'http://nexus.standardbank.co.za:8090/nexus/content/groups/public/'
+            }
         }
     }
     dependencies {
         classpath 'org.hibernate.build.gradle:gradle-maven-publish-auth:2.0.1'
     }
 }
-
-allprojects {
+group='com.sbg.bdd'
+version='0.0.5'
+subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'maven-publish-auth'
-}
-
-subprojects {
     ext {
         CUKES_VERSION = '1.2.5'
         WIREMOCK_VERSION = '2.6.0'
-        SCOPED_WIREMOCK_VERSION = '0.0.3'
+        SCOPED_WIREMOCK_VERSION = '0.0.4'
     }
     repositories {
         mavenLocal()
-//        maven { url 'https://maven.google.com' }
-//        maven { url "http://repo.maven.apache.org/maven2" }
-        maven {
-            name 'releases'
-            url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/releases/'
-        }
-        maven {
-            name '3rdparty'
-            url 'http://nexus.standardbank.co.za:8090/nexus/content/groups/public/'
-        }
-        maven {
-            name 'snapshots'
-            url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/snapshots/'
+        if (System.getProperty("runExternally") == 'true') {
+            maven { url "http://repo.maven.apache.org/maven2" }
+        } else {
+            maven {
+                name 'releases'
+                url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/releases/'
+            }
+            maven {
+                name '3rdparty'
+                url 'http://nexus.standardbank.co.za:8090/nexus/content/groups/public/'
+            }
+            maven {
+                name 'snapshots'
+                url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/snapshots/'
+            }
         }
     }
-    dependencies{
+    dependencies {
         testCompile 'junit:junit:4.12'
         testCompile 'org.codehaus.groovy:groovy-all:2.4.5'
         testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
@@ -53,8 +56,6 @@ subprojects {
             exclude module: "slf4j-api"
         }
     }
-    group = 'com.sbg.bdd'
-    version = '0.0.4'
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
     task packageSources(type: Jar) {
@@ -87,8 +88,9 @@ subprojects {
             mavenJava(MavenPublication) {
 
                 println "Publishing $project.name:$project.group:$project.version"
-                groupId 'com.sbg.bdd'
+                groupId "$rootProject.group"
                 artifactId "$project.name"
+                version "$rootProject.version"
 
                 from components.java
 

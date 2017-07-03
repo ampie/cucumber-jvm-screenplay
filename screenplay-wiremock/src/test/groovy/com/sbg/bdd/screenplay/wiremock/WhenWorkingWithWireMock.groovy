@@ -18,11 +18,11 @@ abstract class WhenWorkingWithWireMock extends Specification{
     public static final int PRIORITIES_PER_LEVEL = 10;
 
     static final int EVERYBODY_PRIORITY_DECREMENT = PRIORITIES_PER_LEVEL / 2;
-    def publicAddress
+    def publicAddress = '127.0.0.1'
 
     def initializeWireMock(GlobalScope globalScope) {
         def wireMockServer = new ScopedWireMockServer()
-        publicAddress = new IpHelper().findFirstNonExcludedNetworkInterface()
+//        publicAddress = new IpHelper().findFirstNonExcludedNetworkInterface()
 
         WireMockMemories.rememberFor(globalScope).toUseWireMock(wireMockServer).withPublicAddress(publicAddress)
         wireMockServer.registerResourceRoot(Performance.OUTPUT_RESOURCE_ROOT,globalScope.recall(Performance.OUTPUT_RESOURCE_ROOT))

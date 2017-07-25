@@ -1,0 +1,90 @@
+version=rootProject.version
+buildscript {
+    repositories {
+        mavenLocal()
+        if (System.getProperty("runExternally") == 'true') {
+            jcenter()
+        } else {
+            maven { url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/public/' }
+        }
+        dependencies {
+            classpath 'com.bmuschko:gradle-docker-plugin:3.0.8'
+        }
+    }
+}
+apply plugin: 'maven'
+apply plugin: 'com.bmuschko.docker-remote-api'
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.*
+import com.bmuschko.gradle.docker.tasks.container.*
+dependencies {
+    compile(project(":serenity-cucumber-adaptor"))
+    compile(project(":cucumber-jvm-screenplay-core"))
+    compile("com.sbg.bdd:scoped-wiremock-server:${SCOPED_WIREMOCK_VERSION}")
+    compile('com.github.tomakehurst:wiremock:2.6.0')
+    compile('javax.enterprise:cdi-api:1.2')
+    compile('org.apache.httpcomponents:httpclient:4.5.2')
+    compile('com.fasterxml.jackson.core:jackson-databind:2.6.4')
+    compile('javax.servlet:javax.servlet-api:3.1.0')
+    compile('net.serenity-bdd:serenity-filterchain-core:0.0.1')
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.sbg.bdd.wiremock.scoped.integration.cucumber.ScopedWireMockCucumberServerRunner',
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
+        )
+    }
+}
+task copyRuntimeLibs(type: Copy) {
+    dependsOn build
+    into "${buildDir}/docker/lib"
+    from configurations.compile
+    from(jar)
+    rename { filename ->
+        filename.startsWith(project.name)? project.name + ".jar": filename
+    }
+}
+task createDockerfile(type: Dockerfile) {
+    dependsOn copyRuntimeLibs
+    destFile = project.file("${buildDir}/docker/Dockerfile")
+    from 'docker.registry.standardbank.co.za/com.sbg.bdd/scoped-wiremock-base:1.2'
+    addFile('lib/*', '/wiremock/')
+    maintainer 'Ampie Barnard "ampie.barnard@standardbank.co.za"'
+}
+
+task buildImage(type: DockerBuildImage) {
+    println "docker.registry.standardbank.co.za/com.sbg.bdd/scoped-wiremock:${project.version}"
+
+    dependsOn createDockerfile
+    inputDir = createDockerfile.destFile.parentFile
+    tag = "docker.registry.standardbank.co.za/com.sbg.bdd/scoped-wiremock:${project.version}"
+}
+
+task pushImage(type: DockerPushImage) {
+    dependsOn buildImage
+    imageName = "docker.registry.standardbank.co.za/com.sbg.bdd/scoped-wiremock:$project.version"
+}
+
+task createWireMockContainer(type: DockerCreateContainer) {
+    dependsOn buildImage
+    targetImageId { buildImage.getImageId() }
+    portBindings = ['33000:8080']
+    volumes =["${buildDir}/test/output:/wiremock/output", "${buildDir}/test/input:/wiremock/input", "${buildDir}/test/journal:/wiremock/journal"]
+    env = ['WM_OPTS=debug;verbose;', 'LOCAL_USER_ID=' + ["id", "-u", System.properties['user.name']].execute().text.trim()]
+}
+
+task startWireMockContainer(type: DockerStartContainer) {
+    dependsOn createWireMockContainer
+    targetContainerId { createWireMockContainer.getContainerId() }
+}
+
+task stopWireMockContainer(type: DockerStopContainer) {
+    targetContainerId { createWireMockContainer.getContainerId() }
+}
+
+task functionalTestMyApp(type: Test) {
+    dependsOn startWireMockContainer
+    finalizedBy stopWireMockContainer
+}

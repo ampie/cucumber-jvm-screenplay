@@ -1,6 +1,6 @@
 package com.sbg.bdd.cucumber.screenplay.scoped
 
-import com.sbg.bdd.cucumber.common.ScreenPlayFormatter
+import com.sbg.bdd.cucumber.screenplay.core.formatter.ScreenPlayFormatter
 import groovy.json.JsonSlurper
 
 import static java.util.Arrays.asList

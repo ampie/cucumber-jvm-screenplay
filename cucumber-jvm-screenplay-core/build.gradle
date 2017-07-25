@@ -1,5 +1,4 @@
 dependencies {
-    compile('com.sbg.bdd:cucumber-common:0.0.2')
     compile("info.cukes:cucumber-java:$CUKES_VERSION")
     compile(project(':screenplay-core'))
 

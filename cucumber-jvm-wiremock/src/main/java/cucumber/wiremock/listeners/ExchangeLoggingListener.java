@@ -2,7 +2,7 @@ package cucumber.wiremock.listeners;
 
 
 import com.github.tomakehurst.wiremock.common.Json;
-import com.sbg.bdd.cucumber.common.ScreenPlayFormatter;
+import com.sbg.bdd.cucumber.screenplay.core.formatter.ScreenPlayFormatter;
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.core.annotations.StepListener;

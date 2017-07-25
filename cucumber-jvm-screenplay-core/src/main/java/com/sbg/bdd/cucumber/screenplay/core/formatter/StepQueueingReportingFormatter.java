@@ -1,6 +1,5 @@
 package com.sbg.bdd.cucumber.screenplay.core.formatter;
 
-import com.sbg.bdd.cucumber.common.ReportingFormatter;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.ScenarioOutline;

@@ -1,6 +1,5 @@
 package com.sbg.bdd.cucumber.screenplay.core.formatter;
 
-import com.sbg.bdd.cucumber.common.ReportingFormatter;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;

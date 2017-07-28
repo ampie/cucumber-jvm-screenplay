@@ -1,0 +1,9 @@
+dependencies {
+    compileOnly('junit:junit:4.12')
+    compile(project(':screenplay-core'))
+    compile(project(':cucumber-jvm-wiremock'))
+    compile("com.sbg.bdd:common-resource-api:${SCOPED_WIREMOCK_VERSION}")
+    compile("com.sbg.bdd:scoped-wiremock-client:${SCOPED_WIREMOCK_VERSION}")
+    compile("info.cukes:cucumber-junit:$CUKES_VERSION")
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

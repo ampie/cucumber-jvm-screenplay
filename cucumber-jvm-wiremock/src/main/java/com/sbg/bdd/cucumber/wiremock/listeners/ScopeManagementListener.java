@@ -1,4 +1,4 @@
-package cucumber.wiremock.listeners;
+package com.sbg.bdd.cucumber.wiremock.listeners;
 
 import com.sbg.bdd.cucumber.screenplay.scoped.plugin.CucumberPayloadProducingListener;
 import com.sbg.bdd.screenplay.core.ActorOnStage;

@@ -37,17 +37,17 @@ public class CorrelationFilter implements Filter {
         StubMapping mapping = buildProxyMapping(URI.create(requestSpecification.getURI()));
         wm.register(mapping);
         propagateCorrelationState(requestSpecification, currentCorrelationState);
-        String redirectedPath = redirectedPath(requestSpecification, currentCorrelationState);
-        Response response = filterContext.next(requestSpecification.path(redirectedPath), responseSpec);
+        String redirectedBaseUri = redirectedBaseUri(requestSpecification, currentCorrelationState);
+        Response response = filterContext.next((FilterableRequestSpecification) requestSpecification.baseUri(redirectedBaseUri), responseSpec);
         wm.removeStubMapping(mapping);
         syncLocalCorrelationState(response);
         return response;
 
     }
 
-    private String redirectedPath(FilterableRequestSpecification requestSpecification, WireMockCorrelationState currentCorrelationState) {
+    private String redirectedBaseUri(FilterableRequestSpecification requestSpecification, WireMockCorrelationState currentCorrelationState) {
         try {
-            return URLHelper.replaceBaseUrl(URI.create(requestSpecification.getURI()).toURL(), currentCorrelationState.getWireMockBaseUrl()).toExternalForm();
+            return URLHelper.replaceBaseUrl(URI.create(requestSpecification.getBaseUri()).toURL(), currentCorrelationState.getWireMockBaseUrl()).toExternalForm();
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }

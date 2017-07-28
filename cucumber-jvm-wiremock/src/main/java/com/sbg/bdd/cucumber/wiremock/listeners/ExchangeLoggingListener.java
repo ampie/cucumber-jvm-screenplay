@@ -1,4 +1,4 @@
-package cucumber.wiremock.listeners;
+package com.sbg.bdd.cucumber.wiremock.listeners;
 
 
 import com.github.tomakehurst.wiremock.common.Json;

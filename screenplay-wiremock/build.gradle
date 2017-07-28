@@ -4,7 +4,8 @@ dependencies {
     compile "com.sbg.bdd:common-resource-api:$SCOPED_WIREMOCK_VERSION"
     compile "com.sbg.bdd:scoped-wiremock-client:$SCOPED_WIREMOCK_VERSION"
     compileOnly "com.github.tomakehurst:wiremock:$WIREMOCK_VERSION"
-//    compile 'commons-io:commons-io:2.5'
+
+    //    compile 'commons-io:commons-io:2.5'
     testCompile "com.sbg.bdd:scoped-wiremock-server:$SCOPED_WIREMOCK_VERSION"
     testCompile('cglib:cglib-nodep:2.2')
     testCompile"com.github.tomakehurst:wiremock:$WIREMOCK_VERSION"

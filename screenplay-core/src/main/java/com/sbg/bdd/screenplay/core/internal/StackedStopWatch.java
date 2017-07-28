@@ -12,7 +12,7 @@ public class StackedStopWatch implements StopWatch {
         if (startStack.get() == null) {
             startStack.set(new ArrayDeque<Long>());
         }
-        startStack.get().push(System.nanoTime());
+        startStack.get().offerLast(System.nanoTime());
     }
 
     @Override

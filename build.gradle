@@ -13,7 +13,7 @@ buildscript {
     }
 }
 group='com.sbg.bdd'
-version='0.0.6'
+version='0.1.0'
 subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
@@ -23,7 +23,7 @@ subprojects {
     ext {
         CUKES_VERSION = '1.2.5'
         WIREMOCK_VERSION = '2.6.0'
-        SCOPED_WIREMOCK_VERSION = '0.0.5'
+        SCOPED_WIREMOCK_VERSION = '0.1.0'
     }
     repositories {
         mavenLocal()

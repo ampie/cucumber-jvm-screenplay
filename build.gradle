@@ -31,16 +31,7 @@ subprojects {
             maven { url "http://repo.maven.apache.org/maven2" }
         } else {
             maven {
-                name 'releases'
-                url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/releases/'
-            }
-            maven {
-                name '3rdparty'
                 url 'http://nexus.standardbank.co.za:8090/nexus/content/groups/public/'
-            }
-            maven {
-                name 'snapshots'
-                url 'http://nexus.standardbank.co.za:8090/nexus/content/repositories/snapshots/'
             }
         }
     }
@@ -87,7 +78,7 @@ subprojects {
         publications {
             mavenJava(MavenPublication) {
 
-                println "Publishing $project.name:$project.group:$project.version"
+                println "Publishing $project.name:$project.group:$rootProject.version"
                 groupId "$rootProject.group"
                 artifactId "$project.name"
                 version "$rootProject.version"

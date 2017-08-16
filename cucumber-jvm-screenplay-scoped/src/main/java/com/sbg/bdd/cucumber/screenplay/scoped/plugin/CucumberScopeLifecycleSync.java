@@ -28,6 +28,7 @@ public class CucumberScopeLifecycleSync extends StepQueueingReportingFormatter {
     private Examples currentExamples;
 
     {
+        stepEventTypeMap.put("pending", StepEventType.PENDING);
         stepEventTypeMap.put(Result.FAILED, StepEventType.FAILED);
         stepEventTypeMap.put(Result.PASSED, StepEventType.SUCCESSFUL);
         stepEventTypeMap.put(Result.SKIPPED.getStatus(), StepEventType.SKIPPED);

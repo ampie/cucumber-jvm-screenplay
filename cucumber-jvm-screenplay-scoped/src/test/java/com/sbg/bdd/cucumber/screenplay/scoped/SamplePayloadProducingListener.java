@@ -4,6 +4,7 @@ import com.sbg.bdd.cucumber.screenplay.core.formatter.MapParser;
 import com.sbg.bdd.cucumber.screenplay.core.formatter.ScreenPlayFormatter;
 import com.sbg.bdd.cucumber.screenplay.scoped.plugin.CucumberPayloadProducingListener;
 import com.sbg.bdd.screenplay.core.Scene;
+import com.sbg.bdd.screenplay.core.events.ActorEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.scoped.FunctionalScope;
 import com.sbg.bdd.screenplay.scoped.ScenarioScope;
@@ -60,4 +61,5 @@ public class SamplePayloadProducingListener extends CucumberPayloadProducingList
             }
         }
     }
+
 }

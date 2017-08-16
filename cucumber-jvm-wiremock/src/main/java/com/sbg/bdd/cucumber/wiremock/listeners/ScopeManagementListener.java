@@ -1,12 +1,15 @@
 package com.sbg.bdd.cucumber.wiremock.listeners;
 
 import com.sbg.bdd.cucumber.screenplay.scoped.plugin.CucumberPayloadProducingListener;
+import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Scene;
+import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.core.annotations.ActorInvolvement;
 import com.sbg.bdd.screenplay.core.annotations.ActorListener;
 import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
 import com.sbg.bdd.screenplay.core.annotations.SceneListener;
+import com.sbg.bdd.screenplay.core.events.ActorEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.core.internal.BaseActorOnStage;
 import com.sbg.bdd.screenplay.scoped.FunctionalScope;
@@ -18,19 +21,32 @@ import com.sbg.bdd.wiremock.scoped.common.ParentPath;
 import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory;
 import com.sbg.bdd.wiremock.scoped.integration.WireMockCorrelationState;
 import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
+import gherkin.formatter.Argument;
+import gherkin.formatter.model.Match;
+import gherkin.formatter.model.Result;
+import gherkin.formatter.model.Step;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.sbg.bdd.screenplay.core.actors.OnStage.theCurrentScene;
 
 public class ScopeManagementListener extends CucumberPayloadProducingListener {
-
-
+    public static final String UPDATE_JIRA = "serenity.jira.integration.enabled";
+    public static final String[] COMPLETION_STATE={UPDATE_JIRA};
     @SceneListener(scopePhases = SceneEventType.AFTER_COMPLETE)
     public void unregisterScope(Scene scene) {
         String knownScopePath = CorrelationPath.of(scene);
-        getWireMockFrom(scene).stopCorrelatedScope(knownScopePath);
+        Map<String, Object> payload = new HashMap<>();
+        for (String s : COMPLETION_STATE) {
+            Object value = scene.recall(s);
+            if(value!=null){
+                payload.put(s,value);
+            }
+        }
+        getWireMockFrom(scene).stopCorrelatedScope(knownScopePath, payload);
     }
 
     @Override
@@ -76,9 +92,35 @@ public class ScopeManagementListener extends CucumberPayloadProducingListener {
         ((CorrelationState) theCurrentScene.recall(WireMockScreenplayContext.CORRELATION_STATE)).setCurrentStep(stepPath);
     }
 
+    @ActorListener(involvement= ActorInvolvement.INTO_SPOTLIGHT)
+    public void intoSpotlight(ActorEvent event){
+        logShineSpotlightOn(event);
+        syncCorrelationState(event.getActorOnStage());
+    }
+    private void logShineSpotlightOn(ActorEvent event) {
+        if (OnStage.theCurrentScene() instanceof ScenarioScope && inStep) {
+            Scene theCurrentScene = theCurrentScene();
+            Actor actor = event.getActorOnStage().getActor();
+            String name = "Shine the spotlight on " + actor.getName();
+            if(actor.getPersona().getUrl()!=null){
+                name = "Shine the spotlight on **[" +  actor.getName() + "](" + actor.getPersona().getUrl() +")**";
+            }
+            Step step = new Step(null, "shineSpotlightOn", name, null, null, null);
+            Map<String, Object> stepAndMatch = step.toMap();
+            List<Argument> arguments = Collections.EMPTY_LIST;
+            Match match = new Match(arguments, "");
+            stepAndMatch.put("match", match.toMap());
+            stepAndMatch.put("personaUrl", actor.getPersona().getUrl());
+            stepAndMatch.put("method", "childStepAndMatch");
+            getWireMockFrom(theCurrentScene).startStep(CorrelationPath.of(theCurrentScene), "shineSpotlightOn", stepAndMatch);
+            Map<String,Object> result = new Result(Result.PASSED,0l,null).toMap();
+            result.put("method","childResult");
+            getWireMockFrom(theCurrentScene).stopStep(CorrelationPath.of(theCurrentScene), "shineSpotlightOn", result);
+        }
+    }
 
-    @ActorListener(involvement = ActorInvolvement.INTO_SPOTLIGHT)
-    public void syncCorrelationState(ActorOnStage userInScope) {
+//    @ActorListener(involvement = ActorInvolvement.INTO_SPOTLIGHT)
+    private void syncCorrelationState(ActorOnStage userInScope) {
         if (!BaseActorOnStage.isEverybody(userInScope)) {
             CorrelationState state = userInScope.recall(WireMockScreenplayContext.CORRELATION_STATE);
             WireMockCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();

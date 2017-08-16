@@ -6,4 +6,6 @@ public interface Persona <JSONOBJECT>{
     JSONOBJECT getDataObject();
     CharacterType getCharacterType();
     void setCharacterType(CharacterType type);
+
+    String getUrl();
 }

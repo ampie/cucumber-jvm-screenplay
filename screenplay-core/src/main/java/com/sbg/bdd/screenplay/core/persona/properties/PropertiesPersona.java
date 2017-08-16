@@ -36,6 +36,10 @@ public class PropertiesPersona implements Persona<Properties> {
     }
 
     @Override
+    public String getUrl() {
+        return data.containsKey("personaUrl")?data.getProperty("personaUrl"):null;
+    }
+    @Override
     public void setCharacterType(CharacterType type) {
         this.characterType = type;
     }

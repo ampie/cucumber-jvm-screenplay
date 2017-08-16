@@ -39,4 +39,10 @@ public class GsonPersona implements Persona<JsonObject> {
     public void setCharacterType(CharacterType type) {
         this.characterType=type;
     }
+
+    @Override
+    public String getUrl() {
+        return data.has("personaUrl")?data.get("personaUrl").getAsString():null;
+    }
+
 }

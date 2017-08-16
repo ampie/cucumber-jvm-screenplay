@@ -1,6 +1,9 @@
 package com.sbg.bdd.cucumber.screenplay.core.formatter;
 
+import com.sbg.bdd.screenplay.core.annotations.ActorInvolvement;
+import com.sbg.bdd.screenplay.core.annotations.ActorListener;
 import com.sbg.bdd.screenplay.core.annotations.StepListener;
+import com.sbg.bdd.screenplay.core.events.ActorEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.core.internal.Embeddings;
 import com.sbg.bdd.screenplay.core.internal.ScreenplayStepMethodInfo;
@@ -11,9 +14,7 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;

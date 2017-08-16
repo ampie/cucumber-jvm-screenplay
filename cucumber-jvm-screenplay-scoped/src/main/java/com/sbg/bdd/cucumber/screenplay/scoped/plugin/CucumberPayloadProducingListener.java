@@ -2,10 +2,8 @@ package com.sbg.bdd.cucumber.screenplay.scoped.plugin;
 
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
-import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
-import com.sbg.bdd.screenplay.core.annotations.SceneListener;
-import com.sbg.bdd.screenplay.core.annotations.StepEventType;
-import com.sbg.bdd.screenplay.core.annotations.StepListener;
+import com.sbg.bdd.screenplay.core.annotations.*;
+import com.sbg.bdd.screenplay.core.events.ActorEvent;
 import com.sbg.bdd.screenplay.core.events.SceneEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.core.internal.Embeddings;
@@ -19,15 +17,13 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.sbg.bdd.cucumber.screenplay.core.formatter.FormattingStepListener.extractArguments;
 import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
 
 public abstract class CucumberPayloadProducingListener {
+    protected boolean inStep=false;
 
     protected abstract void scopeStarted(Scene scene);
 
@@ -38,6 +34,7 @@ public abstract class CucumberPayloadProducingListener {
     protected abstract void stepStarted(StepEvent event, Map<String, Object> payload);
 
     protected abstract void stepCompleted(StepEvent event, Map<String, Object> payload);
+
 
     @SceneListener(scopePhases = SceneEventType.ON_PHASE_ENTERED)
     public void scenarioPhaseEntered(SceneEvent event) {
@@ -70,6 +67,7 @@ public abstract class CucumberPayloadProducingListener {
         if (OnStage.theCurrentScene() instanceof ScenarioScope) {
             //Don't generate events for features or capabilities
             if (event.getStepLevel() == 0 && event.getInfo() instanceof GherkinStepMethodInfo) {
+                inStep=true;
                 GherkinStepMethodInfo mi = (GherkinStepMethodInfo) event.getInfo();
                 stepAndMatch = mi.getStep().toMap();
                 stepAndMatch.put("match", mi.getMatch().toMap());
@@ -91,6 +89,7 @@ public abstract class CucumberPayloadProducingListener {
         Map<String, Object> map = new Result(statusOf(event), event.getDuration(), event.getError(), null).toMap();
         if (event.getStepLevel() == 0) {
             map.put("method", "result");
+            inStep=false;
         } else {
             List<Map<String, Object>> embeddings = new ArrayList<>();
             for (Pair<String, byte[]> embedding : Embeddings.producedBy(((ScreenplayStepMethodInfo) event.getInfo()).getImplementation())) {

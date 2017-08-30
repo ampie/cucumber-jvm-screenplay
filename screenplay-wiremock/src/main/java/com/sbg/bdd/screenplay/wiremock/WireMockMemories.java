@@ -14,6 +14,8 @@ import okhttp3.OkHttpClient;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+@Deprecated
+//Rather use ScreenplayConfigurator
 public class WireMockMemories extends ScreenplayMemories<WireMockMemories> {
 
     public WireMockMemories(Memory memory) {

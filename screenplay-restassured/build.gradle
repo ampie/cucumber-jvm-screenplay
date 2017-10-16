@@ -2,7 +2,10 @@ dependencies {
     compile(project(':screenplay-scoped'))
     compile(project(':screenplay-wiremock'))
     compile("com.sbg.bdd:scoped-wiremock-integration-common:$SCOPED_WIREMOCK_VERSION")
-    compile('io.rest-assured:rest-assured:3.0.3')
+    compile('io.rest-assured:rest-assured:3.0.3'){
+        exclude group: "org.codehaus.groovy"
+    }
+    compile("org.codehaus.groovy:groovy-all:$GROOVY_VERSION")
     compileOnly("com.github.tomakehurst:wiremock:$WIREMOCK_VERSION")
     testCompile("com.sbg.bdd:scoped-wiremock-server:$SCOPED_WIREMOCK_VERSION")
     testCompile("com.github.tomakehurst:wiremock:$WIREMOCK_VERSION")

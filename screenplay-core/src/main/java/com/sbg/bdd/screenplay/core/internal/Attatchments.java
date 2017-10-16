@@ -11,14 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Embeddings {
+public class Attatchments {
     public static List<Pair<String, byte[]>> producedBy(Object o) {
         List<Pair<String, byte[]>> result = new ArrayList<>();
         for (Field field : FieldUtils.getAllFields(o.getClass())) {
             if (field.isAnnotationPresent(ProducesAttachment.class)) {
                 Object dataObject = readValue(o, field);
                 if (dataObject != null) {
-                    result.add(asEmbedding(field, dataObject));
+                    result.add(asAttachment(field, dataObject));
                 }
             }
         }
@@ -34,7 +34,7 @@ public class Embeddings {
         }
     }
 
-    private static ImmutablePair<String, byte[]> asEmbedding(Field field, Object dataObject) {
+    private static ImmutablePair<String, byte[]> asAttachment(Field field, Object dataObject) {
         ProducesAttachment annotation = field.getAnnotation(ProducesAttachment.class);
         byte[] data = null;
         if (dataObject instanceof byte[]) {

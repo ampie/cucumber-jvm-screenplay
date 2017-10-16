@@ -39,7 +39,7 @@ public class BaseActorOnStage implements ActorOnStage {
     public void allow(final DownstreamStub... downstreamStubs) {
         ((BaseActor) actor).performSteps(new ScreenplayStepMethodInfo[]{new ScreenplayStepMethodInfo(((BaseActor) actor).getParentStepPath(), "allow", this, new Object() {
             String keyword = actor.getPrecedingKeyword();
-            String name = actor.getName();
+            String name = ((BaseActor) actor).actorNameString();
 
             @Step("#keyword #name, allow ")
             public void allow(ActorOnStage me) {
@@ -52,7 +52,7 @@ public class BaseActorOnStage implements ActorOnStage {
     public void verifyThat(final DownstreamVerification... downstreamVerifications) {
         ((BaseActor) actor).performSteps(new ScreenplayStepMethodInfo[]{new ScreenplayStepMethodInfo(((BaseActor) actor).getParentStepPath(), "verifyThat", this, new Object() {
             String keyword = actor.getPrecedingKeyword();
-            String name = actor.getName();
+            String name =((BaseActor) actor).actorNameString();
 
             @Step("#keyword #name, verify that ")
             public void verifyThat(ActorOnStage me) {

@@ -12,8 +12,7 @@ import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.persona.properties.PropertiesPersonaClient;
 
 public class BasePerformance implements Performance {
-    private final String name
-            ;
+    private final String name;
     protected ScreenPlayEventBus eventBus;
     protected BaseCastingDirector castingDirector;
     protected Cast cast;
@@ -22,15 +21,16 @@ public class BasePerformance implements Performance {
 
     //For tests mainly
     public BasePerformance(String name, ResourceContainer inputResourceRoot) {
-        this(name,inputResourceRoot, new PropertiesPersonaClient(), new SimpleInstanceGetter());
+        this(name, inputResourceRoot, new PropertiesPersonaClient(), new SimpleInstanceGetter());
+        BaseActor.setCurrentStep(null);//Only an issue for testing
     }
 
     public BasePerformance(String name, ResourceContainer inputResourceRoot, PersonaClient<?> personaClient, InstanceGetter instanceGetter) {
         eventBus = new ScreenPlayEventBus(instanceGetter);
         castingDirector = new BaseCastingDirector(eventBus, personaClient, inputResourceRoot);
         cast = new Cast(castingDirector);
-        memory.remember(INPUT_RESOURCE_ROOT,inputResourceRoot);
-        this.name=name;
+        memory.remember(INPUT_RESOURCE_ROOT, inputResourceRoot);
+        this.name = name;
     }
 
     @Override

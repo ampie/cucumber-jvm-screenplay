@@ -15,7 +15,7 @@ public class EventualConsequence<T> implements Consequence<T> {
         this.timeout = timeout;
     }
 
-    //TODO make this configurable
+    //TODO make the default timeout configurable
     public EventualConsequence(Consequence<T> consequenceThatMightTakeSomeTime) {
         this(consequenceThatMightTakeSomeTime,
                 10000);

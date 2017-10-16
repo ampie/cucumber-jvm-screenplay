@@ -1,11 +1,8 @@
 package com.sbg.bdd.cucumber.screenplay.core.formatter;
 
-import com.sbg.bdd.screenplay.core.annotations.ActorInvolvement;
-import com.sbg.bdd.screenplay.core.annotations.ActorListener;
 import com.sbg.bdd.screenplay.core.annotations.StepListener;
-import com.sbg.bdd.screenplay.core.events.ActorEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
-import com.sbg.bdd.screenplay.core.internal.Embeddings;
+import com.sbg.bdd.screenplay.core.internal.Attatchments;
 import com.sbg.bdd.screenplay.core.internal.ScreenplayStepMethodInfo;
 import com.sbg.bdd.screenplay.core.util.Fields;
 import gherkin.formatter.Argument;
@@ -86,7 +83,7 @@ public class FormattingStepListener {
     }
 
     private void logEmbeddings(ScreenplayStepMethodInfo csi) {
-        for (Pair<String, byte[]> embedding : Embeddings.producedBy(csi.getImplementation())) {
+        for (Pair<String, byte[]> embedding : Attatchments.producedBy(csi.getImplementation())) {
             getFormatter().embedding(embedding.getKey(), embedding.getValue());
         }
     }

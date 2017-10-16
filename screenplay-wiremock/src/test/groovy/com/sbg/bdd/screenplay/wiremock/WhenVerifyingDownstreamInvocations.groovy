@@ -2,6 +2,7 @@ package com.sbg.bdd.screenplay.wiremock
 
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.screenplay.scoped.GlobalScope
+import com.sbg.bdd.screenplay.wiremock.listeners.ScopeManagementListener
 import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 
 import static com.github.tomakehurst.wiremock.http.RequestMethod.PUT
@@ -15,7 +16,7 @@ class WhenVerifyingDownstreamInvocations extends WhenWorkingWithWireMock {
     def 'should create a simple proxy mapping'() throws Exception {
         given:
         Listener.EVENTS.clear()
-        GlobalScope globalScope = buildGlobalScope('TestRun', 5,Listener)
+        GlobalScope globalScope = buildGlobalScope('TestRun', Listener,ScopeManagementListener)
         ScopedWireMockServer wireMockServer = initializeWireMock(globalScope)
         OnStage.present(globalScope)
         def johnSmith = actorNamed('John Smith')

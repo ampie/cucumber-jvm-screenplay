@@ -7,9 +7,6 @@ import com.sbg.bdd.wiremock.scoped.admin.ScopedAdmin;
 import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
 import com.sbg.bdd.wiremock.scoped.client.ScopedHttpAdminClient;
 import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
-import com.sbg.bdd.wiremock.scoped.client.endpointconfig.EndpointConfigRegistry;
-import com.sbg.bdd.wiremock.scoped.client.endpointconfig.RemoteEndPointConfigRegistry;
-import okhttp3.OkHttpClient;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,13 +36,9 @@ public class WireMockMemories extends ScreenplayMemories<WireMockMemories> {
         memory.remember(WireMockScreenplayContext.JOURNAL_MODE, mode);
         return this;
     }
-    public WireMockMemories toUseTheEndpointConfigRegistry(EndpointConfigRegistry endpointConfigRegistry) {
-        memory.remember(WireMockScreenplayContext.ENDPOINT_CONFIG_REGISTRY, endpointConfigRegistry);
-        return this;
-    }
+
     public WireMockMemories toPointTo(String baseUrl) {
-        memory.remember(WireMockScreenplayContext.BASE_URL_OF_SERVICE_UNDER_TEST, baseUrl);
-        toUseTheEndpointConfigRegistry(new RemoteEndPointConfigRegistry(new OkHttpClient(), baseUrl));
+        memory.remember(WireMockScreenplayContext.BASE_URL_OF_SERVICE_UNDER_TEST, toUrl(baseUrl));
         return this;
     }
 
@@ -53,22 +46,34 @@ public class WireMockMemories extends ScreenplayMemories<WireMockMemories> {
         memory.remember(WireMockScreenplayContext.JOURNAL_RESOURCE_ROOT, root);
         return this;
     }
-    public WireMockMemories theRunId(Integer runId) {
-        memory.remember(WireMockScreenplayContext.RUN_ID, runId);
+
+    public WireMockMemories toUseThePersonasAt(ResourceContainer root) {
+        memory.remember(WireMockScreenplayContext.PERSONA_RESOURCE_ROOT, root);
         return this;
     }
 
     public WireMockMemories toUseWireMockAt(String path) {
+        URL url = toUrl(path);
+        toUseWireMock(new ScopedHttpAdminClient(url.getHost(), url.getPort(), url.getPath()));
+        return this;
+    }
+
+    private URL toUrl(String path) {
         try {
-            URL baseUrl = new URL(path);
-            toUseWireMock(new ScopedHttpAdminClient(baseUrl.getHost(), baseUrl.getPort(), baseUrl.getPath()));
-            return this;
+            return new URL(path);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e);
         }
     }
+
     public WireMockMemories withPublicAddress(String address) {
-        memory.remember(WireMockScreenplayContext.WIRE_MOCK_PUBLIC_ADDRESS, address);
+        URL baseUrl = toUrl(address);
+        memory.remember(WireMockScreenplayContext.WIRE_MOCK_PUBLIC_ADDRESS, baseUrl);
+        return this;
+    }
+
+    public WireMockMemories forIntegrationScope(String integrationScope) {
+        memory.remember(WireMockScreenplayContext.INTEGRATION_SCOPE, integrationScope);
         return this;
     }
 
@@ -87,24 +92,32 @@ public class WireMockMemories extends ScreenplayMemories<WireMockMemories> {
     public ScopedWireMockClient theWireMockClient() {
         return memory.recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
     }
+
     public ScopedAdmin theWireMockAdmin() {
         return memory.recall(WireMockScreenplayContext.WIRE_MOCK_ADMIN);
     }
-    public EndpointConfigRegistry theEndointConfigRegistry() {
-        return memory.recall(WireMockScreenplayContext.ENDPOINT_CONFIG_REGISTRY);
-    }
-    public String theBaseUrlOfTheServiceUnderTest() {
+
+    public URL theBaseUrlOfTheServiceUnderTest() {
         return memory.recall(WireMockScreenplayContext.BASE_URL_OF_SERVICE_UNDER_TEST);
     }
-    public String thePublicAddressOfWireMock() {
-        return memory.recall(WireMockScreenplayContext.WIRE_MOCK_PUBLIC_ADDRESS);
+
+    public URL thePublicAddressOfWireMock() {
+        URL url = memory.recall(WireMockScreenplayContext.WIRE_MOCK_PUBLIC_ADDRESS);
+        if (url == null) {
+            ScopedWireMockClient wireMockClient = theWireMockClient();
+            if (wireMockClient != null) {
+                url = toUrl(wireMockClient.baseUrl());
+            }
+        }
+        return url;
     }
 
     public JournalMode theJournalModeToUse() {
         return memory.recall(WireMockScreenplayContext.JOURNAL_MODE);
     }
 
-    public Integer theRunId() {
-            return memory.recall(WireMockScreenplayContext.RUN_ID);
+
+    public String theIntegrationScope() {
+        return memory.recall(WireMockScreenplayContext.INTEGRATION_SCOPE);
     }
 }

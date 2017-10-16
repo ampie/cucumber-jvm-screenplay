@@ -20,7 +20,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
     def 'should associate a recording mapping with the current ActorInScope wihtout registering on WireMock'() throws Exception {
         
         given:
-        GlobalScope globalScope = buildGlobalScope('TestRun',5)
+        GlobalScope globalScope = buildGlobalScope('TestRun')
         def tempDir = File.createTempDir("wiremock-screenplay-tests-WhenBuildingRecordingSpecifications", "")
         ScopedWireMockServer wireMockServer = initializeWireMock(globalScope)
         OnStage.present(globalScope)
@@ -45,7 +45,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
     def 'should associate the recording mapping with the all active actors when created under everybody'() throws Exception {
 
         given:
-        GlobalScope globalScope = buildGlobalScope('TestRun',5)
+        GlobalScope globalScope = buildGlobalScope('TestRun')
         def tempDir = File.createTempDir("wiremock-screenplay-tests-WhenBuildingRecordingSpecifications", "")
         initializeWireMock(globalScope)
         OnStage.present(globalScope)
@@ -68,7 +68,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         mappings[1].userInScopeId == 'John_Smith'
     }
     def 'should record responses to the current output resource directory when no path is specified'() throws Exception {
-        GlobalScope globalScope = buildGlobalScope('TestRun',5)
+        GlobalScope globalScope = buildGlobalScope('TestRun')
         
         ScopedWireMockServer wireMockServer = initializeWireMock(globalScope)
         given:
@@ -90,7 +90,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         requestsToRecord[0].userInScopeId == 'John_Smith'
     }
     def 'should associate a playback recording mapping with the current ActorInScope'() throws Exception {
-        GlobalScope globalScope = buildGlobalScope('TestRun',5)
+        GlobalScope globalScope = buildGlobalScope('TestRun')
         def tempDir = File.createTempDir("wiremock-screenplay-tests-WhenBuildingRecordingSpecifications", "")
         
         ScopedWireMockServer wireMockServer = initializeWireMock(globalScope)
@@ -115,7 +115,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         requestsToRecord[0].userInScopeId == 'John_Smith'
     }
     def 'should playback responses from the current input resource directory when no path is specified'() throws Exception {
-        GlobalScope globalScope = buildGlobalScope('TestRun',5)
+        GlobalScope globalScope = buildGlobalScope('TestRun')
         def nestedScope = globalScope.startFunctionalScope("nested1")
 
         
@@ -139,7 +139,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         requestsToRecord[0].userInScopeId == 'John_Smith'
     }
     def 'should map responses to the current journal directory when no path is specified'() throws Exception {
-        GlobalScope globalScope = buildGlobalScope('TestRun',5)
+        GlobalScope globalScope = buildGlobalScope('TestRun')
         def nestedScope = globalScope.startFunctionalScope("nested1")
         
         ScopedWireMockServer wireMockServer = initializeWireMock(globalScope)
@@ -163,7 +163,7 @@ class WhenBuildingRecordingSpecifications extends WhenWorkingWithWireMock {
         requestsToRecord[0].userInScopeId == 'John_Smith'
     }
     def 'should map responses to the current resource directory under the journal directory when no path is specified'() throws Exception {
-        GlobalScope globalScope = buildGlobalScope('TestRun',5)
+        GlobalScope globalScope = buildGlobalScope('TestRun')
         def nestedScope = globalScope.startFunctionalScope("nested1")
         
         ScopedWireMockServer wireMockServer = initializeWireMock(globalScope)

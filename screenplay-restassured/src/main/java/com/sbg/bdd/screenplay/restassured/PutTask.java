@@ -14,6 +14,8 @@ import io.restassured.response.Response;
 import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.RequestSpecification;
 
+import java.net.URL;
+
 import static com.sbg.bdd.screenplay.core.actors.OnStage.shineSpotlightOn;
 
 public class PutTask implements RestAssuredTasks.HttpTask {
@@ -59,9 +61,9 @@ public class PutTask implements RestAssuredTasks.HttpTask {
             spec.contentType(ContentType.JSON);
         }
         if (baseUrlNotSpecified((FilterableRequestSpecification) spec) && !uri.startsWith("http")) {
-            String baseUri = WireMockMemories.recallFrom(actorOnStage).theBaseUrlOfTheServiceUnderTest();
+            URL baseUri = WireMockMemories.recallFrom(actorOnStage).theBaseUrlOfTheServiceUnderTest();
             if (baseUri != null) {
-                spec.baseUri(baseUri);
+                spec.baseUri(baseUri.toExternalForm());
             }
         }
     }

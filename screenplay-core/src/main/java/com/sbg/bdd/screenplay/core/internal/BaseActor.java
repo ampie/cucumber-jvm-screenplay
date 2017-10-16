@@ -83,7 +83,7 @@ public class BaseActor implements Actor {
     public void should(final Consequence... consequences) {
         performSteps(new ScreenplayStepMethodInfo[]{new ScreenplayStepMethodInfo(getParentStepPath(), "should", this, new Object() {
             String keyword = BaseActor.this.precedingKeyword;
-            String name = BaseActor.this.name;
+            String name = BaseActor.this.actorNameString();
 
             @Step("#keyword #name should ")
             public void should(Actor me) {
@@ -96,7 +96,7 @@ public class BaseActor implements Actor {
     public void wasAbleTo(final Performable... tasks) {
         performSteps(new ScreenplayStepMethodInfo[]{new ScreenplayStepMethodInfo(getParentStepPath(), "wasAbleTo", this, new Object() {
             String keyword = BaseActor.this.precedingKeyword;
-            String name = BaseActor.this.name;
+            String name = BaseActor.this.actorNameString();
 
             @Step("#keyword #name was able to ")
             public void wasAbleTo(Actor me) {
@@ -109,13 +109,20 @@ public class BaseActor implements Actor {
     public void attemptsTo(final Performable... tasks) {
         performSteps(new ScreenplayStepMethodInfo[]{new ScreenplayStepMethodInfo(getParentStepPath(), "attemptsTo", this, new Object() {
             String keyword = BaseActor.this.precedingKeyword;
-            String name = BaseActor.this.name;
+            String name = BaseActor.this.actorNameString();
 
             @Step("#keyword #name attempts to ")
             public void attemptsTo(Actor me) {
                 performSteps("performAs", BaseActor.this, tasks);
             }
         })});
+    }
+    String actorNameString(){
+        if(getPersona() !=null && getPersona().getUrl()!=null){
+            return "**[" +  getName() + "](" + getPersona().getUrl() +")**";
+        }else{
+            return getName();
+        }
     }
 
     public void performSteps(String methodName, Object performer, Object... stepObjects) {

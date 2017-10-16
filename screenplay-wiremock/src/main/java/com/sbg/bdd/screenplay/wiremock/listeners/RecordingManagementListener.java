@@ -13,7 +13,7 @@ import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
 
 import java.util.ArrayList;
 import java.util.List;
-
+//TODO move to server
 public class RecordingManagementListener {
     @SceneListener(scopePhases = SceneEventType.BEFORE_COMPLETE)
     public void saveRecordings(Scene scene) {

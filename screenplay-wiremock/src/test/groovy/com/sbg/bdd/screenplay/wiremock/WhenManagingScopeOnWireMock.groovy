@@ -18,7 +18,7 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
     def 'should keep in sync'() throws Exception {
         given:
         DependencyInjectionAdaptorFactory.useAdapter(new BaseDependencyInjectorAdaptor())
-        GlobalScope globalScope = buildGlobalScopeWithoutStarting('TestRun', 5, ScopeManagementListener)
+        GlobalScope globalScope = buildGlobalScopeWithoutStarting('TestRun', ScopeManagementListener)
         def wireMockServer = initializeWireMock(globalScope)
         globalScope.start()
         OnStage.present(globalScope)
@@ -37,8 +37,8 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
         def userScope = scope.shineSpotlightOn(actorNamed('John Smith'))
         scope.completeNestedScope('scenario1')
         then:
-        scope.everybodyScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == publicAddress + '/'+wireMockServer.port()+'/TestRun/5/nested1'
-        userScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == publicAddress + '/'+wireMockServer.port()+'/TestRun/5/nested1/John_Smith'
+        scope.everybodyScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == publicIp + '/'+publicPort+'/TestRun/0/nested1'
+        userScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == publicIp + '/'+publicPort+'/TestRun/0/nested1/John_Smith'
         innerStep == 'For_requests_from_John_Smith_comma__allow/step1'
         scenarioScope.everybodyScope.recall(WireMockScreenplayContext.CORRELATION_STATE).currentStep == null
     }

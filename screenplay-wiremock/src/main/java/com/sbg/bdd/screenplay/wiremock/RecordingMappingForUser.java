@@ -9,18 +9,17 @@ import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.util.NameConverter;
 import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
-import com.sbg.bdd.wiremock.scoped.integration.HeaderName;
+import com.sbg.bdd.wiremock.scoped.admin.model.ScopeLocalPriority;
 import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
 import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedMappingBuilder;
 import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedRequestPatternBuilder;
 import com.sbg.bdd.wiremock.scoped.client.builders.RecordingSpecification;
-import com.sbg.bdd.wiremock.scoped.client.endpointconfig.EndpointConfigRegistry;
+import com.sbg.bdd.wiremock.scoped.integration.HeaderName;
 
 import java.io.File;
 
-import static com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext.calculatePriorityFor;
 
-
+//TODO move to server
 public class RecordingMappingForUser {
     private ExtendedMappingBuilder mappingBuilder;
     private String userInScopeId;
@@ -44,7 +43,6 @@ public class RecordingMappingForUser {
     public void saveRecordings(Scene scope) {
         ExtendedRequestPatternBuilder requestPatternBuilder = new ExtendedRequestPatternBuilder(this.mappingBuilder.getRequestPatternBuilder());
         ScopedWireMockClient wireMock = getWireMock(scope);
-        requestPatternBuilder.prepareForBuild((EndpointConfigRegistry) scope.recall(WireMockScreenplayContext.ENDPOINT_CONFIG_REGISTRY));
         wireMock.saveRecordingsForRequestPattern(deriveCorrelationPath(scope), requestPatternBuilder.build(), calculateRecordingDirectory(scope));
     }
 
@@ -52,41 +50,40 @@ public class RecordingMappingForUser {
     public ScopedWireMockClient getWireMock(Scene scope) {
         return scope.getPerformance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
     }
-    
+
     public void loadRecordings(Scene scope) {
         ResourceContainer recordingDirectory = calculateRecordingDirectory(scope, userInScopeId);
-        if(recordingDirectory!=null){
+        if (recordingDirectory != null) {
             //may not exist
             ScopedWireMockClient wireMock = getWireMock(scope);
             ExtendedRequestPatternBuilder requestPatternBuilder = new ExtendedRequestPatternBuilder(mappingBuilder.getRequestPatternBuilder());
             requestPatternBuilder.withHeader(HeaderName.ofTheCorrelationKey(), deriveCorrelationPath(scope));
-            wireMock.serveRecordedMappingsAt(recordingDirectory, requestPatternBuilder.build(), priorityFor(scope));
+            //TODO temp hack until we have moved this down to the server
+            wireMock.serveRecordedMappingsAt(recordingDirectory, requestPatternBuilder.build(), (10 - scope.getLevel())*10 - priorityFor(scope).priority());
         }
     }
 
     private StringValuePattern deriveCorrelationPath(Scene scope) {
         return WireMock.equalTo(CorrelationPath.ofUserInScope(scope, userInScopeId));
     }
-    
+
     public boolean enforceJournalModeInScope() {
         return getRecordingSpecification().enforceJournalModeInScope();
     }
-    
+
     public JournalMode getJournalModeOverride() {
         return getRecordingSpecification().getJournalModeOverride();
     }
-    
 
-    private int priorityFor(Scene scope) {
-        int localPriority = getRecordingSpecification().enforceJournalModeInScope() ? 1 : 2;
-        int scopeLevel = scope.getLevel();
-        return calculatePriorityFor(scopeLevel, localPriority);
+
+    private ScopeLocalPriority priorityFor(Scene scope) {
+        return getRecordingSpecification().enforceJournalModeInScope() ? ScopeLocalPriority.JOURNAL : ScopeLocalPriority.RECORDINGS;
     }
 
     public ResourceContainer calculateRecordingDirectory(Scene scope) {
         return calculateRecordingDirectory(scope, this.userInScopeId);
     }
-    
+
     private ResourceContainer calculateRecordingDirectory(Scene scope, String userScopeIdToUse) {
         if (getRecordingSpecification().enforceJournalModeInScope()) {
             //scoped based journalling is assumed to be an automated process where potentially huge amounts of exchanges are recorded and never checked it.
@@ -136,9 +133,9 @@ public class RecordingMappingForUser {
     private RecordingSpecification getRecordingSpecification() {
         return this.mappingBuilder.getRecordingSpecification();
     }
-    
+
     private ResourceContainer toFile(ResourceContainer root, String... trailingSegments) {
         return root.resolvePotentialContainer(trailingSegments);
     }
-    
+
 }

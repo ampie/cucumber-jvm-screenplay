@@ -18,7 +18,9 @@ import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import com.bmuschko.gradle.docker.tasks.image.*
 import com.bmuschko.gradle.docker.tasks.container.*
 dependencies {
-    compile(project(":serenity-cucumber-adaptor"))
+    compile(project(":serenity-cucumber-adaptor")){
+        exclude group: 'org.codehaus.groovy'
+    }
     compile(project(":cucumber-jvm-screenplay-core"))
     compile("com.sbg.bdd:scoped-wiremock-server:${SCOPED_WIREMOCK_VERSION}")
     compile('com.github.tomakehurst:wiremock:2.6.0')
@@ -26,7 +28,10 @@ dependencies {
     compile('org.apache.httpcomponents:httpclient:4.5.2')
     compile('com.fasterxml.jackson.core:jackson-databind:2.6.4')
     compile('javax.servlet:javax.servlet-api:3.1.0')
-    compile('net.serenity-bdd:serenity-filterchain-core:0.0.3')
+    compile('net.serenity-bdd:serenity-filterchain-core:0.0.3'){
+        exclude group: 'org.codehaus.groovy'
+    }
+    compile("org.codehaus.groovy:groovy-all:$GROOVY_VERSION")
 }
 
 jar {

@@ -4,9 +4,7 @@ import com.sbg.bdd.screenplay.core.PendingException;
 import com.sbg.bdd.screenplay.core.ScreenPlayException;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class StepErrorTally {
     public static interface ErrorSelector {
@@ -21,26 +19,35 @@ public class StepErrorTally {
         }
     };
 
-    private static Class<? extends RuntimeException> pendingExceptionType;
+    private static final Set<Class<? extends RuntimeException>> pendingExceptionTypes;
+
+    private static Class<? extends RuntimeException> preferredPendingExceptionType=PendingException.class;
 
     static {
+        pendingExceptionTypes = new HashSet<>();
         try {
-            pendingExceptionType = (Class<? extends RuntimeException>) Class.forName("cucumber.api.PendingException");
+            preferredPendingExceptionType=(Class<? extends RuntimeException>) Class.forName("cucumber.api.PendingException");
+            pendingExceptionTypes.add(preferredPendingExceptionType);
         } catch (Exception e) {
-            pendingExceptionType = PendingException.class;
         }
+        pendingExceptionTypes.add(PendingException.class);
     }
 
     private ErrorSelector isPending = new ErrorSelector() {
         @Override
         public boolean select(Throwable t) {
-            return pendingExceptionType.isInstance(t);
+            for (Class<? extends RuntimeException> pendingExceptionType : pendingExceptionTypes) {
+                if (pendingExceptionType.isInstance(t)) {
+                    return true;
+                }
+            }
+            return false;
         }
     };
     private final StopWatch stopWatch;
     private List<Throwable> throwables = new ArrayList<>();
     private boolean pending;
-    
+
     public StepErrorTally(StopWatch stopWatch) {
         this.stopWatch = stopWatch;
     }
@@ -54,7 +61,7 @@ public class StepErrorTally {
             if (all(throwables, isPending)) {
                 //TODO summary exception here too?
                 throw (RuntimeException) throwables.get(0);
-            } else if (all(throwables, isAssertion ,isPending)) {
+            } else if (all(throwables, isAssertion, isPending)) {
                 throwSummeryAssertionErrorFrom(throwables);
             } else {
                 throw new ScreenPlayException(extractMessagesFrom(throwables), throwables.get(0));
@@ -70,7 +77,7 @@ public class StepErrorTally {
         } else if (pending) {
             //TODO more info - what exactly is pending?
             try {
-                throw pendingExceptionType.newInstance();
+                throw preferredPendingExceptionType.newInstance();
             } catch (ReflectiveOperationException e) {
                 throw new IllegalStateException(e);
             }

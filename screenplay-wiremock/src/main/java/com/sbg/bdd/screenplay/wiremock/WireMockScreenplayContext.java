@@ -10,7 +10,6 @@ import com.sbg.bdd.resource.file.ReadableFileResource;
 import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Scene;
-import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.internal.BaseActorOnStage;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.util.Optional;
@@ -19,44 +18,35 @@ import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
 import com.sbg.bdd.wiremock.scoped.client.WireMockContext;
 import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedMappingBuilder;
 import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedRequestPatternBuilder;
-import com.sbg.bdd.wiremock.scoped.client.endpointconfig.EndpointConfig;
-import com.sbg.bdd.wiremock.scoped.client.endpointconfig.EndpointConfigRegistry;
 
 import java.io.File;
+import java.net.URL;
 import java.util.*;
 
 public class WireMockScreenplayContext implements WireMockContext {
-    private static final int MAX_LEVELS = 10;
-    private static final int PRIORITIES_PER_LEVEL = 10;
-    private static final int EVERYBODY_PRIORITY_DECREMENT = PRIORITIES_PER_LEVEL / 2;
+    public static final String PAYLOAD = "Payload";
     public static final String RECORDING_WIRE_MOCK_CLIENT = "ScopedWireMockClient";
-    public static final String ENDPOINT_CONFIG_REGISTRY = "endpointConfigRegistry";
     public static final String REQUESTS_TO_RECORD_OR_PLAYBACK = "requestsToRecordOrPlayback";
     public static final String BASE_URL_OF_SERVICE_UNDER_TEST = "baseUrlOfServiceUnderTest";
     public static final String PERSONA_CLIENT = "personaClient";
+    public static final String PERSONA_RESOURCE_ROOT = "personaResourceRoot";
     public static final String JOURNAL_RESOURCE_ROOT = "journalResourceRoot";
     public static final String CORRELATION_STATE = "correlationState";
     public static final String PROXY_UNMAPPED_ENDPOINTS = "proxyUnmappedEndpoints";
     public static final String JOURNAL_MODE = "journalMode";
     public static final String WIRE_MOCK_ADMIN = "wireMockAdmin";
     public static final String WIRE_MOCK_PUBLIC_ADDRESS = "wireMockPublicAddress";
-    public static final String RUN_ID = "runId";
-    
-    public static Integer calculatePriorityFor(int scopeLevel, int localLevel) {
-        return ((MAX_LEVELS - scopeLevel) * PRIORITIES_PER_LEVEL) + localLevel;
-    }
+    public static final String INTEGRATION_SCOPE = "integrationScope";
 
     private final ScopedWireMockClient wireMock;
-    private final ResourceContainer inputResourceRoot;
+    private final ResourceContainer personaRoot;
     private final ActorOnStage userInScope;
-    private final EndpointConfigRegistry endpointConfigRegistry;
     private List<RecordingMappingForUser> requestsToRecordOrPlayback;
-    
+
     public WireMockScreenplayContext(ActorOnStage userInScope) {
         this.wireMock = userInScope.recall(RECORDING_WIRE_MOCK_CLIENT);
-        this.endpointConfigRegistry = userInScope.recall(ENDPOINT_CONFIG_REGISTRY);
         this.userInScope = userInScope;
-        this.inputResourceRoot = this.userInScope.getScene().getPerformance().recall(Performance.INPUT_RESOURCE_ROOT);
+        this.personaRoot = this.userInScope.getScene().getPerformance().recall(PERSONA_RESOURCE_ROOT);
         this.requestsToRecordOrPlayback = userInScope.recall(REQUESTS_TO_RECORD_OR_PLAYBACK);
         if (this.requestsToRecordOrPlayback == null) {
             this.requestsToRecordOrPlayback = new ArrayList<>();
@@ -65,22 +55,22 @@ public class WireMockScreenplayContext implements WireMockContext {
     }
 
     @Override
-    public Set<EndpointConfig> allKnownExternalEndpoints() {
-        return endpointConfigRegistry.allKnownExternalEndpoints();
-    }
-
-    @Override
-    public EndpointConfig endpointUrlFor(String serviceEndpointPropertyName) {
-        return endpointConfigRegistry.endpointUrlFor(serviceEndpointPropertyName);
+    public String getCorrelationPath() {
+        Scene scope = userInScope.getScene();
+        if (BaseActorOnStage.isEverybody(userInScope)) {
+            return CorrelationPath.of(scope);
+        } else {
+            return CorrelationPath.of(userInScope);
+        }
     }
 
     @Override
     public ReadableResource resolveInputResource(String fileName) {
-        if (!inputResourceRoot.fallsWithin(fileName)) {
+        if (!personaRoot.fallsWithin(fileName)) {
             File file = new File(fileName);
             return new ReadableFileResource(new DirectoryResourceRoot("inputRoot", file.getParentFile()), file);
         } else {
-            ResourceContainer personaRoot = (ResourceContainer) inputResourceRoot.resolveExisting(userInScope.getId());
+            ResourceContainer personaRoot = (ResourceContainer) this.personaRoot.resolveExisting(userInScope.getId());
             String scopePath = userInScope.getScene().getSceneIdentifier();
             String resourcePath = scopePath + "/" + fileName;
             String[] relativeScopePath = resourcePath.split("\\/");
@@ -90,15 +80,16 @@ public class WireMockScreenplayContext implements WireMockContext {
 
     @Override
     public String getBaseUrlOfServiceUnderTest() {
-        return userInScope.recall(BASE_URL_OF_SERVICE_UNDER_TEST);
+        URL url =userInScope.recall(BASE_URL_OF_SERVICE_UNDER_TEST);
+        return url==null?null:url.toExternalForm();
     }
-    
+
     @Override
     public void register(ExtendedMappingBuilder child) {
         if (!shouldIgnoreMapping(child)) {
             child.getRequestPatternBuilder().ensureScopePath(correlationPattern());
             if (child.getResponseDefinitionBuilder() != null) {
-                wireMock.register(child);
+                wireMock.register(child.build());
             }
             processRecordingSpecs(child, userInScope.getId());
         }
@@ -116,18 +107,8 @@ public class WireMockScreenplayContext implements WireMockContext {
     @Override
     public int count(ExtendedRequestPatternBuilder requestPatternBuilder) {
         requestPatternBuilder.ensureScopePath(correlationPattern());
-        return wireMock.count(requestPatternBuilder);
-    }
-
-    @Override
-    public Integer calculatePriority(int localLevel) {
-        int scopeLevel = userInScope.getScene().getLevel();
-        if (BaseActorOnStage.isEverybody(userInScope)) {
-            //Allow everybody scope mappings to be overriden by PersonaScopes and GuestScope
-            return ((MAX_LEVELS - scopeLevel) * PRIORITIES_PER_LEVEL) + localLevel + EVERYBODY_PRIORITY_DECREMENT;
-        } else {
-            return calculatePriorityFor(scopeLevel, localLevel);
-        }
+        requestPatternBuilder.setCorrelationPath(getCorrelationPath());
+        return wireMock.count(requestPatternBuilder.build());
     }
 
 
@@ -155,7 +136,7 @@ public class WireMockScreenplayContext implements WireMockContext {
 
     private Set<String> allPersonaIds() {
         final PersonaClient personaClient = userInScope.getScene().getPerformance().recall(PERSONA_CLIENT);
-        List<Resource> list = Arrays.asList(inputResourceRoot.list(new ResourceFilter() {
+        List<Resource> list = Arrays.asList(personaRoot.list(new ResourceFilter() {
             @Override
             public boolean accept(ResourceContainer dir, String name) {
                 Resource file = dir.resolveExisting(name);

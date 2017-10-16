@@ -6,9 +6,6 @@ import com.sbg.bdd.cucumber.wiremock.annotations.ScreenplayUrls;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.wiremock.scoped.admin.ScopedAdmin;
 import com.sbg.bdd.wiremock.scoped.client.ScopedHttpAdminClient;
-import com.sbg.bdd.wiremock.scoped.client.endpointconfig.EndpointConfigRegistry;
-import com.sbg.bdd.wiremock.scoped.client.endpointconfig.RemoteEndPointConfigRegistry;
-import okhttp3.OkHttpClient;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,8 +26,4 @@ public class DefaultScreenplayFactories implements ScreenplayFactories {
         }
     }
 
-    @Override
-    public EndpointConfigRegistry createEndpointConfigRegistry(ResourceRoots resourceRoots, ScreenplayUrls urls) {
-        return new RemoteEndPointConfigRegistry(new OkHttpClient(), urls.theServiceUnderTest());
-    }
 }

@@ -11,7 +11,6 @@ import com.sbg.bdd.screenplay.core.util.ScreenplayConfigurator;
 import com.sbg.bdd.screenplay.wiremock.WireMockMemories;
 import com.sbg.bdd.wiremock.scoped.admin.ScopedAdmin;
 import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
-import com.sbg.bdd.wiremock.scoped.client.endpointconfig.EndpointConfigRegistry;
 
 public class CucumberWireMockConfigurator implements ScreenplayConfigurator {
     private final JournalMode globalJournalMode;
@@ -54,16 +53,15 @@ public class CucumberWireMockConfigurator implements ScreenplayConfigurator {
         if (inputRoot != null) {
             remember.toReadResourcesFrom(inputRoot);
         }
+        ResourceContainer personaRoot = resourceRoots.getPersonaRoot(urls);
+        if (personaRoot != null) {
+            remember.toUseThePersonasAt(personaRoot);
+        }
         ResourceContainer outputRoot = resourceRoots.getOutputRoot(urls);
         if (outputRoot != null) {
             remember.toWriteResourcesTo(outputRoot);
         }
-        EndpointConfigRegistry endpointConfigRegistry = factories.createEndpointConfigRegistry(resourceRoots, urls);
-        if (endpointConfigRegistry != null) {
-            remember.toPointTo(urls.theServiceUnderTest());
-            //TODO this is ugly. Maybe split?
-            remember.toUseTheEndpointConfigRegistry(endpointConfigRegistry);
-        } else if (urls.theServiceUnderTest() != null) {
+        if (urls.theServiceUnderTest() != null) {
             remember.toPointTo(urls.theServiceUnderTest());
         }
         PersonaClient personaClient = getPersonaClient();

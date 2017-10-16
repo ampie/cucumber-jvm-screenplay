@@ -5,7 +5,10 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Scene;
+import com.sbg.bdd.wiremock.scoped.admin.model.CorrelationState;
+import com.sbg.bdd.wiremock.scoped.admin.model.GlobalCorrelationState;
 import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
+import org.apache.commons.lang3.StringUtils;
 
 import static com.sbg.bdd.screenplay.core.util.NameConverter.filesystemSafe;
 
@@ -23,24 +26,15 @@ public abstract class CorrelationPath {
     }
 
     public static String of(Scene scope) {
-        StringBuilder path = new StringBuilder();
-        WireMockMemories recall = WireMockMemories.recallFrom(scope);
-        ScopedWireMockClient wireMock = recall.theWireMockClient();
-        String publicAddress = recall.thePublicAddressOfWireMock();
-        if (publicAddress == null) {
-            path.append(wireMock.host());
-        } else {
-            path.append(publicAddress);
+        GlobalCorrelationState state = scope.getPerformance().recall(WireMockScreenplayContext.CORRELATION_STATE);
+        //TODO simplify this
+        if(state==null){
+            return scope.getSceneIdentifier();
+        }else if(StringUtils.isEmpty(scope.getSceneIdentifier())){
+            return state.getCorrelationPath();
+        }else{
+            return state.getCorrelationPath() + "/" + scope.getSceneIdentifier();
         }
-        path.append("/").append(wireMock.port()).append("/").append(filesystemSafe(scope.getPerformance().getName()));
-        Integer runId = recall.theRunId();
-        if (runId != null) {
-            path.append("/").append(runId);
-        }
-        if (!scope.getSceneIdentifier().isEmpty()) {
-            path.append("/").append(scope.getSceneIdentifier());
-        }
-        return path.toString();
     }
 
 }

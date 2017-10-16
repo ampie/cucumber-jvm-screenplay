@@ -1,17 +1,18 @@
 package com.sbg.bdd.screenplay.wiremock
 
+import com.sbg.bdd.screenplay.wiremock.listeners.ScopeManagementListener
+
 class WhenCalculatingTheCorrelationPath extends WhenWorkingWithWireMock {
     def 'it should apply the format {public address}/{port}/{performanceName}/{runId}/{scenarioId}'() {
 
         given:
-        def globalScope = buildGlobalScopeWithoutStarting("AcceptanceRun", 177)
-        def wireMockServer = initializeWireMock(globalScope)
-        WireMockMemories.rememberFor(globalScope).withPublicAddress("10.0.0.1")
+        def globalScope = buildGlobalScopeWithoutStarting("AcceptanceRun",ScopeManagementListener)
+        initializeWireMock(globalScope)
         def scope = globalScope.startFunctionalScope("functionalTest")
         when:
         def path = CorrelationPath.of(scope)
         then:
-        path == "10.0.0.1/${wireMockServer.port()}/AcceptanceRun/177/functionalTest"
+        path == "$publicIp/$publicPort/AcceptanceRun/0/functionalTest"
 
     }
 }

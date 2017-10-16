@@ -111,7 +111,9 @@ public class CucumberScopeLifecycleSync extends StepQueueingReportingFormatter {
     }
     @Override
     public void done() {
-        getGlobalScope().complete();
+        if(getGlobalScope()!=null) {
+            getGlobalScope().complete();
+        }
     }
 
 

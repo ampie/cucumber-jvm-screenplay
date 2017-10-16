@@ -1,9 +1,12 @@
 package com.sbg.bdd.screenplay.cucumber.junit;
 
+import com.sbg.bdd.cucumber.screenplay.core.formatter.CucumberScreenplayLifecycleSync;
+import com.sbg.bdd.cucumber.screenplay.scoped.plugin.CucumberScopeLifecycleSync;
 import com.sbg.bdd.cucumber.screenplay.scoped.plugin.GlobalScopeBuilder;
 import com.sbg.bdd.cucumber.wiremock.annotations.ResourceRoots;
 import com.sbg.bdd.cucumber.wiremock.annotations.ScreenplayWireMockConfig;
 import com.sbg.bdd.cucumber.wiremock.memorizer.CucumberWireMockConfigurator;
+import com.sbg.bdd.wiremock.scoped.common.Reflection;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -25,6 +28,8 @@ import java.util.List;
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
 
+import static com.sbg.bdd.wiremock.scoped.common.Reflection.getValue;
+
 
 public class CucumberWithWireMock extends ParentRunner<FeatureRunner> {
     private final JUnitReporter jUnitReporter;
@@ -43,14 +48,30 @@ public class CucumberWithWireMock extends ParentRunner<FeatureRunner> {
 
         RuntimeOptionsFactory runtimeOptionsFactory = new RuntimeOptionsFactory(clazz);
         RuntimeOptions runtimeOptions = runtimeOptionsFactory.create();
-
+        ensureLifecycleSyncPluginApplied(runtimeOptions);
         ResourceLoader resourceLoader = new GenericResourceMultiLoader(configurator.getFeatureFileRoot(), classLoader);
         runtime = createRuntime(resourceLoader, classLoader, runtimeOptions);
-
+        if(runtimeOptions.getFeaturePaths().isEmpty() ||  (runtimeOptions.getFeaturePaths().size() == 1 && runtimeOptions.getFeaturePaths().get(0).startsWith("classpath:"))){
+            //No ResourceRoot based dir specified
+            runtimeOptions.getFeaturePaths().add("/");
+        }
         final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
         final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
         jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.isStrict(), junitOptions);
         addChildren(cucumberFeatures);
+    }
+
+    private void ensureLifecycleSyncPluginApplied(RuntimeOptions runtimeOptions) {
+        List<String> plugins = getValue(runtimeOptions,"pluginFormatterNames");
+        boolean found = false;
+        for (String plugin : plugins) {
+            if(plugin.equals(CucumberScopeLifecycleSync.class.getName()) || (plugin.equals(CucumberScreenplayLifecycleSync.class.getName()))){
+                found =true;
+            }
+        }
+        if(!found){
+            plugins.add(CucumberScopeLifecycleSync.class.getName());
+        }
     }
 
 

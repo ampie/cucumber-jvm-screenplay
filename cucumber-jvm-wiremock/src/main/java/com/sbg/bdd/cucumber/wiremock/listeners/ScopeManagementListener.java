@@ -15,8 +15,10 @@ import com.sbg.bdd.screenplay.core.internal.BaseActorOnStage;
 import com.sbg.bdd.screenplay.scoped.FunctionalScope;
 import com.sbg.bdd.screenplay.scoped.ScenarioScope;
 import com.sbg.bdd.screenplay.wiremock.CorrelationPath;
+import com.sbg.bdd.screenplay.wiremock.WireMockMemories;
 import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
 import com.sbg.bdd.wiremock.scoped.admin.model.CorrelationState;
+import com.sbg.bdd.wiremock.scoped.admin.model.GlobalCorrelationState;
 import com.sbg.bdd.wiremock.scoped.common.ParentPath;
 import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory;
 import com.sbg.bdd.wiremock.scoped.integration.WireMockCorrelationState;
@@ -26,6 +28,7 @@ import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +39,7 @@ import static com.sbg.bdd.screenplay.core.actors.OnStage.theCurrentScene;
 public class ScopeManagementListener extends CucumberPayloadProducingListener {
     public static final String UPDATE_JIRA = "serenity.jira.integration.enabled";
     public static final String[] COMPLETION_STATE={UPDATE_JIRA};
+
     @SceneListener(scopePhases = SceneEventType.AFTER_COMPLETE)
     public void unregisterScope(Scene scene) {
         String knownScopePath = CorrelationPath.of(scene);
@@ -62,14 +66,19 @@ public class ScopeManagementListener extends CucumberPayloadProducingListener {
     private void registerScope(Scene scene, Map<String, Object> map) {
         ScopedWireMockClient wireMock = getWireMockFrom(scene);
         String scopePath = CorrelationPath.of(scene);
-        CorrelationState correlationState;
         if (scene.getLevel() == 0) {
-            correlationState = wireMock.startNewCorrelatedScope(scopePath);
-            scene.remember("runId", Integer.valueOf(correlationState.getCorrelationPath().split("/")[3]));
+            WireMockMemories recall = WireMockMemories.recallFrom(scene);
+            String name = scene.getPerformance().getName();
+            URL wireMockPublicUrl = recall.thePublicAddressOfWireMock();
+            URL urlOfServiceUnderTest = recall.theBaseUrlOfTheServiceUnderTest();
+            String integrationScope = recall.theIntegrationScope();
+            GlobalCorrelationState inputState = new GlobalCorrelationState(name, wireMockPublicUrl, urlOfServiceUnderTest, integrationScope);
+            GlobalCorrelationState correlationState = wireMock.startNewGlobalScope(inputState);
+            scene.remember(WireMockScreenplayContext.CORRELATION_STATE, correlationState);
         } else {
-            correlationState = wireMock.joinCorrelatedScope(scopePath, map);
+            CorrelationState correlationState = wireMock.joinCorrelatedScope(scopePath, map);
+            scene.remember(WireMockScreenplayContext.CORRELATION_STATE, correlationState);
         }
-        scene.remember(WireMockScreenplayContext.CORRELATION_STATE, correlationState);
     }
 
     @Override
@@ -136,7 +145,7 @@ public class ScopeManagementListener extends CucumberPayloadProducingListener {
     public void registerScope(ActorOnStage userInScope) {
         if (!BaseActorOnStage.isEverybody(userInScope)) {
             String scopePath = CorrelationPath.of(userInScope);
-            CorrelationState state = getWireMockFrom(userInScope.getScene()).joinCorrelatedScope(scopePath);
+            CorrelationState state = getWireMockFrom(userInScope.getScene()).joinCorrelatedScope(scopePath,Collections.<String, Object>emptyMap());
             userInScope.remember(WireMockScreenplayContext.CORRELATION_STATE, state);
         }
     }

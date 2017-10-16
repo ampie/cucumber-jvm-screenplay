@@ -46,18 +46,19 @@ public class CucumberFormattingScopeListener implements ScopeListener {
     @Override
     public void setScopedAdmin(ScopedAdmin admin) {
         this.admin = admin;
-
     }
 
     @Override
-    public void scopeStarted(CorrelationState knownScope) {
+    public void globalScopeStarted(CorrelationState knownScope) {
         String[] segments = knownScope.getCorrelationPath().split("\\/");
-        if (segments.length == 4) {//ip/port/name/runid
-            this.runName = segments[2];
-            out = new StringWriter();
-            reporter = new ScreenPlayFormatter(out);
-            this.parser = new MapParser(reporter, reporter);
-        }
+        this.runName = segments[2];
+        out = new StringWriter();
+        reporter = new ScreenPlayFormatter(out);
+        this.parser = new MapParser(reporter, reporter);
+    }
+
+    @Override
+    public void nestedScopeStarted(CorrelationState knownScope) {
         Map<String, Object> payload = knownScope.getPayload();
         if (payload != null) {
             if ("feature".equals(payload.get("method"))) {
@@ -69,16 +70,19 @@ public class CucumberFormattingScopeListener implements ScopeListener {
     }
 
     @Override
-    public void scopeStopped(CorrelationState state) {
-        if (state.getCorrelationPath().split("\\/").length == 4) {//ip/port/name/runid
-            reporter.done();
-            admin.getResourceRoot("outputResourceRoot").resolvePotential(runName + ".json").write(out.toString().getBytes());
-            File localDir = makeResourcesAvailableOnLocalFileSystem(admin.getResourceRoot("outputResourceRoot"));
-            if(state.getPayload()!=null && state.getPayload().containsKey(SERENITY_JIRA_INTEGRATION_ENABLED)){
-                System.setProperty(SERENITY_JIRA_INTEGRATION_ENABLED,state.getPayload().get(SERENITY_JIRA_INTEGRATION_ENABLED).toString());
-            }
-            publishSerenityResults(localDir);
+    public void nestedScopeStopped(CorrelationState state) {
+
+    }
+
+    @Override
+    public void globalScopeStopped(CorrelationState state) {
+        reporter.done();
+        admin.getResourceRoot("outputResourceRoot").resolvePotential(runName + ".json").write(out.toString().getBytes());
+        File localDir = makeResourcesAvailableOnLocalFileSystem(admin.getResourceRoot("outputResourceRoot"));
+        if(state.getPayload()!=null && state.getPayload().containsKey(SERENITY_JIRA_INTEGRATION_ENABLED)){
+            System.setProperty(SERENITY_JIRA_INTEGRATION_ENABLED,state.getPayload().get(SERENITY_JIRA_INTEGRATION_ENABLED).toString());
         }
+        publishSerenityResults(localDir);
     }
 
     public static void main(String[] args) {
@@ -92,6 +96,12 @@ public class CucumberFormattingScopeListener implements ScopeListener {
             System.setProperty(ThucydidesSystemProperty.THUCYDIDES_REQUIREMENTS_DIR.getPropertyName(), "/wiremock/input/features");
             System.setProperty(ThucydidesSystemProperty.THUCYDIDES_REQUIREMENT_TYPES.getPropertyName(), "capability,feature,low level feature");
             System.setProperty(ThucydidesSystemProperty.ENABLE_MARKDOWN.getPropertyName(), "story,narrative,scenario,step");
+            System.setProperty("serenity.reports.show.step.details", "true");
+            //TODO parameterise
+            System.setProperty("serenity.public.url", "http://172.99.0.5:8080");
+            System.setProperty("serenity.report.show.manual.tests", "false");
+            System.setProperty("serenity.issue.tracker.url", "http://jira.standardbank.co.za:8091/browse/{0}");
+            System.setProperty("jira.url", "http://jira.standardbank.co.za:8091");
             File[] reportFiles = inputDir.listFiles();
             File outputDir = new File("/wiremock/__files");
             FilterChainConfig config = new FilterChainConfig();
@@ -170,19 +180,14 @@ public class CucumberFormattingScopeListener implements ScopeListener {
     private String maybeAddJiraUpdatingProcessor(List<ProcessorLinkConfig> processors) {
         if("true".equals(System.getProperty(SERENITY_JIRA_INTEGRATION_ENABLED))) {
             System.setProperty("serenity.jira.workflow", "cli-workflow.groovy");
-            System.setProperty("serenity.reports.show.step.details", "true");
-            System.setProperty("serenity.report.show.manual.tests", "false");
-            System.setProperty("serenity.issue.tracker.url", "http://jira.standardbank.co.za:8091/browse/{0}");
             System.setProperty("jira.root.issue.type", "\"Technical Issue\"");
             System.setProperty("jira.root.issue.additional.jql", "labels = CSF AND labels = Test");
             System.setProperty("jira.requirement.links", "sub-task");
-            System.setProperty("jira.url", "http://jira.standardbank.co.za:8091");
             System.setProperty("jira.project", "PW");
             System.setProperty("jira.username", "ampie.barnard");
             System.setProperty("jira.password", "ainnikki");
             System.setProperty("serenity.jira.workflow.active", "true");
             System.setProperty("serenity.skip.jira.updates", "false");
-            System.setProperty("serenity.public.url", "http://172.99.0.5:8080");
             processors.add(new ProcessorLinkConfig("jira-updater", JiraUpdatingProcessor.class.getName(), Arrays.asList("requirementsTagger")));
             return "jira-updater";
         }else{
@@ -239,7 +244,6 @@ public class CucumberFormattingScopeListener implements ScopeListener {
                         parser.replayEmbedding(embedding);
                     }
                 }
-                //TODO find Mappings that were made during the step - maintain a map of them in the currentScopestate
                 List<RecordedExchange> exchanges = admin.findExchangesAgainstStep(state.getCorrelationPath(), state.getCurrentStep());
                 if (exchanges.size() > 0) {
                     Map<String, Object> embedding = new HashMap<>();

@@ -1,5 +1,8 @@
 dependencies {
     compile("com.sbg.bdd:scoped-wiremock-client:$SCOPED_WIREMOCK_VERSION")
-    compile('net.serenity-bdd:serenity-cucumber:1.1.35-SNAPSHOT')
+    compile('net.serenity-bdd:serenity-cucumber:1.1.35-SNAPSHOT'){
+        exclude group: 'org.codehaus.groovy'
+    }
+    compile("org.codehaus.groovy:groovy-all:$GROOVY_VERSION")
     compile("com.github.tomakehurst:wiremock:$WIREMOCK_VERSION")
 }

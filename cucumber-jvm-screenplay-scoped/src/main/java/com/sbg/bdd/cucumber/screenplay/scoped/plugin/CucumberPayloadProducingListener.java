@@ -2,11 +2,13 @@ package com.sbg.bdd.cucumber.screenplay.scoped.plugin;
 
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
-import com.sbg.bdd.screenplay.core.annotations.*;
-import com.sbg.bdd.screenplay.core.events.ActorEvent;
+import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
+import com.sbg.bdd.screenplay.core.annotations.SceneListener;
+import com.sbg.bdd.screenplay.core.annotations.StepEventType;
+import com.sbg.bdd.screenplay.core.annotations.StepListener;
 import com.sbg.bdd.screenplay.core.events.SceneEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
-import com.sbg.bdd.screenplay.core.internal.Embeddings;
+import com.sbg.bdd.screenplay.core.internal.Attatchments;
 import com.sbg.bdd.screenplay.core.internal.ScreenplayStepMethodInfo;
 import com.sbg.bdd.screenplay.scoped.FunctionalScope;
 import com.sbg.bdd.screenplay.scoped.ScenarioScope;
@@ -17,13 +19,21 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.sbg.bdd.cucumber.screenplay.core.formatter.FormattingStepListener.extractArguments;
 import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
 
+/*
+TODO refactor this by decoupling the Cucumber dependencies.
+Maybe put the payload on the Scope object's own memory and do this from the CucumberScopeLifecycleSync
+Unfortunately the nested steps is where it all becomes tricky. Might need some kind of PayLoadStrategy there
+ */
 public abstract class CucumberPayloadProducingListener {
-    protected boolean inStep=false;
+    protected boolean inStep = false;
 
     protected abstract void scopeStarted(Scene scene);
 
@@ -67,7 +77,7 @@ public abstract class CucumberPayloadProducingListener {
         if (OnStage.theCurrentScene() instanceof ScenarioScope) {
             //Don't generate events for features or capabilities
             if (event.getStepLevel() == 0 && event.getInfo() instanceof GherkinStepMethodInfo) {
-                inStep=true;
+                inStep = true;
                 GherkinStepMethodInfo mi = (GherkinStepMethodInfo) event.getInfo();
                 stepAndMatch = mi.getStep().toMap();
                 stepAndMatch.put("match", mi.getMatch().toMap());
@@ -89,10 +99,10 @@ public abstract class CucumberPayloadProducingListener {
         Map<String, Object> map = new Result(statusOf(event), event.getDuration(), event.getError(), null).toMap();
         if (event.getStepLevel() == 0) {
             map.put("method", "result");
-            inStep=false;
+            inStep = false;
         } else {
             List<Map<String, Object>> embeddings = new ArrayList<>();
-            for (Pair<String, byte[]> embedding : Embeddings.producedBy(((ScreenplayStepMethodInfo) event.getInfo()).getImplementation())) {
+            for (Pair<String, byte[]> embedding : Attatchments.producedBy(((ScreenplayStepMethodInfo) event.getInfo()).getImplementation())) {
                 HashMap<String, Object> embeddingMap = new HashMap<>();
                 embeddingMap.put("mime_type", embedding.getKey());
                 embeddingMap.put("data", Base64.encodeBytes(embedding.getValue()));

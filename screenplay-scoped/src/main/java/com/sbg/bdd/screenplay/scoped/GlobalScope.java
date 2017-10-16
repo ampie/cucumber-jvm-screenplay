@@ -7,6 +7,7 @@ import com.sbg.bdd.screenplay.core.actors.CastingDirector;
 import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.events.SceneEvent;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
+import com.sbg.bdd.screenplay.core.internal.BaseActor;
 
 public class GlobalScope extends UserTrackingScope implements Performance {
     private final ScreenPlayEventBus scopeEventBus;
@@ -17,6 +18,7 @@ public class GlobalScope extends UserTrackingScope implements Performance {
         super(null, name);
         this.cast = new Cast(castingDirector);
         this.scopeEventBus = scopeEventBus;
+        BaseActor.setCurrentStep(null);//Only an issue for testing
     }
 
     @Override

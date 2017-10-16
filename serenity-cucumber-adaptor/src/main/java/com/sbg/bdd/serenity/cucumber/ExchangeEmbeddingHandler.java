@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionLikeType;
 import com.github.tomakehurst.wiremock.common.Json;
 import com.github.tomakehurst.wiremock.http.ContentTypeHeader;
+import com.github.tomakehurst.wiremock.http.HttpHeader;
+import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
 import com.sbg.bdd.wiremock.scoped.admin.model.RecordedExchange;
 import com.sbg.bdd.wiremock.scoped.admin.model.RecordedRequest;
@@ -27,6 +29,9 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ExchangeEmbeddingHandler implements EmbeddingHandler {
-    Logger LOGGer = Logger.getLogger(ExchangeEmbeddingHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ExchangeEmbeddingHandler.class.getName());
 
     @Override
     public boolean attemptHandling(String mimeType, byte[] data) {
@@ -53,7 +58,7 @@ public class ExchangeEmbeddingHandler implements EmbeddingHandler {
                     }
                     return true;
                 } catch (Exception e) {
-                    LOGGer.log(Level.WARNING, "Could not read embedding", e);
+                    LOGGER.log(Level.WARNING, "Could not read embedding", e);
                     return false;
                 }
             }
@@ -80,18 +85,36 @@ public class ExchangeEmbeddingHandler implements EmbeddingHandler {
             parameters.put(entry.getKey(), entry.getValue().firstValue());
         }
         String bodyAsString = response.getBodyAsString();
+
+        HttpHeaders headers = new HttpHeaders(response.getHeaders()).plus(new HttpHeader("Response-Code", "" + describeStatus(response)));
         RestQuery result = RestQuery.withMethod(RestMethod.valueOf(request.getMethod().getName()))
                 .andPath(request.getUrl())
                 .withContent(formatBody(request.getHeaders().getContentTypeHeader(), request.getBodyAsString()))
                 .withRequestHeaders(Json.write(request.getHeaders()))
                 .withParameters(parameters)
                 .withStatusCode(response.getStatus())
-                .withResponseHeaders(Json.write(response.getHeaders()))
-                .withResponse(formatBody(response.getHeaders().getContentTypeHeader(), bodyAsString));
+                .withResponseHeaders(Json.write(headers))
+                .withResponse(formatBody(headers.getContentTypeHeader(), bodyAsString));
         if (request.getAllHeaderKeys().contains(ContentTypeHeader.KEY)) {
             result = result.withContentType(request.getHeader(ContentTypeHeader.KEY));
         }
         return result;
+    }
+
+    private String describeStatus(RecordedResponse response) {
+        Field[] declaredFields = HttpURLConnection.class.getDeclaredFields();
+        for (Field declaredField : declaredFields) {
+            if(!declaredField.isAnnotationPresent(Deprecated.class) && declaredField.getType() == int.class && Modifier.isStatic(declaredField.getModifiers()) && Modifier.isPublic(declaredField.getModifiers())){
+                try {
+                    Integer constant= (Integer) declaredField.get(null);
+                    if(constant.intValue() == response.getStatus()){
+                        return declaredField.getName();
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
+        return "" + response.getStatus();
     }
 
     private String formatBody(ContentTypeHeader contentTypeHeader, String bodyAsString) {

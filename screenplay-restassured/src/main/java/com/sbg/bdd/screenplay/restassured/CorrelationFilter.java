@@ -1,12 +1,14 @@
 package com.sbg.bdd.screenplay.restassured;
 
 
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.wiremock.CorrelationPath;
 import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
+import com.sbg.bdd.wiremock.scoped.admin.model.ExtendedStubMapping;
 import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory;
 import com.sbg.bdd.wiremock.scoped.integration.HeaderName;
 import com.sbg.bdd.wiremock.scoped.integration.URLHelper;
@@ -54,10 +56,10 @@ public class CorrelationFilter implements Filter {
     }
 
     private StubMapping buildProxyMapping(URI uri) {
-        ExtendedMappingBuilder builder = new ExtendedMappingBuilder(new ExtendedRequestPatternBuilder(RequestMethod.ANY).to(uri.getPath()));
-        builder.willReturn(WireMock.aResponse().proxiedFrom(uri.getScheme() + "://" + uri.getAuthority())).atPriority(1);
-        builder.getRequestPatternBuilder().prepareForBuild(null);
-        builder.getRequestPatternBuilder().ensureScopePath(WireMock.equalTo(CorrelationPath.of(theActorInTheSpotlight())));
+        MappingBuilder builder = WireMock.any(WireMock.urlEqualTo(uri.getPath()));
+        builder.willReturn(WireMock.aResponse().proxiedFrom(uri.getScheme() + "://" + uri.getAuthority()));
+        builder.atPriority(1);
+        builder.withHeader(HeaderName.ofTheCorrelationKey(), WireMock.equalTo(CorrelationPath.of(theActorInTheSpotlight())));
         return builder.build();
     }
 

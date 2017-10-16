@@ -21,13 +21,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class StubMappingEmbeddingHandler implements EmbeddingHandler {
-    Logger LOGGER = Logger.getLogger(StubMappingEmbeddingHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(StubMappingEmbeddingHandler.class.getName());
 
     @Override
     public boolean attemptHandling(String mimeType, byte[] data) {
         if (mimeType.endsWith("json")) {
             String json = new String(data);
-            System.out.println(json);
             if (json.contains("\"request\" : {") && json.contains("\"response\" : {") && json.contains("\"id\" : ")) {
                 CollectionLikeType type = Json.getObjectMapper().getTypeFactory().constructCollectionType(List.class, StubMapping.class);
                 ObjectMapper mapper = Json.getObjectMapper();
@@ -79,7 +78,7 @@ public class StubMappingEmbeddingHandler implements EmbeddingHandler {
                 .withStatusCode(response.getStatus())
                 .withResponseHeaders(Json.write(response.getHeaders()))
                 .withResponse(response.getBody());
-        if (request.getHeaders().containsKey(ContentTypeHeader.KEY)) {
+        if (request.getHeaders()!=null && request.getHeaders().containsKey(ContentTypeHeader.KEY)) {
             result = result.withContentType(request.getHeaders().get(ContentTypeHeader.KEY).getExpected());
         }
         return result;

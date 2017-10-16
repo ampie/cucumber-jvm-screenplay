@@ -5,7 +5,7 @@ import com.sbg.bdd.cucumber.wiremock.annotations.ScreenplayUrls;
 import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
-import com.sbg.bdd.wiremock.scoped.WireMockResourceRoot;
+import com.sbg.bdd.wiremock.scoped.resources.WireMockResourceRoot;
 
 public class DefaultWireMockResourceRoots implements ResourceRoots {
     private WireMockResourceRoot inputRoot;

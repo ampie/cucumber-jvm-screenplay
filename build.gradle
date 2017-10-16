@@ -28,7 +28,7 @@ subprojects {
         SCOPED_WIREMOCK_VERSION = '0.2.0'
     }
     repositories {
-        mavenLocal()
+//        mavenLocal()
         if (System.getProperty("runExternally") == 'true') {
             maven { url "http://repo.maven.apache.org/maven2" }
         } else {

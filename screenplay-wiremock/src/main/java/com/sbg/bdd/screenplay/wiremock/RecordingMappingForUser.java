@@ -42,6 +42,7 @@ public class RecordingMappingForUser {
 
     public void saveRecordings(Scene scope) {
         ExtendedRequestPatternBuilder requestPatternBuilder = new ExtendedRequestPatternBuilder(this.mappingBuilder.getRequestPatternBuilder());
+        requestPatternBuilder.setCorrelationPath(CorrelationPath.ofUserInScope(scope, userInScopeId));
         ScopedWireMockClient wireMock = getWireMock(scope);
         wireMock.saveRecordingsForRequestPattern(deriveCorrelationPath(scope), requestPatternBuilder.build(), calculateRecordingDirectory(scope));
     }
@@ -57,6 +58,7 @@ public class RecordingMappingForUser {
             //may not exist
             ScopedWireMockClient wireMock = getWireMock(scope);
             ExtendedRequestPatternBuilder requestPatternBuilder = new ExtendedRequestPatternBuilder(mappingBuilder.getRequestPatternBuilder());
+            requestPatternBuilder.setCorrelationPath(CorrelationPath.ofUserInScope(scope, userInScopeId));
             requestPatternBuilder.withHeader(HeaderName.ofTheCorrelationKey(), deriveCorrelationPath(scope));
             //TODO temp hack until we have moved this down to the server
             wireMock.serveRecordedMappingsAt(recordingDirectory, requestPatternBuilder.build(), (10 - scope.getLevel())*10 - priorityFor(scope).priority());

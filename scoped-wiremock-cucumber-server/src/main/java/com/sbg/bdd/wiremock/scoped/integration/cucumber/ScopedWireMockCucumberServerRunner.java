@@ -18,7 +18,10 @@ public class ScopedWireMockCucumberServerRunner {
         }else if(!cp.contains(resourcesJar)){
             System.setProperty("java.class.path",cp + File.pathSeparator + resourcesJar);
         }
+        System.setProperty("http.keepAlive", "false");
         List<String> newArgs = new ArrayList(Arrays.asList(args));
+        newArgs.add("--container-threads");
+        newArgs.add("50");
         //TODO add this extension
         CucumberFormattingScopeListener.class.getName();
         ScopedWireMockServerRunner.main(newArgs.toArray(new String[newArgs.size()]));

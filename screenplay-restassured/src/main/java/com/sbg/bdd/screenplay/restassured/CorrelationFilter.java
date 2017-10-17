@@ -56,7 +56,7 @@ public class CorrelationFilter implements Filter {
     }
 
     private StubMapping buildProxyMapping(URI uri) {
-        MappingBuilder builder = WireMock.any(WireMock.urlEqualTo(uri.getPath()));
+        MappingBuilder builder = WireMock.any(WireMock.urlPathEqualTo(uri.getPath()));
         builder.willReturn(WireMock.aResponse().proxiedFrom(uri.getScheme() + "://" + uri.getAuthority()));
         builder.atPriority(1);
         builder.withHeader(HeaderName.ofTheCorrelationKey(), WireMock.equalTo(CorrelationPath.of(theActorInTheSpotlight())));

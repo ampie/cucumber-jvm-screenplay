@@ -74,10 +74,12 @@ public class CorrelationFilter implements Filter {
 
                 requestSpecification
                         .header(HeaderName.ofTheOriginalUrl(), new URL(URLHelper.identifier(originalUrl)).toExternalForm())
-                        .header(HeaderName.ofTheCorrelationKey(), currentCorrelationState.getCorrelationPath())
                         .header(HeaderName.ofTheSequenceNumber(), sequenceNumber);
                 if (currentCorrelationState.shouldProxyUnmappedEndpoints()) {
                     requestSpecification.header(HeaderName.toProxyUnmappedEndpoints(), "true");
+                }
+                if (requestSpecification.getHeaders().getValues(HeaderName.ofTheCorrelationKey())==null || requestSpecification.getHeaders().getValues(HeaderName.ofTheCorrelationKey()).isEmpty()) {
+                    requestSpecification.header(HeaderName.ofTheCorrelationKey(), CorrelationPath.of(theActorInTheSpotlight()));
                 }
                 for (Map.Entry<String, Integer> entry : currentCorrelationState.getSequenceNumbers().entrySet()) {
                     requestSpecification.header(HeaderName.ofTheServiceInvocationCount(), entry.getKey() + "|" + entry.getValue());

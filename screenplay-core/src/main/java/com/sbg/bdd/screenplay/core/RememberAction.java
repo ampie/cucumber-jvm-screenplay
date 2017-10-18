@@ -21,7 +21,7 @@ public class RememberAction implements DownstreamStub {
     }
 
     @Override
-    @Step("the variable #name to be #value")
+    @Step("the variable \"#name\" to be \"#value\"")
     public void performOnStage(ActorOnStage actorOnStage) {
         actorOnStage.remember(name,value);
     }

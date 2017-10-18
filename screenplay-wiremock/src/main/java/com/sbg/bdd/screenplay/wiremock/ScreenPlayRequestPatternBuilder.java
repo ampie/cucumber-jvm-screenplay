@@ -11,6 +11,7 @@ import com.sbg.bdd.wiremock.scoped.client.WireMockContext;
 import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedMappingBuilder;
 import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedRequestPatternBuilder;
 import com.sbg.bdd.wiremock.scoped.client.builders.ResponseStrategy;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -18,13 +19,32 @@ import org.hamcrest.StringDescription;
 public class ScreenPlayRequestPatternBuilder extends ExtendedRequestPatternBuilder<ScreenPlayRequestPatternBuilder> {
 
 
-
     public ScreenPlayRequestPatternBuilder(RequestMethod requestMethod) {
         super(requestMethod);
     }
 
     public String getDescription() {
-        return "a " + getHttpMethod() + " to \"" + getUrlInfo() +"\"";
+        StringBuilder sb = new StringBuilder();
+        if (getHttpMethod().equals("ANY")) {
+            sb.append("any request to ");
+
+        } else {
+            sb.append("a " + getHttpMethod() + " to ");
+        }
+        if (isToAllKnownExternalServices()) {
+            if (StringUtils.isEmpty(getEndpointCategory())) {
+                sb.append("any known external service");
+            } else {
+                sb.append("any " + getEndpointCategory() + " service");
+            }
+        } else {
+            if (StringUtils.isEmpty(getPathSuffix())) {
+                sb.append("\"" + getUrlInfo() + "\"");
+            } else {
+                sb.append("\"" + getUrlInfo() + getPathSuffix() + "\"");
+            }
+        }
+        return sb.toString();
     }
 
 
@@ -70,11 +90,13 @@ public class ScreenPlayRequestPatternBuilder extends ExtendedRequestPatternBuild
     public ScreenPlayMappingBuilder to(ResponseStrategy responseStrategy) {
         return will(responseStrategy);
     }
+
     public ScreenPlayMappingBuilder toReturn(ResponseDefinitionBuilder response) {
         ScreenPlayMappingBuilder ruleBuilder = new ScreenPlayMappingBuilder(this);
         ruleBuilder.willReturn(response);
         return ruleBuilder;
     }
+
     public ScreenPlayMappingBuilder willReturn(ResponseDefinitionBuilder response) {
         return toReturn(response);
     }

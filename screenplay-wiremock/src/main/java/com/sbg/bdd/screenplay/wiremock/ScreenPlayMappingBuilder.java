@@ -37,10 +37,10 @@ public class ScreenPlayMappingBuilder extends ExtendedMappingBuilder<ScreenPlayM
         final List<StubMapping> mappings = new ArrayList<>();
         super.applyTo(new WireMockScreenplayContext(actorOnStage) {
             @Override
-            public void register(ExtendedMappingBuilder child) {
-                super.register(child);
-                if (child.getResponseDefinitionBuilder() != null) {
-                    mappings.add(child.build());
+            public void register(ExtendedMappingBuilder builder) {
+                super.register(builder);
+                if (builder.getResponseDefinitionBuilder() != null) {
+                    mappings.add(builder.build());
                 }
             }
         });

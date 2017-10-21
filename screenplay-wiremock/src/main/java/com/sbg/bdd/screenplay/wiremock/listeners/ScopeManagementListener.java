@@ -24,6 +24,7 @@ import java.util.Map;
 import static com.sbg.bdd.screenplay.core.actors.OnStage.theCurrentScene;
 import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
 @Deprecated
+//Still used for tests primarily
 //See com.sbg.bdd.cucumber.wiremock.listeners.ScopeManagementListener
 //TODO refactor this out of existince and decouple the other ScopeManagementListener from both cucumber and from screenplay-scoped
 public class ScopeManagementListener {
@@ -35,11 +36,12 @@ public class ScopeManagementListener {
             GlobalCorrelationState correlationState = startGlobalScope(wireMock, scene.getPerformance());
             scene.remember(WireMockScreenplayContext.CORRELATION_STATE, correlationState);
         } else {
-            if(scene.getPerformance().recall(WireMockScreenplayContext.CORRELATION_STATE)==null){
-                GlobalCorrelationState correlationState = startGlobalScope(wireMock, scene.getPerformance());
-                scene.getPerformance().remember(WireMockScreenplayContext.CORRELATION_STATE, correlationState);
+            GlobalCorrelationState globalCorrelationState = scene.getPerformance().recall(WireMockScreenplayContext.CORRELATION_STATE);
+            if(globalCorrelationState ==null){
+                globalCorrelationState = startGlobalScope(wireMock, scene.getPerformance());
+                scene.getPerformance().remember(WireMockScreenplayContext.CORRELATION_STATE, globalCorrelationState);
             }
-            CorrelationState correlationState = wireMock.joinCorrelatedScope(CorrelationPath.of(scene), Collections.<String, Object>emptyMap());
+            CorrelationState correlationState = wireMock.joinCorrelatedScope(globalCorrelationState.getCorrelationPath(), scene.getSceneIdentifier(), Collections.<String, Object>emptyMap());
             scene.remember(WireMockScreenplayContext.CORRELATION_STATE, correlationState);
         }
 
@@ -91,8 +93,8 @@ public class ScopeManagementListener {
     @ActorListener(involvement = ActorInvolvement.BEFORE_ENTER_STAGE)
     public void registerScope(ActorOnStage userInScope) {
         if (!BaseActorOnStage.isEverybody(userInScope)) {
-            String scopePath = CorrelationPath.of(userInScope);
-            CorrelationState state = getWireMockFrom(userInScope.getScene()).joinCorrelatedScope(scopePath,Collections.<String, Object>emptyMap());
+            String scopePath = CorrelationPath.of(userInScope.getScene());
+            CorrelationState state = getWireMockFrom(userInScope.getScene()).joinUserScope(scopePath, userInScope.getId(),Collections.<String, Object>emptyMap());
             userInScope.remember(WireMockScreenplayContext.CORRELATION_STATE, state);
         }
     }

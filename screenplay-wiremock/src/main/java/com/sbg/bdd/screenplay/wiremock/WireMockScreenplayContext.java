@@ -85,13 +85,13 @@ public class WireMockScreenplayContext implements WireMockContext {
     }
 
     @Override
-    public void register(ExtendedMappingBuilder child) {
-        if (!shouldIgnoreMapping(child)) {
-            child.getRequestPatternBuilder().ensureScopePath(correlationPattern());
-            if (child.getResponseDefinitionBuilder() != null) {
-                wireMock.register(child.build());
+    public void register(ExtendedMappingBuilder builder) {
+        if (!shouldIgnoreMapping(builder)) {
+            builder.getRequestPatternBuilder().ensureScopePath(correlationPattern());
+            if (builder.getResponseDefinitionBuilder() != null) {
+                wireMock.register(builder.build());
             }
-            processRecordingSpecs(child, userInScope.getId());
+            processRecordingSpecs(builder, userInScope.getId());
         }
     }
 
@@ -111,7 +111,7 @@ public class WireMockScreenplayContext implements WireMockContext {
         return wireMock.count(requestPatternBuilder.build());
     }
 
-
+    //TODO move to server
     protected void processRecordingSpecs(ExtendedMappingBuilder builder, String personaIdToUse) {
         if (personaIdToUse.equals(Actor.EVERYBODY)) {
             for (String personaDir : allPersonaIds()) {
@@ -133,7 +133,7 @@ public class WireMockScreenplayContext implements WireMockContext {
             }
         }
     }
-
+    //TODO Move to server???
     private Set<String> allPersonaIds() {
         final PersonaClient personaClient = userInScope.getScene().getPerformance().recall(PERSONA_CLIENT);
         List<Resource> list = Arrays.asList(personaRoot.list(new ResourceFilter() {

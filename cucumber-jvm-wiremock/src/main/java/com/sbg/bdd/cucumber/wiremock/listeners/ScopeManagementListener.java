@@ -12,8 +12,10 @@ import com.sbg.bdd.screenplay.core.annotations.SceneListener;
 import com.sbg.bdd.screenplay.core.events.ActorEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.core.internal.BaseActorOnStage;
+import com.sbg.bdd.screenplay.core.util.NameConverter;
 import com.sbg.bdd.screenplay.scoped.FunctionalScope;
 import com.sbg.bdd.screenplay.scoped.ScenarioScope;
+import com.sbg.bdd.screenplay.scoped.UserTrackingScope;
 import com.sbg.bdd.screenplay.wiremock.CorrelationPath;
 import com.sbg.bdd.screenplay.wiremock.WireMockMemories;
 import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
@@ -55,7 +57,7 @@ public class ScopeManagementListener extends CucumberPayloadProducingListener {
 
     @Override
     protected void scopeStarted(Scene scene) {
-        registerScope(scene, Collections.<String, Object>emptyMap());
+        registerScope((UserTrackingScope) scene, Collections.<String, Object>emptyMap());
     }
 
     @Override
@@ -63,9 +65,8 @@ public class ScopeManagementListener extends CucumberPayloadProducingListener {
         registerScope(scene, map);
     }
 
-    private void registerScope(Scene scene, Map<String, Object> map) {
+    private void registerScope(UserTrackingScope scene, Map<String, Object> map) {
         ScopedWireMockClient wireMock = getWireMockFrom(scene);
-        String scopePath = CorrelationPath.of(scene);
         if (scene.getLevel() == 0) {
             WireMockMemories recall = WireMockMemories.recallFrom(scene);
             String name = scene.getPerformance().getName();
@@ -76,7 +77,8 @@ public class ScopeManagementListener extends CucumberPayloadProducingListener {
             GlobalCorrelationState correlationState = wireMock.startNewGlobalScope(inputState);
             scene.remember(WireMockScreenplayContext.CORRELATION_STATE, correlationState);
         } else {
-            CorrelationState correlationState = wireMock.joinCorrelatedScope(scopePath, map);
+            String parentScopePath = CorrelationPath.of(scene.getContainingScope());
+            CorrelationState correlationState = wireMock.joinCorrelatedScope(parentScopePath, scene.getId(), map);
             scene.remember(WireMockScreenplayContext.CORRELATION_STATE, correlationState);
         }
     }
@@ -144,8 +146,8 @@ public class ScopeManagementListener extends CucumberPayloadProducingListener {
     @ActorListener(involvement = ActorInvolvement.BEFORE_ENTER_STAGE)
     public void registerScope(ActorOnStage userInScope) {
         if (!BaseActorOnStage.isEverybody(userInScope)) {
-            String scopePath = CorrelationPath.of(userInScope);
-            CorrelationState state = getWireMockFrom(userInScope.getScene()).joinCorrelatedScope(scopePath,Collections.<String, Object>emptyMap());
+            String parentScopePath = CorrelationPath.of(userInScope.getScene());
+            CorrelationState state = getWireMockFrom(userInScope.getScene()).joinUserScope(parentScopePath,userInScope.getId(),Collections.<String, Object>emptyMap());
             userInScope.remember(WireMockScreenplayContext.CORRELATION_STATE, state);
         }
     }

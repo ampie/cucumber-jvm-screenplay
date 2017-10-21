@@ -32,10 +32,6 @@ public class RecordingMappingForUser {
         this.mappingBuilder = mappingBuilder;
     }
 
-    public ExtendedMappingBuilder getMappingBuilder() {
-        return mappingBuilder;
-    }
-
     public String getUserInScopeId() {
         return userInScopeId;
     }
@@ -61,7 +57,7 @@ public class RecordingMappingForUser {
             requestPatternBuilder.setCorrelationPath(CorrelationPath.ofUserInScope(scope, userInScopeId));
             requestPatternBuilder.withHeader(HeaderName.ofTheCorrelationKey(), deriveCorrelationPath(scope));
             //TODO temp hack until we have moved this down to the server
-            wireMock.serveRecordedMappingsAt(recordingDirectory, requestPatternBuilder.build(), (10 - scope.getLevel())*10 - priorityFor(scope).priority());
+            wireMock.serveRecordedMappingsAt(recordingDirectory, requestPatternBuilder.build(), (10 - scope.getLevel())*10 - priority().priority());
         }
     }
 
@@ -78,7 +74,7 @@ public class RecordingMappingForUser {
     }
 
 
-    private ScopeLocalPriority priorityFor(Scene scope) {
+    private ScopeLocalPriority priority() {
         return getRecordingSpecification().enforceJournalModeInScope() ? ScopeLocalPriority.JOURNAL : ScopeLocalPriority.RECORDINGS;
     }
 

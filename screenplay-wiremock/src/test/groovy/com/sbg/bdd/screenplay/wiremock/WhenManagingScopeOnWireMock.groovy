@@ -38,7 +38,7 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
         scope.completeNestedScope('scenario1')
         then:
         scope.everybodyScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == publicIp + '/'+publicPort+'/TestRun/0/nested1'
-        userScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == publicIp + '/'+publicPort+'/TestRun/0/nested1/John_Smith'
+        userScope.recall(WireMockScreenplayContext.CORRELATION_STATE).correlationPath == publicIp + '/'+publicPort+'/TestRun/0/nested1/:John_Smith'
         innerStep == 'For_requests_from_John_Smith_comma__allow/step1'
         scenarioScope.everybodyScope.recall(WireMockScreenplayContext.CORRELATION_STATE).currentStep == null
     }

@@ -1,6 +1,10 @@
 package com.sbg.bdd.wiremock.scoped.integration.cucumber;
 
+import com.sbg.bdd.resource.ResourceContainer;
+import com.sbg.bdd.wiremock.scoped.admin.ScopedAdmin;
+import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer;
 import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServerRunner;
+import com.sbg.bdd.wiremock.scoped.server.recording.RecordingManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,5 +29,12 @@ public class ScopedWireMockCucumberServerRunner {
         //TODO add this extension
         CucumberFormattingScopeListener.class.getName();
         ScopedWireMockServerRunner.main(newArgs.toArray(new String[newArgs.size()]));
+        ScopedWireMockServer server = ScopedWireMockServerRunner.getWireMockServer();
+        ResourceContainer inputRoot = server.getResourceRoot(ScopedAdmin.INPUT_RESOURCE_ROOT);
+        if(inputRoot!=null){
+            if(server.getResourceRoot(ScopedAdmin.PERSONA_RESOURCE_ROOT)==null){
+                server.registerResourceRoot(ScopedAdmin.PERSONA_RESOURCE_ROOT, (ResourceContainer) inputRoot.getChild("personas"));
+            }
+        }
     }
 }

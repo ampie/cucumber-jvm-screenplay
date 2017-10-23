@@ -34,7 +34,7 @@ class WhenUsingTheInterceptor extends WhenUsingRestAssured {
         requestSpecification != null
 
         def headers = requestSpecification.getHeaders()
-        headers.getValue(HeaderName.ofTheCorrelationKey()) == 'localhost/' + server.port() + '/Runit/0/Scene_1/John'
+        headers.getValue(HeaderName.ofTheCorrelationKey()) == 'localhost/' + server.port() + '/Runit/0/Scene_1/:John'
 
         def value = headers.getValue(HeaderName.ofTheOriginalUrl())
         value == 'http://localhost:'+server.port() +'/base/url'

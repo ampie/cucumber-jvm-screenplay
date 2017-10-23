@@ -1,4 +1,4 @@
-{
+  {
   "Content-Type" : "application/xml",
   "requestedUrl" : "/context/service/operation2",
   "responseCode" : "0"

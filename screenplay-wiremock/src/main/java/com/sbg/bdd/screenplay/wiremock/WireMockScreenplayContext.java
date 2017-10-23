@@ -87,11 +87,10 @@ public class WireMockScreenplayContext implements WireMockContext {
     @Override
     public void register(ExtendedMappingBuilder builder) {
         if (!shouldIgnoreMapping(builder)) {
+            //TODO move to server
             builder.getRequestPatternBuilder().ensureScopePath(correlationPattern());
-            if (builder.getResponseDefinitionBuilder() != null) {
-                wireMock.register(builder.build());
-            }
-            processRecordingSpecs(builder, userInScope.getId());
+            wireMock.register(builder.build());
+//            processRecordingSpecs(builder, userInScope.getId());
         }
     }
 
@@ -111,52 +110,52 @@ public class WireMockScreenplayContext implements WireMockContext {
         return wireMock.count(requestPatternBuilder.build());
     }
 
-    //TODO move to server
-    protected void processRecordingSpecs(ExtendedMappingBuilder builder, String personaIdToUse) {
-        if (personaIdToUse.equals(Actor.EVERYBODY)) {
-            for (String personaDir : allPersonaIds()) {
-                processRecordingSpecs(builder, personaDir);
-            }
-        } else {
-            if (builder.getRecordingSpecification().getJournalModeOverride() == JournalMode.RECORD) {
-                requestsToRecordOrPlayback.add(new RecordingMappingForUser(personaIdToUse, builder));
-            } else if (builder.getRecordingSpecification().getJournalModeOverride() == JournalMode.PLAYBACK) {
-                RecordingMappingForUser recordingMappingForUser = new RecordingMappingForUser(personaIdToUse, builder);
-                requestsToRecordOrPlayback.add(recordingMappingForUser);
-                recordingMappingForUser.loadRecordings(userInScope.getScene());
-            } else if (builder.getRecordingSpecification().enforceJournalModeInScope()) {
-                RecordingMappingForUser recordingMappingForUser = new RecordingMappingForUser(personaIdToUse, builder);
-                requestsToRecordOrPlayback.add(recordingMappingForUser);
-                if (getJournalModeInScope() == JournalMode.PLAYBACK) {
-                    recordingMappingForUser.loadRecordings(userInScope.getScene());
-                }
-            }
-        }
-    }
-    //TODO Move to server???
-    private Set<String> allPersonaIds() {
-        final PersonaClient personaClient = userInScope.getScene().getPerformance().recall(PERSONA_CLIENT);
-        List<Resource> list = Arrays.asList(personaRoot.list(new ResourceFilter() {
-            @Override
-            public boolean accept(ResourceContainer dir, String name) {
-                Resource file = dir.resolveExisting(name);
-                if (file.getName().equals(Actor.EVERYBODY)) {
-                    return false;
-                } else if (file instanceof ResourceContainer) {
-                    return file.getName().equals(Actor.GUEST) || ((ResourceContainer) file).resolveExisting(personaClient.getDefaultPersonaFileName()) != null;
-                } else {
-                    return false;
-                }
-            }
-
-        }));
-        TreeSet<String> result = new TreeSet<>();
-        for (Resource o : list) {
-            result.add(o.getName());
-        }
-        return result;
-    }
-
+//    //TODO move to server
+//    protected void processRecordingSpecs(ExtendedMappingBuilder builder, String personaIdToUse) {
+//        if (personaIdToUse.equals(Actor.EVERYBODY)) {
+//            for (String personaDir : allPersonaIds()) {
+//                processRecordingSpecs(builder, personaDir);
+//            }
+//        } else {
+//            if (builder.getRecordingSpecification().getJournalModeOverride() == JournalMode.RECORD) {
+//                requestsToRecordOrPlayback.add(new RecordingMappingForUser(personaIdToUse, builder));
+//            } else if (builder.getRecordingSpecification().getJournalModeOverride() == JournalMode.PLAYBACK) {
+//                RecordingMappingForUser recordingMappingForUser = new RecordingMappingForUser(personaIdToUse, builder);
+//                requestsToRecordOrPlayback.add(recordingMappingForUser);
+//                recordingMappingForUser.loadRecordings(userInScope.getScene());
+//            } else if (builder.getRecordingSpecification().enforceJournalModeInScope()) {
+//                RecordingMappingForUser recordingMappingForUser = new RecordingMappingForUser(personaIdToUse, builder);
+//                requestsToRecordOrPlayback.add(recordingMappingForUser);
+//                if (getJournalModeInScope() == JournalMode.PLAYBACK) {
+//                    recordingMappingForUser.loadRecordings(userInScope.getScene());
+//                }
+//            }
+//        }
+//    }
+//    //TODO Move to server???
+//    private Set<String> allPersonaIds() {
+//        final PersonaClient personaClient = userInScope.getScene().getPerformance().recall(PERSONA_CLIENT);
+//        List<Resource> list = Arrays.asList(personaRoot.list(new ResourceFilter() {
+//            @Override
+//            public boolean accept(ResourceContainer dir, String name) {
+//                Resource file = dir.resolveExisting(name);
+//                if (file.getName().equals(Actor.EVERYBODY)) {
+//                    return false;
+//                } else if (file instanceof ResourceContainer) {
+//                    return file.getName().equals(Actor.GUEST) || ((ResourceContainer) file).resolveExisting(personaClient.getDefaultPersonaFileName()) != null;
+//                } else {
+//                    return false;
+//                }
+//            }
+//
+//        }));
+//        TreeSet<String> result = new TreeSet<>();
+//        for (Resource o : list) {
+//            result.add(o.getName());
+//        }
+//        return result;
+//    }
+//
     private JournalMode getJournalModeInScope() {
         return Optional.fromNullable(userInScope.recall(JournalMode.class)).or(JournalMode.NONE);
     }

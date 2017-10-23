@@ -54,13 +54,14 @@ public class ScopeManagementListener {
         URL urlOfServiceUnderTest = recall.theBaseUrlOfTheServiceUnderTest();
         String integrationScope = recall.theIntegrationScope();
         GlobalCorrelationState inputState = new GlobalCorrelationState(name, wireMockPublicUrl, urlOfServiceUnderTest, integrationScope);
+        inputState.setGlobalJournaMode(recall.theJournalModeToUse());
         return wireMock.startNewGlobalScope(inputState);
     }
 
     @SceneListener(scopePhases = SceneEventType.AFTER_COMPLETE)
     public void unregisterScope(Scene scene) {
         String knownScopePath = CorrelationPath.of(scene);
-        getWireMockFrom(scene).stopCorrelatedScope(knownScopePath,Collections.<String, Object>emptyMap());
+        getWireMockFrom(scene).stopNestedScope(knownScopePath,Collections.<String, Object>emptyMap());
     }
 
     @StepListener(eventTypes = StepEventType.STARTED)

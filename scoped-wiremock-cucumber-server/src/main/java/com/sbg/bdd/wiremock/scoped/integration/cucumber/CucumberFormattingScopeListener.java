@@ -223,6 +223,8 @@ public class CucumberFormattingScopeListener implements ScopeListener {
             if (payload != null && !payload.isEmpty()) {
                 if ("childStepAndMatch".equals(payload.get("method"))) {
                     parser.replayChildStepAndMatch(payload);
+                } else if ("step".equals(payload.get("method"))) {
+                    parser.replayStep(payload);
                 } else if ("stepAndMatch".equals(payload.get("method"))) {
                     parser.replayStepAndMatch(payload);
                 }
@@ -255,6 +257,8 @@ public class CucumberFormattingScopeListener implements ScopeListener {
                     parser.replayChildResult(payload);
                 } else if ("result".equals(payload.get("method"))) {
                     parser.replayResult(payload);
+                } else if ("matchAndResult".equals(payload.get("method"))) {
+                    parser.replayMatchAndResult(payload);
                 }
             }
         } catch (Exception e) {

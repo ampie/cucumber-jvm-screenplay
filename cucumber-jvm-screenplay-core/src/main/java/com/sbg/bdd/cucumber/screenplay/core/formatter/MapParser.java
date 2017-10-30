@@ -62,12 +62,14 @@ public class MapParser {
     }
 
     public void replayStepAndMatch(Map o) {
-        Step step = buildStep(o);
-        step.replay(formatter);
+        replayStep(o);
         if (o.containsKey("match")) {
-            Match match = buildMatch(o);
-            match.replay(reporter);
+            buildMatch(o).replay(reporter);
         }
+    }
+
+    public void replayStep(Map o) {
+        buildStep(o).replay(formatter);
     }
 
     private Match buildMatch(Map o) {
@@ -80,7 +82,6 @@ public class MapParser {
         if (o.containsKey("rows")) {
             rows = dataTableRows(getList(o, "rows"));
         }
-
         DocString docString = null;
         if (o.containsKey("doc_string")) {
             Map ds = (Map) o.get("doc_string");
@@ -89,7 +90,10 @@ public class MapParser {
 
         return new Step(comments(o), keyword(o), name(o), line(o), rows, docString);
     }
-
+    public void replayMatchAndResult(Map step){
+        buildMatch(step).replay(reporter);
+        replayResult((Map) step.get("result"));
+    }
     public void replayResult(Map r) {
         new Result(status(r), duration(r), errorMessage(r)).replay(reporter);
     }

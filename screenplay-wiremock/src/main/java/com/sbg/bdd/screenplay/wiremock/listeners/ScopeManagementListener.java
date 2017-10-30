@@ -41,7 +41,7 @@ public class ScopeManagementListener {
                 globalCorrelationState = startGlobalScope(wireMock, scene.getPerformance());
                 scene.getPerformance().remember(WireMockScreenplayContext.CORRELATION_STATE, globalCorrelationState);
             }
-            CorrelationState correlationState = wireMock.joinCorrelatedScope(globalCorrelationState.getCorrelationPath(), scene.getSceneIdentifier(), Collections.<String, Object>emptyMap());
+            CorrelationState correlationState = wireMock.startNestedScope(globalCorrelationState.getCorrelationPath(), scene.getSceneIdentifier(), Collections.<String, Object>emptyMap());
             scene.remember(WireMockScreenplayContext.CORRELATION_STATE, correlationState);
         }
 
@@ -95,7 +95,7 @@ public class ScopeManagementListener {
     public void registerScope(ActorOnStage userInScope) {
         if (!BaseActorOnStage.isEverybody(userInScope)) {
             String scopePath = CorrelationPath.of(userInScope.getScene());
-            CorrelationState state = getWireMockFrom(userInScope.getScene()).joinUserScope(scopePath, userInScope.getId(),Collections.<String, Object>emptyMap());
+            CorrelationState state = getWireMockFrom(userInScope.getScene()).startUserScope(scopePath, userInScope.getId(),Collections.<String, Object>emptyMap());
             userInScope.remember(WireMockScreenplayContext.CORRELATION_STATE, state);
         }
     }

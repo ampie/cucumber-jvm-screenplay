@@ -14,6 +14,7 @@ import com.sbg.bdd.wiremock.scoped.admin.model.CorrelationState;
 import com.sbg.bdd.wiremock.scoped.admin.model.GlobalCorrelationState;
 import com.sbg.bdd.wiremock.scoped.common.ParentPath;
 import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory;
+import com.sbg.bdd.wiremock.scoped.integration.ServiceInvocationCount;
 import com.sbg.bdd.wiremock.scoped.integration.WireMockCorrelationState;
 import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
 
@@ -84,9 +85,9 @@ public class ScopeManagementListener {
             CorrelationState state = userInScope.recall(WireMockScreenplayContext.CORRELATION_STATE);
             WireMockCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
             currentCorrelationState.clear();
-            currentCorrelationState.set(state.getCorrelationPath(), Boolean.TRUE.equals(userInScope.recall(WireMockScreenplayContext.PROXY_UNMAPPED_ENDPOINTS)));
-            for (Map.Entry<String, Integer> entry : state.getServiceInvocationCounts().entrySet()) {
-                currentCorrelationState.initSequenceNumberFor(entry.getKey(), entry.getValue());
+            currentCorrelationState.set(state.getCorrelationPath(), 1, Boolean.TRUE.equals(userInScope.recall(WireMockScreenplayContext.PROXY_UNMAPPED_ENDPOINTS)));
+            for (com.sbg.bdd.wiremock.scoped.admin.model.ServiceInvocationCount entry : state.getServiceInvocationCounts()) {
+                currentCorrelationState.initSequenceNumberFor(new ServiceInvocationCount(entry.toString()));
             }
         }
     }

@@ -14,7 +14,7 @@ buildscript {
     }
 }
 group='com.sbg.bdd'
-version='0.2.2'
+version='0.2.3'
 subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
@@ -25,7 +25,7 @@ subprojects {
         GROOVY_VERSION = '2.4.5'
         CUKES_VERSION = '1.2.5'
         WIREMOCK_VERSION = '2.6.0'
-        SCOPED_WIREMOCK_VERSION = '0.2.2'
+        SCOPED_WIREMOCK_VERSION = '0.2.3'
     }
     repositories {
         if ('true'.equals(System.getProperty("runExternally"))) {

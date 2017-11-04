@@ -40,7 +40,7 @@ class WhenUsingTheInterceptor extends WhenUsingRestAssured {
         value == 'http://localhost:'+server.port() +'/base/url'
         headers.getValue(HeaderName.ofTheSequenceNumber()) == '1'
         headers.getValues(HeaderName.ofTheServiceInvocationCount()).size() == 1
-        headers.getValues(HeaderName.ofTheServiceInvocationCount()).get(0) == 'http:null://localhost:' + server.port() + '/base/url|1'
+        headers.getValues(HeaderName.ofTheServiceInvocationCount()).get(0) == '1|http:null://localhost:' + server.port() + '/base/url|1'
 
     }
 
@@ -49,7 +49,7 @@ class WhenUsingTheInterceptor extends WhenUsingRestAssured {
 
         def server = initWireMockAndBasePerformance()
         def filter = new CorrelationFilter()
-        def headers = new Headers(new Header(HeaderName.ofTheServiceInvocationCount(), 'http://localhost:' + server.port() + '/base/urlnull|5'))
+        def headers = new Headers(new Header(HeaderName.ofTheServiceInvocationCount(), '1|http://localhost:' + server.port() + '/base/urlnull|5'))
         def response = Mock(Response) {
             getHeaders() >> headers
         }
@@ -61,7 +61,8 @@ class WhenUsingTheInterceptor extends WhenUsingRestAssured {
         OnStage.shineSpotlightOn(actorNamed('John'))
         filter.filter(RestAssured.given().baseUri('http://localhost:' + server.port() + '/base/url'), null, context)
         then:
-        BaseDependencyInjectorAdaptor.CURRENT_CORRELATION_STATE.getSequenceNumbers().get('http://localhost:' + server.port() + '/base/urlnull') == 5
+        BaseDependencyInjectorAdaptor.CURRENT_CORRELATION_STATE.getServiceInvocationCounts()[0].endpointIdentifier == 'http://localhost:' + server.port() + '/base/urlnull'
+        BaseDependencyInjectorAdaptor.CURRENT_CORRELATION_STATE.getServiceInvocationCounts()[0].count == 5
 
     }
 }

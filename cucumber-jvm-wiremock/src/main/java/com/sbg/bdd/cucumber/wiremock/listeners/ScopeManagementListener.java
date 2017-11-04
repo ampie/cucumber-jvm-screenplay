@@ -12,7 +12,6 @@ import com.sbg.bdd.screenplay.core.annotations.SceneListener;
 import com.sbg.bdd.screenplay.core.events.ActorEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.core.internal.BaseActorOnStage;
-import com.sbg.bdd.screenplay.core.util.NameConverter;
 import com.sbg.bdd.screenplay.scoped.FunctionalScope;
 import com.sbg.bdd.screenplay.scoped.ScenarioScope;
 import com.sbg.bdd.screenplay.scoped.UserTrackingScope;
@@ -21,10 +20,11 @@ import com.sbg.bdd.screenplay.wiremock.WireMockMemories;
 import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
 import com.sbg.bdd.wiremock.scoped.admin.model.CorrelationState;
 import com.sbg.bdd.wiremock.scoped.admin.model.GlobalCorrelationState;
+import com.sbg.bdd.wiremock.scoped.admin.model.ServiceInvocationCount;
+import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
 import com.sbg.bdd.wiremock.scoped.common.ParentPath;
 import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory;
 import com.sbg.bdd.wiremock.scoped.integration.WireMockCorrelationState;
-import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
 import gherkin.formatter.Argument;
 import gherkin.formatter.model.Match;
 import gherkin.formatter.model.Result;
@@ -142,9 +142,9 @@ public class ScopeManagementListener extends CucumberPayloadProducingListener {
             CorrelationState state = userInScope.recall(WireMockScreenplayContext.CORRELATION_STATE);
             WireMockCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
             currentCorrelationState.clear();
-            currentCorrelationState.set(state.getCorrelationPath(), Boolean.TRUE.equals(userInScope.recall(WireMockScreenplayContext.PROXY_UNMAPPED_ENDPOINTS)));
-            for (Map.Entry<String, Integer> entry : state.getServiceInvocationCounts().entrySet()) {
-                currentCorrelationState.initSequenceNumberFor(entry.getKey(), entry.getValue());
+            currentCorrelationState.set(state.getCorrelationPath(), 1, Boolean.TRUE.equals(userInScope.recall(WireMockScreenplayContext.PROXY_UNMAPPED_ENDPOINTS)));
+            for (ServiceInvocationCount entry : state.getServiceInvocationCounts()) {
+                currentCorrelationState.initSequenceNumberFor(new com.sbg.bdd.wiremock.scoped.integration.ServiceInvocationCount(entry.toString()));
             }
         }
     }

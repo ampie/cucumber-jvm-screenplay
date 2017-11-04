@@ -9,10 +9,7 @@ import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.wiremock.CorrelationPath;
 import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
 import com.sbg.bdd.wiremock.scoped.admin.model.ExtendedStubMapping;
-import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory;
-import com.sbg.bdd.wiremock.scoped.integration.HeaderName;
-import com.sbg.bdd.wiremock.scoped.integration.URLHelper;
-import com.sbg.bdd.wiremock.scoped.integration.WireMockCorrelationState;
+import com.sbg.bdd.wiremock.scoped.integration.*;
 import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
 import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedMappingBuilder;
 import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedRequestPatternBuilder;
@@ -81,8 +78,8 @@ public class CorrelationFilter implements Filter {
                 if (requestSpecification.getHeaders().getValues(HeaderName.ofTheCorrelationKey())==null || requestSpecification.getHeaders().getValues(HeaderName.ofTheCorrelationKey()).isEmpty()) {
                     requestSpecification.header(HeaderName.ofTheCorrelationKey(), CorrelationPath.of(theActorInTheSpotlight()));
                 }
-                for (Map.Entry<String, Integer> entry : currentCorrelationState.getSequenceNumbers().entrySet()) {
-                    requestSpecification.header(HeaderName.ofTheServiceInvocationCount(), entry.getKey() + "|" + entry.getValue());
+                for (ServiceInvocationCount entry : currentCorrelationState.getServiceInvocationCounts()) {
+                    requestSpecification.header(HeaderName.ofTheServiceInvocationCount(), entry.toString());
                 }
             } catch (MalformedURLException e) {
                 throw new IllegalStateException(e);
@@ -99,8 +96,7 @@ public class CorrelationFilter implements Filter {
             if (headers != null && headers.hasHeaderWithName(HeaderName.ofTheServiceInvocationCount())) {
                 Iterable<String> o = headers.getValues(HeaderName.ofTheServiceInvocationCount());
                 for (String s : o) {
-                    String[] split = s.split("\\|");
-                    currentCorrelationState.initSequenceNumberFor(split[0], Integer.valueOf(split[1]));
+                    currentCorrelationState.initSequenceNumberFor(new ServiceInvocationCount(s));
                 }
             }
         }

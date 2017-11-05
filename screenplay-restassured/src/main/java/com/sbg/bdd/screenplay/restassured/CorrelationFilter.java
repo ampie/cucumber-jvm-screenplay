@@ -81,6 +81,7 @@ public class CorrelationFilter implements Filter {
                 for (ServiceInvocationCount entry : currentCorrelationState.getServiceInvocationCounts()) {
                     requestSpecification.header(HeaderName.ofTheServiceInvocationCount(), entry.toString());
                 }
+                requestSpecification.header(HeaderName.ofTheThreadContextId(),currentCorrelationState.getCurrentThreadContextId());
             } catch (MalformedURLException e) {
                 throw new IllegalStateException(e);
             }

@@ -15,7 +15,7 @@ import com.sbg.bdd.wiremock.scoped.admin.model.GlobalCorrelationState;
 import com.sbg.bdd.wiremock.scoped.common.ParentPath;
 import com.sbg.bdd.wiremock.scoped.integration.DependencyInjectionAdaptorFactory;
 import com.sbg.bdd.wiremock.scoped.integration.ServiceInvocationCount;
-import com.sbg.bdd.wiremock.scoped.integration.WireMockCorrelationState;
+import com.sbg.bdd.wiremock.scoped.integration.RuntimeCorrelationState;
 import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
 
 import java.net.URL;
@@ -83,7 +83,7 @@ public class ScopeManagementListener {
     public void syncCorrelationState(ActorOnStage userInScope) {
         if (!BaseActorOnStage.isEverybody(userInScope)) {
             CorrelationState state = userInScope.recall(WireMockScreenplayContext.CORRELATION_STATE);
-            WireMockCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
+            RuntimeCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
             currentCorrelationState.clear();
             currentCorrelationState.set(state.getCorrelationPath(), 1, Boolean.TRUE.equals(userInScope.recall(WireMockScreenplayContext.PROXY_UNMAPPED_ENDPOINTS)));
             for (com.sbg.bdd.wiremock.scoped.admin.model.ServiceInvocationCount entry : state.getServiceInvocationCounts()) {

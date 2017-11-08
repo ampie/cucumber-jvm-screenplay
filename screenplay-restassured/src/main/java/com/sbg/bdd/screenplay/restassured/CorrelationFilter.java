@@ -31,7 +31,7 @@ public class CorrelationFilter implements Filter {
 
     @Override
     public Response filter(FilterableRequestSpecification requestSpecification, FilterableResponseSpecification responseSpec, FilterContext filterContext) {
-        WireMockCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
+        RuntimeCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
         ScopedWireMockClient wm = OnStage.performance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
         StubMapping mapping = buildProxyMapping(URI.create(requestSpecification.getURI()));
         wm.register(mapping);
@@ -44,7 +44,7 @@ public class CorrelationFilter implements Filter {
 
     }
 
-    private String redirectedBaseUri(FilterableRequestSpecification requestSpecification, WireMockCorrelationState currentCorrelationState) {
+    private String redirectedBaseUri(FilterableRequestSpecification requestSpecification, RuntimeCorrelationState currentCorrelationState) {
         try {
             return URLHelper.replaceBaseUrl(URI.create(requestSpecification.getBaseUri()).toURL(), currentCorrelationState.getWireMockBaseUrl()).toExternalForm();
         } catch (MalformedURLException e) {
@@ -60,7 +60,7 @@ public class CorrelationFilter implements Filter {
         return builder.build();
     }
 
-    private void propagateCorrelationState(FilterableRequestSpecification requestSpecification, WireMockCorrelationState currentCorrelationState) {
+    private void propagateCorrelationState(FilterableRequestSpecification requestSpecification, RuntimeCorrelationState currentCorrelationState) {
         requestSpecification.header(HeaderName.ofTheCorrelationKey(), CorrelationPath.of(theActorInTheSpotlight()));
         if (currentCorrelationState.isSet()) {
             try {
@@ -91,7 +91,7 @@ public class CorrelationFilter implements Filter {
 
 
     private void syncLocalCorrelationState(Response response) {
-        WireMockCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
+        RuntimeCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
         if (currentCorrelationState.isSet()) {
             Headers headers = response.getHeaders();
             if (headers != null && headers.hasHeaderWithName(HeaderName.ofTheServiceInvocationCount())) {

@@ -40,7 +40,7 @@ abstract class WhenWorkingWithWireMock extends Specification{
     }
 
     def buildGlobalScope(String name, Class<?>... glue) {
-        DependencyInjectionAdaptorFactory.useAdapter(new BaseDependencyInjectorAdaptor())
+        DependencyInjectionAdaptorFactory.useAdaptor(new BaseDependencyInjectorAdaptor())
         if(glue.length ==0){
             glue=[ScopeManagementListener]
         }

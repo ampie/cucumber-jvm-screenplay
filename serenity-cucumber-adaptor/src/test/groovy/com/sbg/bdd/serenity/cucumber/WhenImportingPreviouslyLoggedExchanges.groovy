@@ -57,7 +57,7 @@ class WhenImportingPreviouslyLoggedExchanges extends Specification {
         request.base64Body = Base64.encoder.encodeToString(('{"level":' + level +'}').bytes);
         request.headers = new HttpHeaders(new HttpHeader('Content-type','application/json'))
         request.date = new Date(System.currentTimeMillis())
-        request.requestedUrl = url
+        request.path = url
         request.absoluteUrl = url
         def exchange = new RecordedExchange(request)
         def response = new RecordedResponse()

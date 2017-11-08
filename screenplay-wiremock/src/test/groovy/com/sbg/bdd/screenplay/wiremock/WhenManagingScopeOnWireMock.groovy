@@ -17,7 +17,7 @@ class WhenManagingScopeOnWireMock extends WhenWorkingWithWireMock {
 
     def 'should keep in sync'() throws Exception {
         given:
-        DependencyInjectionAdaptorFactory.useAdapter(new BaseDependencyInjectorAdaptor())
+        DependencyInjectionAdaptorFactory.useAdaptor(new BaseDependencyInjectorAdaptor())
         GlobalScope globalScope = buildGlobalScopeWithoutStarting('TestRun', ScopeManagementListener)
         def wireMockServer = initializeWireMock(globalScope)
         globalScope.start()

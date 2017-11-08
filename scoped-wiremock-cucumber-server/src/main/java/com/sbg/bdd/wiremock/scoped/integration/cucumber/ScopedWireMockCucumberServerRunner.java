@@ -4,7 +4,6 @@ import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.wiremock.scoped.admin.ScopedAdmin;
 import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer;
 import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServerRunner;
-import com.sbg.bdd.wiremock.scoped.server.recording.RecordingManager;
 
 import java.io.File;
 import java.util.ArrayList;

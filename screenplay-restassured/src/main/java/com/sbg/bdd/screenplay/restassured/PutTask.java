@@ -41,7 +41,7 @@ public class PutTask implements RestAssuredTasks.HttpTask {
     }
 
     @Override
-    @Step("send a PUT request to #uri with body '#body'")
+    @Step("send a PUT request to #uri")
     public <T extends Actor> T performAs(T actor) {
         ActorOnStage actorOnStage = shineSpotlightOn(actor);
         prependBaseUrl(actorOnStage, uri, spec);

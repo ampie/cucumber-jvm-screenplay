@@ -2,16 +2,18 @@ package com.sbg.bdd.serenity.cucumber
 
 import com.github.tomakehurst.wiremock.common.Json
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import com.sbg.bdd.wiremock.scoped.client.WireMockContext
+import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedMappingBuilder
 import net.serenitybdd.cucumber.adaptor.CucumberJsonAdaptor
 import org.apache.commons.io.FileUtils
 import spock.lang.Specification
 
 import java.nio.charset.Charset
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo
-import static com.github.tomakehurst.wiremock.client.WireMock.get
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import static com.github.tomakehurst.wiremock.http.RequestMethod.*
+import static com.sbg.bdd.wiremock.scoped.client.strategies.RequestStrategies.*
+import static com.sbg.bdd.wiremock.scoped.client.strategies.ResponseBodyStrategies.*
 import static java.util.Arrays.asList
 
 class WhenImportingPreviouslyLoggedStubMappings extends Specification {
@@ -35,7 +37,7 @@ class WhenImportingPreviouslyLoggedStubMappings extends Specification {
         def givenStep = outcomes[0].testSteps[1].children[0]
         givenStep.restQuery != null
         givenStep.children.size() == 0
-        givenStep.restQuery.path.endsWith('/resource?name=John')
+        givenStep.restQuery.path.endsWith('/resource')
         givenStep.restQuery.parameterMap.get()['name'] == 'John'
         givenStep.restQuery.responseBody == 'my body is my temple'
         givenStep.children.size() == 0
@@ -44,8 +46,9 @@ class WhenImportingPreviouslyLoggedStubMappings extends Specification {
     }
 
     private List<StubMapping> buildOneStubMapping() {
-        def builder = get(urlEqualTo('/resource?name=John')).willReturn(aResponse().withBody('my body is my temple'))
+        def builder = a(GET).to('http://localhost/resource').will(returnTheBody('my body is my temple','text/plain'))
         builder.withQueryParam('name', equalTo('John'))
+        applyStrategy(builder)
         return asList(builder.build())
     }
     def 'it should reflect multiple stubMappings as childsteps with restQueroes against the step it occurred in'() {
@@ -69,7 +72,7 @@ class WhenImportingPreviouslyLoggedStubMappings extends Specification {
         givenStep.restQuery == null
         givenStep.children.size() == 2
         givenStep.children[0].restQuery != null
-        givenStep.children[0].restQuery.path.endsWith('/resource?name=John')
+        givenStep.children[0].restQuery.path.endsWith('/resource')
         givenStep.children[0].restQuery.parameterMap.get()['name'] == 'John'
         givenStep.children[0].restQuery.responseBody == 'my body is my temple'
 
@@ -77,8 +80,15 @@ class WhenImportingPreviouslyLoggedStubMappings extends Specification {
     }
 
     private List<StubMapping> buildTwoStubMappings() {
-        def builder = get(urlEqualTo('/resource?name=John')).willReturn(aResponse().withBody('my body is my temple'))
+        def builder = a(GET).to('/resource').will(returnTheBody('my body is my temple','text/plain'))
         builder.withQueryParam('name', equalTo('John'))
+        applyStrategy(builder)
         return asList(builder.build(),builder.build())
+    }
+
+    private applyStrategy(ExtendedMappingBuilder builder) {
+        builder.applyTo(Mock(WireMockContext) {
+            getCorrelationPath() >> 'localhost/1808/asdf/0'
+        })
     }
 }

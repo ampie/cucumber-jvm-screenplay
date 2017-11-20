@@ -8,6 +8,7 @@ import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.matching.MultiValuePattern;
 import com.github.tomakehurst.wiremock.matching.RequestPattern;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
+import com.sbg.bdd.wiremock.scoped.admin.model.ExtendedStubMapping;
 import net.serenitybdd.core.rest.RestMethod;
 import net.serenitybdd.core.rest.RestQuery;
 import net.serenitybdd.cucumber.adaptor.EmbeddingHandler;
@@ -27,11 +28,11 @@ public class StubMappingEmbeddingHandler implements EmbeddingHandler {
     public boolean attemptHandling(String mimeType, byte[] data) {
         if (mimeType.endsWith("json")) {
             String json = new String(data);
-            if (json.contains("\"request\" : {") && json.contains("\"response\" : {") && json.contains("\"id\" : ")) {
-                CollectionLikeType type = Json.getObjectMapper().getTypeFactory().constructCollectionType(List.class, StubMapping.class);
+            if (json.contains("\"extendedRequest\" : {") && json.contains("\"id\" : ")) {
+                CollectionLikeType type = Json.getObjectMapper().getTypeFactory().constructCollectionType(List.class, ExtendedStubMapping.class);
                 ObjectMapper mapper = Json.getObjectMapper();
                 try {
-                    List<StubMapping> stubMappings = mapper.readValue(json, type);
+                    List<ExtendedStubMapping> stubMappings = mapper.readValue(json, type);
                     if (stubMappings.size() == 1) {
                         StepEventBus.getEventBus().getBaseStepListener().addRestQuery(toRestQuery(stubMappings.get(0)));
                     } else {
@@ -47,15 +48,15 @@ public class StubMappingEmbeddingHandler implements EmbeddingHandler {
         return false;
     }
 
-    private void logstubMappings(List<StubMapping> stubMappings) {
-        for (StubMapping stubMapping : stubMappings) {
+    private void logstubMappings(List<ExtendedStubMapping> stubMappings) {
+        for (ExtendedStubMapping stubMapping : stubMappings) {
             StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(stubMapping.getRequest().getUrlMatcher().getExpected()));
             StepEventBus.getEventBus().getBaseStepListener().addRestQuery(toRestQuery(stubMapping));
             StepEventBus.getEventBus().stepFinished();
         }
     }
 
-    private RestQuery toRestQuery(StubMapping stubMapping) {
+    private RestQuery toRestQuery(ExtendedStubMapping stubMapping) {
         RequestPattern request = stubMapping.getRequest();
         ResponseDefinition response = stubMapping.getResponse();
         Map<String, String> parameters = new HashMap<>();
@@ -70,8 +71,12 @@ public class StubMappingEmbeddingHandler implements EmbeddingHandler {
         } catch (Exception e) {
             LOGGER.log(Level.WARNING,e.toString());
         }
+        String requestUrl = request.getUrl();
+        if(requestUrl==null){
+            requestUrl=stubMapping.getExtendedRequest().getUrlInfo();
+        }
         RestQuery result = RestQuery.withMethod(method)
-                .andPath(request.getUrl())
+                .andPath(requestUrl)
                 .withContent(Json.write(request.getBodyPatterns()))
                 .withRequestHeaders(Json.write(request.getHeaders()))
                 .withParameters(parameters)

@@ -57,7 +57,7 @@ class WhenUsingTheRestAssuredTasks extends WhenUsingRestAssured {
         then:
         TaskListener.EVENTS.size() == 4
         TaskListener.EVENTS[0].info.name == 'Given that John was able to '
-        TaskListener.EVENTS[1].info.name == 'send a PUT request to http://localhost:' + dummyServer.port() + "/some/path with body 'bar'"
+        TaskListener.EVENTS[1].info.name == 'send a PUT request to http://localhost:' + dummyServer.port() + "/some/path"
         TaskListener.EVENTS[2].type == StepEventType.SUCCESSFUL
     }
     def 'should generate perty descriptions for POSTs'() {
@@ -75,7 +75,7 @@ class WhenUsingTheRestAssuredTasks extends WhenUsingRestAssured {
         then:
         TaskListener.EVENTS.size() == 4
         TaskListener.EVENTS[0].info.name == 'Given that John was able to '
-        TaskListener.EVENTS[1].info.name == 'send a POST request to http://localhost:' + dummyServer.port() + "/some/path with body 'bar'"
+        TaskListener.EVENTS[1].info.name == 'send a POST request to http://localhost:' + dummyServer.port() + "/some/path"
         TaskListener.EVENTS[2].type == StepEventType.SUCCESSFUL
     }
     def 'should generate perty descriptions for DELETEs'() {

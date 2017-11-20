@@ -3,6 +3,7 @@ package com.sbg.bdd.screenplay.restassured
 import com.sbg.bdd.screenplay.core.actors.OnStage
 import com.sbg.bdd.wiremock.scoped.integration.BaseDependencyInjectorAdaptor
 import com.sbg.bdd.wiremock.scoped.integration.HeaderName
+import com.sbg.bdd.wiremock.scoped.integration.RuntimeCorrelationState
 import com.sbg.bdd.wiremock.scoped.server.ScopedWireMockServer
 import io.restassured.RestAssured
 import io.restassured.filter.FilterContext
@@ -38,9 +39,11 @@ class WhenUsingTheInterceptor extends WhenUsingRestAssured {
 
         def value = headers.getValue(HeaderName.ofTheOriginalUrl())
         value == 'http://localhost:'+server.port() +'/base/url'
-        headers.getValue(HeaderName.ofTheSequenceNumber()) == '1'
-        headers.getValues(HeaderName.ofTheServiceInvocationCount()).size() == 1
-        headers.getValues(HeaderName.ofTheServiceInvocationCount()).get(0) == '1|http:null://localhost:' + server.port() + '/base/url|1'
+        if(RuntimeCorrelationState.ON) {
+            headers.getValue(HeaderName.ofTheSequenceNumber()) == '1'
+            headers.getValues(HeaderName.ofTheServiceInvocationCount()).size() == 1
+            headers.getValues(HeaderName.ofTheServiceInvocationCount()).get(0) == '1|http:null://localhost:' + server.port() + '/base/url|1'
+        }
 
     }
 
@@ -61,8 +64,10 @@ class WhenUsingTheInterceptor extends WhenUsingRestAssured {
         OnStage.shineSpotlightOn(actorNamed('John'))
         filter.filter(RestAssured.given().baseUri('http://localhost:' + server.port() + '/base/url'), null, context)
         then:
-        BaseDependencyInjectorAdaptor.CURRENT_CORRELATION_STATE.getServiceInvocationCounts()[0].endpointIdentifier == 'http://localhost:' + server.port() + '/base/urlnull'
-        BaseDependencyInjectorAdaptor.CURRENT_CORRELATION_STATE.getServiceInvocationCounts()[0].count == 5
+        if(RuntimeCorrelationState.ON) {
+            BaseDependencyInjectorAdaptor.CURRENT_CORRELATION_STATE.getServiceInvocationCounts()[0].endpointIdentifier == 'http://localhost:' + server.port() + '/base/urlnull'
+            BaseDependencyInjectorAdaptor.CURRENT_CORRELATION_STATE.getServiceInvocationCounts()[0].count == 5
+        }
 
     }
 }

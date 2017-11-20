@@ -34,7 +34,7 @@ public class PostTask implements RestAssuredTasks.HttpTask {
     String body;
 
     @Override
-    @Step("send a POST request to #uri with body '#body'")
+    @Step("send a POST request to #uri")
     public <T extends Actor> T performAs(T actor) {
         ActorOnStage actorOnStage = shineSpotlightOn(actor);
         prependBaseUrl(actorOnStage, uri, spec);

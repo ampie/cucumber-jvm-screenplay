@@ -69,19 +69,20 @@ public class CorrelationFilter implements Filter {
                 String sequenceNumber = currentCorrelationState.getNextSequenceNumberFor(key).toString();
 
 
-                requestSpecification
-                        .header(HeaderName.ofTheOriginalUrl(), new URL(URLHelper.identifier(originalUrl)).toExternalForm())
-                        .header(HeaderName.ofTheSequenceNumber(), sequenceNumber);
+                requestSpecification.header(HeaderName.ofTheOriginalUrl(), new URL(URLHelper.identifier(originalUrl)).toExternalForm());
                 if (currentCorrelationState.shouldProxyUnmappedEndpoints()) {
                     requestSpecification.header(HeaderName.toProxyUnmappedEndpoints(), "true");
                 }
-                if (requestSpecification.getHeaders().getValues(HeaderName.ofTheCorrelationKey())==null || requestSpecification.getHeaders().getValues(HeaderName.ofTheCorrelationKey()).isEmpty()) {
+                if (requestSpecification.getHeaders().getValues(HeaderName.ofTheCorrelationKey()) == null || requestSpecification.getHeaders().getValues(HeaderName.ofTheCorrelationKey()).isEmpty()) {
                     requestSpecification.header(HeaderName.ofTheCorrelationKey(), CorrelationPath.of(theActorInTheSpotlight()));
                 }
-                for (ServiceInvocationCount entry : currentCorrelationState.getServiceInvocationCounts()) {
-                    requestSpecification.header(HeaderName.ofTheServiceInvocationCount(), entry.toString());
+                requestSpecification.header(HeaderName.ofTheThreadContextId(), currentCorrelationState.getCurrentThreadContextId());
+                if (RuntimeCorrelationState.ON) {
+                    for (ServiceInvocationCount entry : currentCorrelationState.getServiceInvocationCounts()) {
+                        requestSpecification.header(HeaderName.ofTheServiceInvocationCount(), entry.toString());
+                    }
+                    requestSpecification.header(HeaderName.ofTheSequenceNumber(), sequenceNumber);
                 }
-                requestSpecification.header(HeaderName.ofTheThreadContextId(),currentCorrelationState.getCurrentThreadContextId());
             } catch (MalformedURLException e) {
                 throw new IllegalStateException(e);
             }
@@ -91,13 +92,15 @@ public class CorrelationFilter implements Filter {
 
 
     private void syncLocalCorrelationState(Response response) {
-        RuntimeCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
-        if (currentCorrelationState.isSet()) {
-            Headers headers = response.getHeaders();
-            if (headers != null && headers.hasHeaderWithName(HeaderName.ofTheServiceInvocationCount())) {
-                Iterable<String> o = headers.getValues(HeaderName.ofTheServiceInvocationCount());
-                for (String s : o) {
-                    currentCorrelationState.initSequenceNumberFor(new ServiceInvocationCount(s));
+        if (RuntimeCorrelationState.ON) {
+            RuntimeCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
+            if (currentCorrelationState.isSet()) {
+                Headers headers = response.getHeaders();
+                if (headers != null && headers.hasHeaderWithName(HeaderName.ofTheServiceInvocationCount())) {
+                    Iterable<String> o = headers.getValues(HeaderName.ofTheServiceInvocationCount());
+                    for (String s : o) {
+                        currentCorrelationState.initSequenceNumberFor(new ServiceInvocationCount(s));
+                    }
                 }
             }
         }

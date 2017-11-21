@@ -206,7 +206,16 @@ public class BaseActor implements Actor {
 
     @Override
     public <T extends Ability> T usingAbilityTo(Class<? extends T> doSomething) {
-        return (T) abilities.get(doSomething);
+        Ability ability = abilities.get(doSomething);
+        if(ability==null){
+            for (Ability someAbility : abilities.values()) {
+                if(doSomething.isInstance(someAbility)){
+                    ability=someAbility;
+                    break;
+                }
+            }
+        }
+        return (T) ability;
     }
 
     @Override

@@ -8,6 +8,10 @@ import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.util.NameConverter;
 
+/**
+ * Implement in the BaseCast implementation
+ */
+@Deprecated
 public class BaseCastingDirector implements CastingDirector {
     private ScreenPlayEventBus eventBus;
     private PersonaClient personaClient;
@@ -20,10 +24,15 @@ public class BaseCastingDirector implements CastingDirector {
     }
 
     @Override
+    @Deprecated
+    /**
+     * Move to PersonaBasedCast
+     */
     public Actor recruitActor(String name) {
         BaseActor result = new BaseActor(eventBus, name);
         if (hasPersona(name)) {
-            result.remember(Actor.PERSONA, personaClient.preparePersona(name, getPersonaResource(name)));
+            result.remember(Actor.PERSONA, personaClient.ensurePersonaInState(name, getPersonaResource(name)));
+            result.remember(PersonaClient.PERSONA_CLIENT, personaClient);
         }
         return result;
     }
@@ -37,11 +46,8 @@ public class BaseCastingDirector implements CastingDirector {
     }
 
     @Override
+    @Deprecated
     public Actor findCandidate(String name) {
-        BaseActor result = new BaseActor(eventBus, name);
-        if (hasPersona(name)) {
-            result.remember(Actor.PERSONA, personaClient.installPersona(name, getPersonaResource(name)));
-        }
-        return result;
+        return null;
     }
 }

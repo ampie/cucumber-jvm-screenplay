@@ -16,6 +16,8 @@ import cucumber.runtime.junit.FeatureRunner;
 import cucumber.runtime.junit.JUnitOptions;
 import cucumber.runtime.junit.JUnitReporter;
 import cucumber.runtime.model.CucumberFeature;
+import cucumber.runtime.model.CucumberTagStatement;
+import gherkin.formatter.model.Tag;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
@@ -23,7 +25,9 @@ import org.junit.runners.model.InitializationError;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import cucumber.runtime.io.ResourceLoader;
 import cucumber.runtime.io.ResourceLoaderClassFinder;
@@ -38,11 +42,13 @@ public class CucumberWithWireMock extends ParentRunner<FeatureRunner> {
 
     public CucumberWithWireMock(Class clazz) throws InitializationError, IOException {
         super(clazz);
+        runInitializers(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
         if(!clazz.isAnnotationPresent(ScreenplayWireMockConfig.class)){
             throw new IllegalStateException("Please annotate your JUnit class with the ScreenplayWireMockConfig annotation");
         }
-        CucumberWireMockConfigurator configurator = new CucumberWireMockConfigurator((ScreenplayWireMockConfig) clazz.getAnnotation(ScreenplayWireMockConfig.class));
+        ScreenplayWireMockConfig screenplayWireMockConfig = (ScreenplayWireMockConfig) clazz.getAnnotation(ScreenplayWireMockConfig.class);
+        CucumberWireMockConfigurator configurator = new CucumberWireMockConfigurator(screenplayWireMockConfig);
         GlobalScopeBuilder.configureWith(configurator);
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
 
@@ -56,9 +62,55 @@ public class CucumberWithWireMock extends ParentRunner<FeatureRunner> {
             runtimeOptions.getFeaturePaths().add("/");
         }
         final JUnitOptions junitOptions = new JUnitOptions(runtimeOptions.getJunitOptions());
-        final List<CucumberFeature> cucumberFeatures = runtimeOptions.cucumberFeatures(resourceLoader);
+        final List<CucumberFeature> cucumberFeatures = filterFeaturesAndScenarios(runtimeOptions.cucumberFeatures(resourceLoader), screenplayWireMockConfig);
         jUnitReporter = new JUnitReporter(runtimeOptions.reporter(classLoader), runtimeOptions.formatter(classLoader), runtimeOptions.isStrict(), junitOptions);
         addChildren(cucumberFeatures);
+    }
+
+    private void runInitializers(Class clazz) {
+        try{
+
+            clazz.newInstance();
+        } catch (Exception e) {
+
+        }
+    }
+
+    private List<CucumberFeature> filterFeaturesAndScenarios(List<CucumberFeature> cucumberFeatures, ScreenplayWireMockConfig screenplayWireMockConfig) {
+        String[] tags = screenplayWireMockConfig.tags();
+        if(tags!=null && tags.length > 0){
+            Iterator<CucumberFeature> iterator = cucumberFeatures.iterator();
+            while (iterator.hasNext()){
+                if(shouldIgnore(iterator.next(),tags)){
+                    iterator.remove();
+                }
+            }
+        }
+        return cucumberFeatures;
+    }
+
+    private boolean shouldIgnore(CucumberFeature next, String[] tags) {
+        boolean hasTagMatch = hasTagMatch(tags, next.getGherkinFeature().getTags());
+        Iterator<CucumberTagStatement> iterator = next.getFeatureElements().iterator();
+        while (iterator.hasNext()){
+            if(!hasTagMatch(tags,iterator.next().getGherkinModel().getTags())){
+                iterator.remove();
+            }
+        }
+        return hasTagMatch && next.getFeatureElements().size()>0;
+    }
+
+    private boolean hasTagMatch(String[] tags, List<Tag> tags1) {
+        boolean hasTagMatch=false;
+        outer:for (Tag tag : tags1) {
+            for (String s : tags) {
+                if(Pattern.compile(s).matcher(tag.getName()).find()){
+                    hasTagMatch=true;
+                    break outer;
+                }
+            }
+        }
+        return hasTagMatch;
     }
 
     private void ensureLifecycleSyncPluginApplied(RuntimeOptions runtimeOptions) {

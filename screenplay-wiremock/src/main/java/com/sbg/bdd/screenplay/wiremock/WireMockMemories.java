@@ -80,7 +80,7 @@ public class WireMockMemories extends ScreenplayMemories<WireMockMemories> {
 
     public WireMockMemories toUseWireMock(ScopedAdmin admin) {
         memory.remember(WireMockScreenplayContext.WIRE_MOCK_ADMIN, admin);
-        memory.remember(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT, new ScopedWireMockClient(admin));
+        memory.remember(WireMockScreenplayContext.SCOPED_WIRE_MOCK_CLIENT, new ScopedWireMockClient(admin));
         return this;
     }
 
@@ -90,7 +90,7 @@ public class WireMockMemories extends ScreenplayMemories<WireMockMemories> {
     }
 
     public ScopedWireMockClient theWireMockClient() {
-        return memory.recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
+        return memory.recall(WireMockScreenplayContext.SCOPED_WIRE_MOCK_CLIENT);
     }
 
     public ScopedAdmin theWireMockAdmin() {

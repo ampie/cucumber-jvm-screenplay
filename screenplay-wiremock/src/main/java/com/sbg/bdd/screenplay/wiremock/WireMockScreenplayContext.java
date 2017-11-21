@@ -2,16 +2,12 @@ package com.sbg.bdd.screenplay.wiremock;
 
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 import com.sbg.bdd.resource.ReadableResource;
-import com.sbg.bdd.resource.Resource;
 import com.sbg.bdd.resource.ResourceContainer;
-import com.sbg.bdd.resource.ResourceFilter;
 import com.sbg.bdd.resource.file.DirectoryResourceRoot;
 import com.sbg.bdd.resource.file.ReadableFileResource;
-import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.internal.BaseActorOnStage;
-import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.util.Optional;
 import com.sbg.bdd.wiremock.scoped.admin.model.JournalMode;
 import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
@@ -25,7 +21,7 @@ import java.util.*;
 
 public class WireMockScreenplayContext implements WireMockContext {
     public static final String PAYLOAD = "Payload";
-    public static final String RECORDING_WIRE_MOCK_CLIENT = "ScopedWireMockClient";
+    public static final String SCOPED_WIRE_MOCK_CLIENT = "ScopedWireMockClient";
     public static final String REQUESTS_TO_RECORD_OR_PLAYBACK = "requestsToRecordOrPlayback";
     public static final String BASE_URL_OF_SERVICE_UNDER_TEST = "baseUrlOfServiceUnderTest";
     public static final String PERSONA_CLIENT = "personaClient";
@@ -44,7 +40,7 @@ public class WireMockScreenplayContext implements WireMockContext {
     private List<RecordingMappingForUser> requestsToRecordOrPlayback;
 
     public WireMockScreenplayContext(ActorOnStage userInScope) {
-        this.wireMock = userInScope.recall(RECORDING_WIRE_MOCK_CLIENT);
+        this.wireMock = userInScope.recall(SCOPED_WIRE_MOCK_CLIENT);
         this.userInScope = userInScope;
         this.personaRoot = this.userInScope.getScene().getPerformance().recall(PERSONA_RESOURCE_ROOT);
         this.requestsToRecordOrPlayback = userInScope.recall(REQUESTS_TO_RECORD_OR_PLAYBACK);

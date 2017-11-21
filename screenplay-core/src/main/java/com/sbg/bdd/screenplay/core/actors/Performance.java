@@ -4,6 +4,7 @@ package com.sbg.bdd.screenplay.core.actors;
 import com.sbg.bdd.screenplay.core.Memory;
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
+import com.sbg.bdd.screenplay.core.internal.BaseCast;
 
 public interface Performance extends Memory{
 
@@ -11,7 +12,7 @@ public interface Performance extends Memory{
     String OUTPUT_RESOURCE_ROOT = "outputResourceRoot";
     String PERSONA_CLIENT = "personaClient";
 
-    Cast getCast();
+    BaseCast getCast();
 
     Scene raiseTheCurtain(String sceneName);
 

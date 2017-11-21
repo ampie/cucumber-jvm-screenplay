@@ -159,6 +159,6 @@ public class ScopeManagementListener extends CucumberPayloadProducingListener {
     }
 
     private ScopedWireMockClient getWireMockFrom(Scene scene) {
-        return scene.getPerformance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
+        return scene.getPerformance().recall(WireMockScreenplayContext.SCOPED_WIRE_MOCK_CLIENT);
     }
 }

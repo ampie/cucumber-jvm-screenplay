@@ -3,16 +3,12 @@ package com.sbg.bdd.screenplay.restassured;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.wiremock.CorrelationPath;
 import com.sbg.bdd.screenplay.wiremock.WireMockScreenplayContext;
-import com.sbg.bdd.wiremock.scoped.admin.model.ExtendedStubMapping;
 import com.sbg.bdd.wiremock.scoped.integration.*;
 import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
-import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedMappingBuilder;
-import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedRequestPatternBuilder;
 import io.restassured.filter.Filter;
 import io.restassured.filter.FilterContext;
 import io.restassured.http.Headers;
@@ -23,7 +19,6 @@ import io.restassured.specification.FilterableResponseSpecification;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Map;
 
 import static com.sbg.bdd.screenplay.core.actors.OnStage.theActorInTheSpotlight;
 
@@ -32,7 +27,7 @@ public class CorrelationFilter implements Filter {
     @Override
     public Response filter(FilterableRequestSpecification requestSpecification, FilterableResponseSpecification responseSpec, FilterContext filterContext) {
         RuntimeCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
-        ScopedWireMockClient wm = OnStage.performance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
+        ScopedWireMockClient wm = OnStage.performance().recall(WireMockScreenplayContext.SCOPED_WIRE_MOCK_CLIENT);
         StubMapping mapping = buildProxyMapping(URI.create(requestSpecification.getURI()));
         wm.register(mapping);
         propagateCorrelationState(requestSpecification, currentCorrelationState);

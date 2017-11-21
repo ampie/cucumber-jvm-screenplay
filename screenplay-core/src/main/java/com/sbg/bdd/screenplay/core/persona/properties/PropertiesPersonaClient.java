@@ -14,46 +14,6 @@ import java.util.Properties;
 
 public class PropertiesPersonaClient implements PersonaClient<Properties> {
 
-    @Override
-    public Persona preparePersona(String personaName, ReadableResource file) {
-        return readPersona(personaName, file);
-    }
-
-    @Override
-    public Persona<Properties> preparePersona(String name, ReadableResource personaFile, Map<String, Object> loginContext) {
-        return readPersona(name, personaFile);
-    }
-
-    private Persona readPersona(String name, ReadableResource file) {
-        try {
-            Properties properties = new Properties();
-            properties.load(new ByteArrayInputStream(file.read()));
-            return new PropertiesPersona(name, properties);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    @Override
-    public void deletePersona(String username) {
-
-    }
-
-    @Override
-    public Persona installPersona(String name, ReadableResource file) {
-        return readPersona(file.getName(), file);
-    }
-
-    @Override
-    public void savePersonaLocally(Persona<Properties> persona, WritableResource targetFile) {
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            persona.getDataObject().store(out, "saved");
-            targetFile.write(out.toByteArray());
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
 
     @Override
     public Persona extractPersona(String name, String userName) {
@@ -67,5 +27,25 @@ public class PropertiesPersonaClient implements PersonaClient<Properties> {
     public String getDefaultPersonaFileName() {
         return "persona.properties";
     }
+
+    @Override
+    public Persona<Properties> ensurePersonaInState(String name, ReadableResource personaFile) {
+        return readPersona(name, personaFile);
+    }
+
+    @Override
+    public void establishSessionFor(Persona<?> persona, Map<String, Object> loginContext) {
+
+    }
+    private Persona readPersona(String name, ReadableResource file) {
+        try {
+            Properties properties = new Properties();
+            properties.load(new ByteArrayInputStream(file.read()));
+            return new PropertiesPersona(name, properties);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
 
 }

@@ -20,7 +20,6 @@ import com.sbg.bdd.wiremock.scoped.client.ScopedWireMockClient;
 
 import java.net.URL;
 import java.util.Collections;
-import java.util.Map;
 
 import static com.sbg.bdd.screenplay.core.actors.OnStage.theCurrentScene;
 import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
@@ -102,6 +101,6 @@ public class ScopeManagementListener {
     }
 
     private ScopedWireMockClient getWireMockFrom(Scene scene) {
-        return scene.getPerformance().recall(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT);
+        return scene.getPerformance().recall(WireMockScreenplayContext.SCOPED_WIRE_MOCK_CLIENT);
     }
 }

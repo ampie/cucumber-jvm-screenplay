@@ -22,7 +22,7 @@ abstract class WhenUsingRestAssured extends Specification {
         OnStage.present(performance)
         def server = new ScopedWireMockServer()
         server.start()
-        performance.remember(WireMockScreenplayContext.RECORDING_WIRE_MOCK_CLIENT, new ScopedWireMockClient(server))
+        performance.remember(WireMockScreenplayContext.SCOPED_WIRE_MOCK_CLIENT, new ScopedWireMockClient(server))
         server
     }
 

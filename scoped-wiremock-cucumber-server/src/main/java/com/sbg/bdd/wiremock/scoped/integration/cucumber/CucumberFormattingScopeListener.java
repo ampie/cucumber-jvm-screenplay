@@ -157,7 +157,7 @@ public class CucumberFormattingScopeListener implements ScopeListener {
     private List<String> addInputsAndContextualizers(File[] reportFiles, List<InputLinkConfig> inputs, List<ProcessorLinkConfig> processors) {
         List<String> contextualizerNames = new ArrayList<>();
         for (File reportFile : reportFiles) {
-            if (reportFile.isFile()) {
+            if (reportFile.isFile() && reportFile.getName().endsWith(".json")) {
                 InputLinkConfig inputLinkConfig = new InputLinkConfig(reportFile.getName() + "-json", CucumberImporter.class.getName(), Paths.get(reportFile.getAbsolutePath()));
                 inputs.add(inputLinkConfig);
                 ProcessorLinkConfig contextualizer = new ProcessorLinkConfig(reportFile.getName() + "-contextualizer", ContextTaggingProcessor.class.getName(), Arrays.asList(reportFile.getName() + "-json"));

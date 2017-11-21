@@ -13,36 +13,6 @@ import java.util.Map;
 
 public class GsonPersonaClient implements PersonaClient<JsonObject> {
 
-    @Override
-    public Persona preparePersona(String personaName, ReadableResource file) {
-        return readPersona(personaName, file);
-    }
-
-    @Override
-    public Persona<JsonObject> preparePersona(String name, ReadableResource personaFile, Map<String, Object> loginContext) {
-        return readPersona(name, personaFile);
-    }
-
-    private Persona readPersona(String name, ReadableResource file) {
-        JsonParser parser = new JsonParser();
-        JsonObject element = (JsonObject) parser.parse(new InputStreamReader(new ByteArrayInputStream(file.read())));
-        return new GsonPersona(name, element);
-    }
-
-    @Override
-    public void deletePersona(String username) {
-    }
-
-    @Override
-    public Persona installPersona(String name, ReadableResource file) {
-        return readPersona(file.getName(), file);
-    }
-
-    @Override
-    public void savePersonaLocally(Persona<JsonObject> persona, WritableResource targetFile) {
-
-        targetFile.write(persona.getDataObject().toString().getBytes());
-    }
 
     @Override
     public Persona extractPersona(String name, String userName) {
@@ -55,6 +25,21 @@ public class GsonPersonaClient implements PersonaClient<JsonObject> {
     @Override
     public String getDefaultPersonaFileName() {
         return "persona.json";
+    }
+
+    @Override
+    public Persona<JsonObject> ensurePersonaInState(String name, ReadableResource personaFile) {
+        return readPersona(name, personaFile);
+    }
+
+    @Override
+    public void establishSessionFor(Persona<?> persona, Map<String, Object> loginContext) {
+
+    }
+    private Persona readPersona(String name, ReadableResource file) {
+        JsonParser parser = new JsonParser();
+        JsonObject element = (JsonObject) parser.parse(new InputStreamReader(new ByteArrayInputStream(file.read())));
+        return new GsonPersona(name, element);
     }
 
 }

@@ -70,7 +70,6 @@ public class ExchangeEmbeddingHandler implements EmbeddingHandler {
         for (RecordedExchange exchange : exchanges) {
             StepEventBus.getEventBus().stepStarted(ExecutedStepDescription.withTitle(exchange.getRequest().getAbsoluteUrl()));
             StepEventBus.getEventBus().getBaseStepListener().addRestQuery(toRestQuery(exchange));
-            StepEventBus.getEventBus().getBaseStepListener().recordStepDuration(exchange.getDuration());
             logExchanges(exchange.getNestedExchanges());
             StepEventBus.getEventBus().getBaseStepListener().recordStepDuration(exchange.getDuration());
             StepEventBus.getEventBus().stepFinished();

@@ -31,7 +31,7 @@ public abstract class GlobalScopeBuilder {
         GlobalScopeBuilder.configurator = configurator;
     }
     public GlobalScopeBuilder(Class... extraClasses) {
-        if (!(OnStage.performance() instanceof GlobalScope)) {
+        if (!(OnStage.performance() instanceof GlobalScope && ((GlobalScope)OnStage.performance()).isActive())) {
             if(configurator == null){
                 throw new IllegalStateException("No ScreenplayConfigurator provided. Did you remember to call configureWith(configurator)?");
             }

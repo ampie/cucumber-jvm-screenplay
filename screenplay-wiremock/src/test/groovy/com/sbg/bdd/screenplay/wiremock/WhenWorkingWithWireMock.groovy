@@ -3,7 +3,7 @@ package com.sbg.bdd.screenplay.wiremock
 import com.sbg.bdd.resource.file.DirectoryResourceRoot
 import com.sbg.bdd.screenplay.core.actors.Performance
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus
-import com.sbg.bdd.screenplay.core.internal.BaseCastingDirector
+import com.sbg.bdd.screenplay.core.internal.PersonaBasedCast
 import com.sbg.bdd.screenplay.core.internal.SimpleInstanceGetter
 import com.sbg.bdd.screenplay.core.persona.properties.PropertiesPersonaClient
 import com.sbg.bdd.screenplay.scoped.GlobalScope
@@ -55,9 +55,9 @@ abstract class WhenWorkingWithWireMock extends Specification{
         def outputResourceRoot = new DirectoryResourceRoot("outputRoot", outputResourceDir)
         def eventBus = new ScreenPlayEventBus(new SimpleInstanceGetter())
         def personaClient = new PropertiesPersonaClient()
-        def castingDirector = new BaseCastingDirector(eventBus, personaClient, inputResourceRoot)
+        def cast = new PersonaBasedCast(eventBus, personaClient, inputResourceRoot)
         eventBus.scanClasses(new HashSet<Class<?>>(Arrays.asList(glue)))
-        def globalScope = new GlobalScope(name, castingDirector, eventBus)
+        def globalScope = new GlobalScope(name, cast, eventBus)
         def remember = WireMockMemories.rememberFor(globalScope)
         remember
             .toUseThePersonaClient(personaClient)

@@ -11,7 +11,7 @@ public class GuestInScope extends UserInScope implements ActorOnStage {
 
 
     public static Actor guest(GlobalScope globalScope) {
-        return globalScope.getCast().candidateActor(Actor.GUEST);
+        return globalScope.getCast().actorNamed(Actor.GUEST);
     }
 
 

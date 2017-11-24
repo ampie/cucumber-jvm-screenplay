@@ -10,4 +10,5 @@ include 'cucumber-jvm-wiremock'
 include 'serenity-cucumber-adaptor'
 include 'scoped-wiremock-cucumber-server'
 include 'cucumber-jvm-screenplay-junit'
+include 'junit-screenplay-scoped'
 

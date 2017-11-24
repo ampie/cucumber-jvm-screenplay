@@ -3,6 +3,7 @@ package com.sbg.bdd.screenplay.core.internal;
 import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.screenplay.core.Memory;
 import com.sbg.bdd.screenplay.core.Scene;
+import com.sbg.bdd.screenplay.core.actors.Cast;
 import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
 import com.sbg.bdd.screenplay.core.events.SceneEvent;
@@ -13,8 +14,7 @@ import com.sbg.bdd.screenplay.core.persona.properties.PropertiesPersonaClient;
 public class BasePerformance implements Performance {
     private final String name;
     protected ScreenPlayEventBus eventBus;
-    protected BaseCastingDirector castingDirector;
-    protected BaseCast cast;
+    protected Cast cast;
     private Scene scene;
     protected Memory memory = new SimpleMemory();
 
@@ -26,8 +26,7 @@ public class BasePerformance implements Performance {
 
     public BasePerformance(String name, ResourceContainer inputResourceRoot, PersonaClient<?> personaClient, InstanceGetter instanceGetter) {
         eventBus = new ScreenPlayEventBus(instanceGetter);
-        castingDirector = new BaseCastingDirector(eventBus, personaClient, inputResourceRoot);
-        cast = new BaseCast(eventBus, castingDirector);
+        cast = new PersonaBasedCast(eventBus, personaClient,inputResourceRoot);
         memory.remember(INPUT_RESOURCE_ROOT, inputResourceRoot);
         this.name = name;
     }
@@ -38,7 +37,7 @@ public class BasePerformance implements Performance {
     }
 
     @Override
-    public BaseCast getCast() {
+    public Cast getCast() {
         return cast;
     }
 

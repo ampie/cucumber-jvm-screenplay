@@ -3,8 +3,8 @@ package com.sbg.bdd.cucumber.screenplay.scoped.plugin;
 import com.sbg.bdd.resource.ResourceContainer;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
-import com.sbg.bdd.screenplay.core.internal.BaseCastingDirector;
 import com.sbg.bdd.screenplay.core.internal.InstanceGetter;
+import com.sbg.bdd.screenplay.core.internal.PersonaBasedCast;
 import com.sbg.bdd.screenplay.core.internal.SimpleInstanceGetter;
 import com.sbg.bdd.screenplay.core.persona.PersonaClient;
 import com.sbg.bdd.screenplay.core.util.Fields;
@@ -36,7 +36,7 @@ public abstract class GlobalScopeBuilder {
                 throw new IllegalStateException("No ScreenplayConfigurator provided. Did you remember to call configureWith(configurator)?");
             }
             ScreenPlayEventBus scopeEventBus = buildIntegratedEventBus(extraClasses);
-            globalScope = new GlobalScope(configurator.getName(), new BaseCastingDirector(scopeEventBus, configurator.getPersonaClient(),configurator.getPersonaRoot()), scopeEventBus);
+            globalScope = new GlobalScope(configurator.getName(), new PersonaBasedCast(scopeEventBus, configurator.getPersonaClient(),configurator.getPersonaRoot()), scopeEventBus);
             configurator.applyTo(globalScope);
             OnStage.present(globalScope);
         }
@@ -45,8 +45,8 @@ public abstract class GlobalScopeBuilder {
     //Rather use the ScreenplayConfigurator
     public GlobalScopeBuilder(String name, ResourceContainer inputResourceRoot, PersonaClient personaClient, Class... extraClasses) {
         if (!(OnStage.performance() instanceof GlobalScope)) {
-            ScreenPlayEventBus scopeEventBus = buildIntegratedEventBus(extraClasses);
-            globalScope = new GlobalScope(name, new BaseCastingDirector(scopeEventBus, personaClient, inputResourceRoot), scopeEventBus);
+            ScreenPlayEventBus screenPlayEventBus = buildIntegratedEventBus(extraClasses);
+            globalScope = new GlobalScope(name, new PersonaBasedCast(screenPlayEventBus, personaClient, inputResourceRoot), screenPlayEventBus);
             ScreenplayMemories.rememberFor(globalScope.getEverybodyScope())
                     .toReadResourcesFrom(inputResourceRoot)
                     .toUseThePersonaClient(personaClient);

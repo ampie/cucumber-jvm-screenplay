@@ -3,6 +3,7 @@ package com.sbg.bdd.screenplay.wiremock;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
+import com.sbg.bdd.wiremock.scoped.client.junit.InMemoryWireMockContext;
 
 public abstract class RequestStrategies {
     public static  StringValuePattern[] containing(String... strings) {
@@ -21,6 +22,13 @@ public abstract class RequestStrategies {
         return extendedMappingBuilder;
     }
 
+    /**
+     * For use outside of a Screenplay context
+     * @param builder
+     */
+    public static void stubFor(ScreenPlayMappingBuilder builder) {
+        builder.applyTo(new InMemoryWireMockContext());
+    }
     public static ScreenPlayRequestPatternBuilder anyRequest() {
         return allRequests();
     }

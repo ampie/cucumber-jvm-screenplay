@@ -2,8 +2,7 @@ package com.sbg.bdd.screenplay.scoped;
 
 
 import com.sbg.bdd.screenplay.core.Scene;
-import com.sbg.bdd.screenplay.core.internal.BaseCast;
-import com.sbg.bdd.screenplay.core.actors.CastingDirector;
+import com.sbg.bdd.screenplay.core.actors.Cast;
 import com.sbg.bdd.screenplay.core.actors.Performance;
 import com.sbg.bdd.screenplay.core.events.SceneEvent;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
@@ -11,12 +10,12 @@ import com.sbg.bdd.screenplay.core.internal.BaseActor;
 
 public class GlobalScope extends UserTrackingScope implements Performance {
     private final ScreenPlayEventBus scopeEventBus;
-    private BaseCast cast;
+    private Cast cast;
 
 
-    public GlobalScope(String name,  CastingDirector castingDirector, ScreenPlayEventBus scopeEventBus) {
+    public GlobalScope(String name,  Cast cast, ScreenPlayEventBus scopeEventBus) {
         super(null, name);
-        this.cast = new BaseCast(scopeEventBus, castingDirector);
+        this.cast = cast;
         this.scopeEventBus = scopeEventBus;
         BaseActor.setCurrentStep(null);//Only an issue for testing
     }
@@ -77,7 +76,7 @@ public class GlobalScope extends UserTrackingScope implements Performance {
         return this;
     }
 
-    public BaseCast getCast() {
+    public Cast getCast() {
         return cast;
     }
 

@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * A useful interface  that provides callbacks for the most commonly used Scoped Screenplay events.
- * Each of these callbacks also take a Map<String,Object> that typically contains a payload that can be forwarded
+ * Each of these callbacks also take a Map that typically contains a payload that can be forwarded
  * either to a reporting facility or to another scope maintaining framework
  */
 public interface PayloadConsumingListener {

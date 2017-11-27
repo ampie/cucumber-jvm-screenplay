@@ -44,10 +44,6 @@ subprojects {
             exclude group: "junit"
             exclude module: "groovy-all"
         }
-        testCompile("com.github.goldin:spock-extensions:0.1.4") {
-            exclude module: "spock-core"
-            exclude module: "slf4j-api"
-        }
     }
     sourceCompatibility = 1.7
     targetCompatibility = 1.7

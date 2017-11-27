@@ -51,7 +51,7 @@ class WhenImportingPreviouslyLoggedStubMappings extends Specification {
         applyStrategy(builder)
         return asList(builder.build())
     }
-    def 'it should reflect multiple stubMappings as childsteps with restQueroes against the step it occurred in'() {
+    def 'it should reflect multiple stubMappings as childsteps with restQueries against the step it occurred in'() {
         given: 'multiple stubMappings under the single child step under the second step '
         def adaptor = new CucumberJsonAdaptor()
         def file = new File(Thread.currentThread().contextClassLoader.getResource('json/cucumber.json').file)

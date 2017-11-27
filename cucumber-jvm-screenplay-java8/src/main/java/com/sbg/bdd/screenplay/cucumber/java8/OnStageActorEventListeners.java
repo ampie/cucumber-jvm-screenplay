@@ -1,43 +1,43 @@
 package com.sbg.bdd.screenplay.cucumber.java8;
 
 import com.sbg.bdd.screenplay.core.annotations.ActorInvolvement;
-import com.sbg.bdd.screenplay.core.events.ActorEvent;
-import com.sbg.bdd.screenplay.core.events.ActorEventCallback;
+import com.sbg.bdd.screenplay.core.events.OnStageActorEvent;
+import com.sbg.bdd.screenplay.core.events.OnStageActorEventCallback;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 
 import java.lang.reflect.Method;
 
-public interface ActorEventListeners {
+public interface OnStageActorEventListeners {
     //TODO support other method contracts too
     interface ReceivesActorEvent {
-        void receive(ActorEvent event) throws Throwable;
+        void receive(OnStageActorEvent event) throws Throwable;
         
         default Method getMethod() {
             return METHOD;
         }
         
-        Method METHOD = resolveReceive(ReceivesActorEvent.class, ActorEvent.class);
+        Method METHOD = OnStageActorEventListeners.resolveReceive(ReceivesActorEvent.class, OnStageActorEvent.class);
     }
     
     
     default void onActor(ActorInvolvement type, String namePattern, int actorLevel, ReceivesActorEvent receptor) {
-        register(type, new ActorEventCallback(receptor, receptor.getMethod(), namePattern, actorLevel));
+        register(type, new OnStageActorEventCallback(receptor, receptor.getMethod(), namePattern, actorLevel));
     }
 
-    default void register(ActorInvolvement type, ActorEventCallback actorEventCallback) {
-        ScreenPlayEventBus.registerCallback(type, actorEventCallback);
+    default void register(ActorInvolvement type, OnStageActorEventCallback onStageActorEventCallback) {
+        ScreenPlayEventBus.registerCallback(type, onStageActorEventCallback);
     }
     
     default void onActor(ActorInvolvement type, String namePattern, ReceivesActorEvent receptor) {
-        register(type, new ActorEventCallback(receptor, receptor.getMethod(), namePattern, -1));
+        register(type, new OnStageActorEventCallback(receptor, receptor.getMethod(), namePattern, -1));
     }
     
     default void onActor(ActorInvolvement type, ReceivesActorEvent receptor) {
-        register(type, new ActorEventCallback(receptor, receptor.getMethod(), ".*", -1));
+        register(type, new OnStageActorEventCallback(receptor, receptor.getMethod(), ".*", -1));
     }
     
     default void onActor(ActorInvolvement type, int actorLevel, ReceivesActorEvent receptor) {
-        register(type, new ActorEventCallback(receptor, receptor.getMethod(), ".*", actorLevel));
+        register(type, new OnStageActorEventCallback(receptor, receptor.getMethod(), ".*", actorLevel));
     }
 
     

@@ -49,14 +49,21 @@ public class ScreenPlayEventBus {
         }
     }
 
-    private Map<ActorInvolvement, SortedSet<ActorEventCallback>> actorListeners = new HashMap<>();
+    private Map<ActorInvolvement, SortedSet<OnStageActorEventCallback>> onStageActorEventListeners = new HashMap<>();
 
     {
         for (ActorInvolvement actorInvolvement : ActorInvolvement.values()) {
-            actorListeners.put(actorInvolvement, new TreeSet<ActorEventCallback>(new CallbackNestingSequence()));
+            onStageActorEventListeners.put(actorInvolvement, new TreeSet<OnStageActorEventCallback>(new CallbackNestingSequence()));
         }
     }
 
+    private Map<ActorEventType, SortedSet<ActorEventCallback>> actorEventListeners = new HashMap<>();
+
+    {
+        for (ActorEventType actorInvolvement : ActorEventType.values()) {
+            actorEventListeners.put(actorInvolvement, new TreeSet<ActorEventCallback>(new CallbackNestingSequence()));
+        }
+    }
     public ScreenPlayEventBus(InstanceGetter instanceGetter) {
         this.instanceGetter = instanceGetter;
     }
@@ -85,9 +92,16 @@ public class ScreenPlayEventBus {
                     register(sceneEventType, callback);
                 }
             }
+            if (method.isAnnotationPresent(ActorInvolvementListener.class)) {
+                Object target = instanceGetter.getInstance(aClass);
+                for (ActorInvolvement involvement : method.getAnnotation(ActorInvolvementListener.class).involvement()) {
+                    OnStageActorEventCallback callback = new OnStageActorEventCallback(target, method, method.getAnnotation(ActorInvolvementListener.class));
+                    register(involvement, callback);
+                }
+            }
             if (method.isAnnotationPresent(ActorListener.class)) {
                 Object target = instanceGetter.getInstance(aClass);
-                for (ActorInvolvement involvement : method.getAnnotation(ActorListener.class).involvement()) {
+                for (ActorEventType involvement : method.getAnnotation(ActorListener.class).eventType()) {
                     ActorEventCallback callback = new ActorEventCallback(target, method, method.getAnnotation(ActorListener.class));
                     register(involvement, callback);
                 }
@@ -95,8 +109,11 @@ public class ScreenPlayEventBus {
         }
     }
 
-    public void register(ActorInvolvement involvement, ActorEventCallback callback) {
-        this.actorListeners.get(involvement).add(callback);
+    public void register(ActorEventType involvement, ActorEventCallback callback) {
+        this.actorEventListeners.get(involvement).add(callback);
+    }
+    public void register(ActorInvolvement involvement, OnStageActorEventCallback callback) {
+        this.onStageActorEventListeners.get(involvement).add(callback);
     }
 
     public void register(SceneEventType sceneEventType, SceneEventCallback callback) {
@@ -123,15 +140,18 @@ public class ScreenPlayEventBus {
         }
     }
 
-    public void broadcast(ActorEvent event) {
+    public void broadcast(OnStageActorEvent event) {
         ensureRegisteredCallbacksIncluded();
-        for (ActorEventCallback callback : actorListeners.get(event.getInvolvement())) {
+        for (OnStageActorEventCallback callback : onStageActorEventListeners.get(event.getInvolvement())) {
             if (callback.isMatch(event)) {
                 callback.invoke(event, event.getInvolvement());
             }
         }
     }
 
+    public void broadcast(ActorEvent actorEvent) {
+
+    }
     private void ensureRegisteredCallbacksIncluded() {
         Iterator<Pair<Enum<?>, ScreenPlayEventCallback>> iterator = registeredCallbacks.iterator();
         while (iterator.hasNext()) {
@@ -140,11 +160,12 @@ public class ScreenPlayEventBus {
                 register((StepEventType) callback.getLeft(), (StepEventCallback) callback.getRight());
             } else if (callback.getRight() instanceof SceneEventCallback) {
                 register((SceneEventType) callback.getLeft(), (SceneEventCallback) callback.getRight());
-            } else if (callback.getRight() instanceof ActorEventCallback) {
-                register((ActorInvolvement) callback.getLeft(), (ActorEventCallback) callback.getRight());
+            } else if (callback.getRight() instanceof OnStageActorEventCallback) {
+                register((ActorInvolvement) callback.getLeft(), (OnStageActorEventCallback) callback.getRight());
             }
             iterator.remove();
         }
 
     }
+
 }

@@ -23,10 +23,8 @@ import java.util.Collections;
 
 import static com.sbg.bdd.screenplay.core.actors.OnStage.theCurrentScene;
 import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
-@Deprecated
-//Still used for tests primarily
-//See com.sbg.bdd.cucumber.wiremock.listeners.ScopeManagementListener
-//TODO refactor this out of existince and decouple the other ScopeManagementListener from both cucumber and from screenplay-scoped
+//TODO refactor this to emulate the CucumberPayloadProducingListener but with empty with empty payloads
+//TODO then use CucumberPayloadProducingListener as a template to implement one for Junit
 public class ScopeManagementListener {
 
     @SceneListener(scopePhases = SceneEventType.BEFORE_START)
@@ -78,7 +76,7 @@ public class ScopeManagementListener {
         String stepPath = ParentPath.of(stepEvent.getStepPath());
         ((CorrelationState) theCurrentScene.recall(WireMockScreenplayContext.CORRELATION_STATE)).setCurrentStep(stepPath);
     }
-    @ActorListener(involvement = ActorInvolvement.INTO_SPOTLIGHT)
+    @ActorInvolvementListener(involvement = ActorInvolvement.INTO_SPOTLIGHT)
     public void syncCorrelationState(ActorOnStage userInScope) {
         if (!BaseActorOnStage.isEverybody(userInScope)) {
             CorrelationState state = userInScope.recall(WireMockScreenplayContext.CORRELATION_STATE);
@@ -91,7 +89,7 @@ public class ScopeManagementListener {
         }
     }
 
-    @ActorListener(involvement = ActorInvolvement.BEFORE_ENTER_STAGE)
+    @ActorInvolvementListener(involvement = ActorInvolvement.BEFORE_ENTER_STAGE)
     public void registerScope(ActorOnStage userInScope) {
         if (!BaseActorOnStage.isEverybody(userInScope)) {
             String scopePath = CorrelationPath.of(userInScope.getScene());

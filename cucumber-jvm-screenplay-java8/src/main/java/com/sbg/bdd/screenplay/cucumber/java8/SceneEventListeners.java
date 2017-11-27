@@ -16,7 +16,7 @@ public interface SceneEventListeners {
             return METHOD;
         }
         
-        Method METHOD = resolveReceive(ReceivesSceneEvent.class, SceneEvent.class);
+        Method METHOD = SceneEventListeners.resolveReceive(ReceivesSceneEvent.class, SceneEvent.class);
     }
     
     

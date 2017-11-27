@@ -16,7 +16,7 @@ public interface StepEventListeners {
             return METHOD;
         }
         
-        Method METHOD = resolveReceive(ReceivesStepEvent.class, StepEvent.class);
+        Method METHOD = StepEventListeners.resolveReceive(ReceivesStepEvent.class, StepEvent.class);
     }
     
     default void onStep(StepEventType type, ReceivesStepEvent receptor) {

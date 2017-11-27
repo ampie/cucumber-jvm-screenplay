@@ -4,12 +4,14 @@ package com.sbg.bdd.screenplay.scoped.junit;
 import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.Question;
 import com.sbg.bdd.screenplay.core.Task;
+import com.sbg.bdd.screenplay.core.actors.OnStage;
 import com.sbg.bdd.screenplay.core.annotations.SceneListener;
 import com.sbg.bdd.screenplay.core.annotations.Step;
 import com.sbg.bdd.screenplay.core.annotations.StepListener;
 import com.sbg.bdd.screenplay.core.annotations.Subject;
 import com.sbg.bdd.screenplay.core.events.SceneEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -18,6 +20,10 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class ScopedTest1 {
+    @BeforeClass
+    public static void beforeClass(){
+        OnStage.present(null);
+    }
     int number1;
     int number2;
     int result;

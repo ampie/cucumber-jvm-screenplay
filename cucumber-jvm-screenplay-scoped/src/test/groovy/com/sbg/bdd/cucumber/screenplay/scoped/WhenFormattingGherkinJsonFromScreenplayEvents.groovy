@@ -11,7 +11,7 @@ class WhenFormattingGherkinJsonFromScreenplayEvents extends WhenScopeXYZ {
         def report = new StringBuilder()
 
         def formatter = new ScreenPlayFormatter(report)
-        SamplePayloadProducingListener.output= formatter
+        SamplePayloadConsumingListener.output= formatter
         when:
         def expected = runFeaturesWithScreenplayPlugin(asList("classpath:cucumber/scoping/ScopedStuff.feature"))
         formatter.done()

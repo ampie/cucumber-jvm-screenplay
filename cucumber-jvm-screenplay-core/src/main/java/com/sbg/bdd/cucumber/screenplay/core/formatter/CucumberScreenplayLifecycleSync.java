@@ -8,7 +8,7 @@ import java.util.Deque;
 import java.util.List;
 
 
-public class CucumberScreenplayLifecycleSync extends  StepQueueingReportingFormatter {
+public class CucumberScreenplayLifecycleSync extends StepQueueingReportingFormatter {
 
     public CucumberScreenplayLifecycleSync() {
     }

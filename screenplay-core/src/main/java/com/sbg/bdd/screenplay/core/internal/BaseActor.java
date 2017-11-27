@@ -2,8 +2,10 @@ package com.sbg.bdd.screenplay.core.internal;
 
 import com.sbg.bdd.screenplay.core.*;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
+import com.sbg.bdd.screenplay.core.annotations.ActorEventType;
 import com.sbg.bdd.screenplay.core.annotations.Step;
 import com.sbg.bdd.screenplay.core.annotations.StepEventType;
+import com.sbg.bdd.screenplay.core.events.ActorEvent;
 import com.sbg.bdd.screenplay.core.events.ScreenPlayEventBus;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.core.persona.Persona;
@@ -200,8 +202,10 @@ public class BaseActor implements Actor {
 
     @Override
     public void can(Ability doSomething) {
+        eventBus.broadcast(new ActorEvent(this, ActorEventType.BEFORE_ABILITY_ADDED,doSomething));
         doSomething.asActor(this);
         abilities.put(doSomething.getClass(), doSomething);
+        eventBus.broadcast(new ActorEvent(this, ActorEventType.AFTER_ABILITY_ADDED,doSomething));
     }
 
     @Override

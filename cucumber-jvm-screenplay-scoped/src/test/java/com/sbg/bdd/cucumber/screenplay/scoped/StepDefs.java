@@ -4,7 +4,7 @@ import com.sbg.bdd.screenplay.core.Actor;
 import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.DownstreamStub;
 import com.sbg.bdd.screenplay.core.annotations.ActorInvolvement;
-import com.sbg.bdd.screenplay.core.annotations.ActorListener;
+import com.sbg.bdd.screenplay.core.annotations.ActorInvolvementListener;
 import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
 import com.sbg.bdd.screenplay.core.annotations.SceneListener;
 import com.sbg.bdd.screenplay.scoped.ActorInScope;
@@ -85,22 +85,22 @@ public class StepDefs {
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    @ActorListener(involvement = ActorInvolvement.BEFORE_ENTER_STAGE)
+    @ActorInvolvementListener(involvement = ActorInvolvement.BEFORE_ENTER_STAGE)
     public void beforeEnter(ActorInScope scope, ActorInvolvement phase) {
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    @ActorListener(involvement = ActorInvolvement.AFTER_ENTER_STAGE)
+    @ActorInvolvementListener(involvement = ActorInvolvement.AFTER_ENTER_STAGE)
     public void afterEnter(ActorInScope scope, ActorInvolvement phase) {
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }
 
-    @ActorListener(involvement = ActorInvolvement.BEFORE_EXIT_STAGE)
+    @ActorInvolvementListener(involvement = ActorInvolvement.BEFORE_EXIT_STAGE)
     public void beforeExit(ActorInScope scope) {
         registerCallbackOccurrence(scope.getScopePath(), ActorInvolvement.BEFORE_EXIT_STAGE);
     }
 
-    @ActorListener(involvement = ActorInvolvement.AFTER_EXIT_STAGE)
+    @ActorInvolvementListener(involvement = ActorInvolvement.AFTER_EXIT_STAGE)
     public void afterExit(ActorInScope scope, ActorInvolvement phase) {
         registerCallbackOccurrence(scope.getScopePath(), phase);
     }

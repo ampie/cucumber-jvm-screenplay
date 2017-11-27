@@ -24,8 +24,6 @@ public class CucumberScopeLifecycleSync extends StepQueueingReportingFormatter {
     private Map<String, StepEventType> stepEventTypeMap = new HashMap<>();
     private Feature currentFeature;
     private BasicStatement currentFeatureElement;
-    private Scenario currentScenarioLifecycle;
-    private Examples currentExamples;
 
     {
         stepEventTypeMap.put("pending", StepEventType.PENDING);
@@ -45,14 +43,6 @@ public class CucumberScopeLifecycleSync extends StepQueueingReportingFormatter {
 
     public BasicStatement getCurrentFeatureElement() {
         return currentFeatureElement;
-    }
-
-    public Examples getCurrentExamples() {
-        return currentExamples;
-    }
-
-    public Scenario getCurrentScenarioLifecycle() {
-        return currentScenarioLifecycle;
     }
 
     public Feature getCurrentFeature() {
@@ -91,7 +81,6 @@ public class CucumberScopeLifecycleSync extends StepQueueingReportingFormatter {
     @Override
     public void startOfScenarioLifeCycle(Scenario s) {
         super.startOfScenarioLifeCycle(s);
-        currentScenarioLifecycle=s;
         try {
             if (featureName != null) {
                 scenarioContainer(featureName);
@@ -107,7 +96,6 @@ public class CucumberScopeLifecycleSync extends StepQueueingReportingFormatter {
     public void endOfScenarioLifeCycle(Scenario scenario) {
         ScenarioScope srs = getInnerMostActive(ScenarioScope.class);
         getInnerMostActive(FunctionalScope.class).completeNestedScope(srs.getName());
-        currentScenarioLifecycle=null;
     }
     @Override
     public void done() {
@@ -218,7 +206,7 @@ public class CucumberScopeLifecycleSync extends StepQueueingReportingFormatter {
 
     @Override
     public void examples(Examples examples) {
-        currentExamples=examples;
+        currentFeatureElement=examples;
     }
 
 

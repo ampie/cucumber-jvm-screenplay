@@ -24,7 +24,7 @@ subprojects {
     ext {
         GROOVY_VERSION = '2.4.5'
         CUKES_VERSION = '1.2.5'
-        WIREMOCK_VERSION = '2.6.0'
+        WIREMOCK_VERSION = '2.11.0'
         SCOPED_WIREMOCK_VERSION = '0.2.7'
     }
     repositories {

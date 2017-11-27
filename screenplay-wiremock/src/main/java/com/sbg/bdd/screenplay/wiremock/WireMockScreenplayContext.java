@@ -17,12 +17,10 @@ import com.sbg.bdd.wiremock.scoped.client.builders.ExtendedRequestPatternBuilder
 
 import java.io.File;
 import java.net.URL;
-import java.util.*;
 
 public class WireMockScreenplayContext implements WireMockContext {
     public static final String PAYLOAD = "Payload";
     public static final String SCOPED_WIRE_MOCK_CLIENT = "ScopedWireMockClient";
-    public static final String REQUESTS_TO_RECORD_OR_PLAYBACK = "requestsToRecordOrPlayback";
     public static final String BASE_URL_OF_SERVICE_UNDER_TEST = "baseUrlOfServiceUnderTest";
     public static final String PERSONA_CLIENT = "personaClient";
     public static final String PERSONA_RESOURCE_ROOT = "personaResourceRoot";
@@ -37,18 +35,12 @@ public class WireMockScreenplayContext implements WireMockContext {
     private final ScopedWireMockClient wireMock;
     private final ResourceContainer personaRoot;
     private final ActorOnStage userInScope;
-    private List<RecordingMappingForUser> requestsToRecordOrPlayback;
 
     public WireMockScreenplayContext(ActorOnStage userInScope) {
         this.wireMock = userInScope.recall(SCOPED_WIRE_MOCK_CLIENT);
         this.userInScope = userInScope;
         this.personaRoot = this.userInScope.getScene().getPerformance().recall(PERSONA_RESOURCE_ROOT);
-        this.requestsToRecordOrPlayback = userInScope.recall(REQUESTS_TO_RECORD_OR_PLAYBACK);
-        if (this.requestsToRecordOrPlayback == null) {
-            this.requestsToRecordOrPlayback = new ArrayList<>();
-            userInScope.remember(REQUESTS_TO_RECORD_OR_PLAYBACK, this.requestsToRecordOrPlayback);
-        }
-    }
+     }
 
     @Override
     public String getCorrelationPath() {
@@ -86,7 +78,6 @@ public class WireMockScreenplayContext implements WireMockContext {
             //TODO move to server
             builder.getRequestPatternBuilder().ensureScopePath(correlationPattern());
             wireMock.register(builder.build());
-//            processRecordingSpecs(builder, userInScope.getId());
         }
     }
 
@@ -106,52 +97,6 @@ public class WireMockScreenplayContext implements WireMockContext {
         return wireMock.count(requestPatternBuilder.build());
     }
 
-//    //TODO move to server
-//    protected void processRecordingSpecs(ExtendedMappingBuilder builder, String personaIdToUse) {
-//        if (personaIdToUse.equals(Actor.EVERYBODY)) {
-//            for (String personaDir : allPersonaIds()) {
-//                processRecordingSpecs(builder, personaDir);
-//            }
-//        } else {
-//            if (builder.getRecordingSpecification().getJournalModeOverride() == JournalMode.RECORD) {
-//                requestsToRecordOrPlayback.add(new RecordingMappingForUser(personaIdToUse, builder));
-//            } else if (builder.getRecordingSpecification().getJournalModeOverride() == JournalMode.PLAYBACK) {
-//                RecordingMappingForUser recordingMappingForUser = new RecordingMappingForUser(personaIdToUse, builder);
-//                requestsToRecordOrPlayback.add(recordingMappingForUser);
-//                recordingMappingForUser.loadRecordings(userInScope.getScene());
-//            } else if (builder.getRecordingSpecification().enforceJournalModeInScope()) {
-//                RecordingMappingForUser recordingMappingForUser = new RecordingMappingForUser(personaIdToUse, builder);
-//                requestsToRecordOrPlayback.add(recordingMappingForUser);
-//                if (getJournalModeInScope() == JournalMode.PLAYBACK) {
-//                    recordingMappingForUser.loadRecordings(userInScope.getScene());
-//                }
-//            }
-//        }
-//    }
-//    //TODO Move to server???
-//    private Set<String> allPersonaIds() {
-//        final PersonaClient personaClient = userInScope.getScene().getPerformance().recall(PERSONA_CLIENT);
-//        List<Resource> list = Arrays.asList(personaRoot.list(new ResourceFilter() {
-//            @Override
-//            public boolean accept(ResourceContainer dir, String name) {
-//                Resource file = dir.resolveExisting(name);
-//                if (file.getName().equals(Actor.EVERYBODY)) {
-//                    return false;
-//                } else if (file instanceof ResourceContainer) {
-//                    return file.getName().equals(Actor.GUEST) || ((ResourceContainer) file).resolveExisting(personaClient.getDefaultPersonaFileName()) != null;
-//                } else {
-//                    return false;
-//                }
-//            }
-//
-//        }));
-//        TreeSet<String> result = new TreeSet<>();
-//        for (Resource o : list) {
-//            result.add(o.getName());
-//        }
-//        return result;
-//    }
-//
     private JournalMode getJournalModeInScope() {
         return Optional.fromNullable(userInScope.recall(JournalMode.class)).or(JournalMode.NONE);
     }

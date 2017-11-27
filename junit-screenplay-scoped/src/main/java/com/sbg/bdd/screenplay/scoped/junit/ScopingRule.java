@@ -94,10 +94,10 @@ public class ScopingRule implements TestRule {
                 final GlobalScope globalScope = new GlobalScope("test", new PersonaBasedCast(screenPlayEventBus, null, null), screenPlayEventBus);
                 OnStage.present(globalScope);
                 globalScope.start();
-                Runtime.getRuntime().addShutdownHook(new Thread(){
+                Runtime.getRuntime().addShutdownHook(new Thread() {
                     @Override
                     public void run() {
-                        while(globalScope.getInnerMostActive(UserTrackingScope.class)!=globalScope){
+                        while (globalScope.getInnerMostActive(UserTrackingScope.class) != globalScope) {
                             UserTrackingScope activeScope = globalScope.getInnerMostActive(UserTrackingScope.class);
                             activeScope.getContainingScope().completeNestedScope(activeScope.getName());
                         }
@@ -107,9 +107,6 @@ public class ScopingRule implements TestRule {
                 });
                 return globalScope;
             }
-
-        }
-
-                ;
+        };
     }
 }

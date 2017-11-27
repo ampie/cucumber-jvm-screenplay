@@ -1,9 +1,9 @@
 package com.sbg.bdd.screenplay.scoped;
 
-import com.sbg.bdd.screenplay.core.annotations.ActorListener;
+import com.sbg.bdd.screenplay.core.annotations.ActorInvolvementListener;
 import com.sbg.bdd.screenplay.core.annotations.SceneListener;
 import com.sbg.bdd.screenplay.core.annotations.StepListener;
-import com.sbg.bdd.screenplay.core.events.ActorEvent;
+import com.sbg.bdd.screenplay.core.events.OnStageActorEvent;
 import com.sbg.bdd.screenplay.core.events.SceneEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 
@@ -20,8 +20,8 @@ public class EventStore {
         events.add(event);
     }
 
-    @ActorListener()
-    public void onScope(ActorEvent event) {
+    @ActorInvolvementListener()
+    public void onScope(OnStageActorEvent event) {
         events.add(event);
     }
 

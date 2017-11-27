@@ -3,7 +3,7 @@ package com.sbg.bdd.screenplay.core.internal;
 import com.sbg.bdd.screenplay.core.*;
 import com.sbg.bdd.screenplay.core.annotations.ActorInvolvement;
 import com.sbg.bdd.screenplay.core.annotations.Step;
-import com.sbg.bdd.screenplay.core.events.ActorEvent;
+import com.sbg.bdd.screenplay.core.events.OnStageActorEvent;
 import com.sbg.bdd.screenplay.core.util.NameConverter;
 
 import java.util.ArrayList;
@@ -129,29 +129,29 @@ public class BaseActorOnStage implements ActorOnStage {
 
     public void enterSpotlight() {
         if (isActive()) {
-            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.INTO_SPOTLIGHT));
+            getScene().getPerformance().getEventBus().broadcast(new OnStageActorEvent(this, ActorInvolvement.INTO_SPOTLIGHT));
         }
     }
 
     public void exitSpotlight() {
         if (isActive()) {
-            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.OUT_OF_SPOTLIGHT));
+            getScene().getPerformance().getEventBus().broadcast(new OnStageActorEvent(this, ActorInvolvement.OUT_OF_SPOTLIGHT));
         }
     }
 
     public void enterStage() {
         if (!isActive()) {
-            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.BEFORE_ENTER_STAGE));
+            getScene().getPerformance().getEventBus().broadcast(new OnStageActorEvent(this, ActorInvolvement.BEFORE_ENTER_STAGE));
             enterStageWithoutEvents();
-            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.AFTER_ENTER_STAGE));
+            getScene().getPerformance().getEventBus().broadcast(new OnStageActorEvent(this, ActorInvolvement.AFTER_ENTER_STAGE));
         }
     }
 
     public void exitStage() {
         if (isActive()) {
-            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.BEFORE_EXIT_STAGE));
+            getScene().getPerformance().getEventBus().broadcast(new OnStageActorEvent(this, ActorInvolvement.BEFORE_EXIT_STAGE));
             exitStageWithoutEvents();
-            getScene().getPerformance().getEventBus().broadcast(new ActorEvent(this, ActorInvolvement.AFTER_EXIT_STAGE));
+            getScene().getPerformance().getEventBus().broadcast(new OnStageActorEvent(this, ActorInvolvement.AFTER_EXIT_STAGE));
         }
     }
 

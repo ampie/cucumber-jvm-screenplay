@@ -1,16 +1,18 @@
 package com.sbg.bdd.cucumber.screenplay.scoped.plugin;
 
+import com.sbg.bdd.screenplay.core.Actor;
+import com.sbg.bdd.screenplay.core.ActorOnStage;
 import com.sbg.bdd.screenplay.core.Scene;
 import com.sbg.bdd.screenplay.core.actors.OnStage;
-import com.sbg.bdd.screenplay.core.annotations.SceneEventType;
-import com.sbg.bdd.screenplay.core.annotations.SceneListener;
-import com.sbg.bdd.screenplay.core.annotations.StepEventType;
-import com.sbg.bdd.screenplay.core.annotations.StepListener;
+import com.sbg.bdd.screenplay.core.annotations.*;
+import com.sbg.bdd.screenplay.core.events.OnStageActorEvent;
 import com.sbg.bdd.screenplay.core.events.SceneEvent;
 import com.sbg.bdd.screenplay.core.events.StepEvent;
 import com.sbg.bdd.screenplay.core.internal.Attatchments;
+import com.sbg.bdd.screenplay.core.internal.BaseActorOnStage;
 import com.sbg.bdd.screenplay.core.internal.ScreenplayStepMethodInfo;
 import com.sbg.bdd.screenplay.scoped.FunctionalScope;
+import com.sbg.bdd.screenplay.scoped.PayloadConsumingListener;
 import com.sbg.bdd.screenplay.scoped.ScenarioScope;
 import gherkin.deps.net.iharder.Base64;
 import gherkin.formatter.Argument;
@@ -19,40 +21,53 @@ import gherkin.formatter.model.Result;
 import gherkin.formatter.model.Step;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.sbg.bdd.cucumber.screenplay.core.formatter.FormattingStepListener.extractArguments;
+import static com.sbg.bdd.screenplay.core.actors.OnStage.theCurrentScene;
 import static com.sbg.bdd.screenplay.core.annotations.StepEventType.*;
 
-/*
-TODO refactor this by decoupling the Cucumber dependencies.
-Maybe put the payload on the Scope object's own memory and do this from the CucumberScopeLifecycleSync
-Unfortunately the nested steps is where it all becomes tricky. Might need some kind of PayLoadStrategy there
+/**
+ * This is an adapter that listens to Scoped Screenplay events, builds up a payload to associate with the event, and then
+ * delegates it to a PayloadConsumingListener. The payload produced is expected to reflect the current Gherkin element being processed.
+ * The PayloadConusmingListener will typically be responsible for generating a report of some sort, or to synchronize the Cucumber
+ * scoped state with some other scope management framework.
  */
 public abstract class CucumberPayloadProducingListener {
     protected boolean inStep = false;
+    private PayloadConsumingListener payloadConsumingListener;
+    public static final String UPDATE_JIRA = "serenity.jira.integration.enabled";
+    public static final String[] COMPLETION_STATE = {UPDATE_JIRA};
 
-    protected abstract void scopeStarted(Scene scene);
+    protected CucumberPayloadProducingListener(PayloadConsumingListener payloadConsumingListener) {
+        this.payloadConsumingListener = payloadConsumingListener;
+    }
 
-    protected abstract void featureStarted(FunctionalScope scene, Map<String, Object> map);
-
-    protected abstract void scenarioPhaseEntered(ScenarioScope scene, Map<String, Object> payload);
-
-    protected abstract void stepStarted(StepEvent event, Map<String, Object> payload);
-
-    protected abstract void stepCompleted(StepEvent event, Map<String, Object> payload);
-
-
+    @SceneListener(scopePhases = SceneEventType.AFTER_COMPLETE)
+    public void unregisterScope(Scene scene) {
+        Map<String, Object> payload = new HashMap<>();
+        for (String s : COMPLETION_STATE) {
+            Object value = scene.recall(s);
+            if (value != null) {
+                payload.put(s, value);
+            }
+        }
+        payloadConsumingListener.scopeCompleted(scene, payload);
+    }
+    @ActorInvolvementListener(involvement = ActorInvolvement.BEFORE_ENTER_STAGE)
+    public void registerScope(ActorOnStage userInScope) {
+        if (!BaseActorOnStage.isEverybody(userInScope)) {
+            Map<String, Object> payload = Collections.<String, Object>emptyMap();
+            payloadConsumingListener.beforeEnterStage(userInScope, payload);
+        }
+    }
     @SceneListener(scopePhases = SceneEventType.ON_PHASE_ENTERED)
     public void scenarioPhaseEntered(SceneEvent event) {
         CucumberScopeLifecycleSync sync = CucumberScopeLifecycleSync.getInstance();
         if (event.getScene() instanceof ScenarioScope) {
             Map<String, Object> map = sync.getCurrentFeatureElement().toMap();
             map.put("method", "featureElement");
-            scenarioPhaseEntered((ScenarioScope) event.getScene(), map);
+            payloadConsumingListener.scenarioPhaseEntered((ScenarioScope) event.getScene(), map);
         }
     }
 
@@ -64,9 +79,9 @@ public abstract class CucumberPayloadProducingListener {
             Map<String, Object> map = sync.getCurrentFeature().toMap();
             map.put("uri", sync.getCurrentUri());
             map.put("method", "feature");
-            featureStarted((FunctionalScope) scene, map);
+            payloadConsumingListener.featureStarted((FunctionalScope) scene, map);
         } else {
-            scopeStarted(scene);
+            payloadConsumingListener.scopeStarted(scene);
         }
     }
 
@@ -91,7 +106,7 @@ public abstract class CucumberPayloadProducingListener {
                 stepAndMatch.put("method", "childStepAndMatch");
             }
         }
-        stepStarted(event, stepAndMatch);
+        payloadConsumingListener.stepStarted(event, stepAndMatch);
     }
 
     @StepListener(eventTypes = {PENDING, SKIPPED, ASSERTION_FAILED, SUCCESSFUL, FAILED})
@@ -111,7 +126,34 @@ public abstract class CucumberPayloadProducingListener {
             map.put("embeddings", embeddings);
             map.put("method", "childResult");
         }
-        stepCompleted(event, map);
+        payloadConsumingListener.stepCompleted(event, map);
+    }
+    @ActorInvolvementListener(involvement = ActorInvolvement.INTO_SPOTLIGHT)
+    public void intoSpotlight(OnStageActorEvent event) {
+        logShineSpotlightOn(event);
+    }
+
+    private void logShineSpotlightOn(OnStageActorEvent event) {
+        if (OnStage.theCurrentScene() instanceof ScenarioScope && inStep) {
+            Scene theCurrentScene = theCurrentScene();
+            Actor actor = event.getActorOnStage().getActor();
+            String name = "Shine the spotlight on " + actor.getName();
+            if (actor.getPersona().getUrl() != null) {
+                name = "Shine the spotlight on **[" + actor.getName() + "](" + actor.getPersona().getUrl() + ")**";
+            }
+            Step step = new Step(null, "shineSpotlightOn", name, null, null, null);
+            Map<String, Object> stepAndMatch = step.toMap();
+            List<Argument> arguments = Collections.EMPTY_LIST;
+            Match match = new Match(arguments, "");
+            stepAndMatch.put("match", match.toMap());
+            stepAndMatch.put("method", "childStepAndMatch");
+            stepAndMatch.put("personaUrl", actor.getPersona().getUrl());
+
+            payloadConsumingListener.beforeIntoSpotlight(theCurrentScene, event.getActorOnStage(), stepAndMatch);
+            Map<String, Object> result = new Result(Result.PASSED, 0l, null).toMap();
+            result.put("method", "childResult");
+            payloadConsumingListener.afterIntoSpotlight(theCurrentScene, event.getActorOnStage(), result);
+        }
     }
 
 

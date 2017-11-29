@@ -28,7 +28,7 @@ public class ScopedSuite extends Suite {
 
     protected ScopedSuite(RunnerBuilder builder, Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
         super(klass, builder.runners(klass, suiteClasses));
-        ScreenPlayEventBus eventBus = buildIntegratedEventBus(suiteClasses);
+        ScreenPlayEventBus eventBus = buildIntegratedEventBus(klass, suiteClasses);
         globalScope = new GlobalScope(klass.getSimpleName(), new PersonaBasedCast(eventBus, null, null), eventBus);
         OnStage.present(globalScope);
         globalScope.start();
@@ -42,10 +42,11 @@ public class ScopedSuite extends Suite {
          */
     }
 
-    private ScreenPlayEventBus buildIntegratedEventBus(Class[] extraClasses) {
+    private ScreenPlayEventBus buildIntegratedEventBus(Class<?> suiteClass, Class<?>[] extraClasses) {
         ScreenPlayEventBus scopeEventBus = new ScreenPlayEventBus(new SimpleInstanceGetter());
         Set<Class<?>> classes = new HashSet<>();
         classes.addAll(Arrays.<Class<?>>asList(extraClasses));
+        classes.add(suiteClass);
         scopeEventBus.scanClasses(classes);
         return scopeEventBus;
     }

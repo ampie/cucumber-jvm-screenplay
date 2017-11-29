@@ -1,5 +1,5 @@
 dependencies {
-    compile project (':cucumber-jvm-screenplay-scoped')
+    compile project (':cucumber-jvm-screenplay-core')
     compile project (':screenplay-wiremock')
     compileOnly "com.github.tomakehurst:wiremock:$WIREMOCK_VERSION"
 }

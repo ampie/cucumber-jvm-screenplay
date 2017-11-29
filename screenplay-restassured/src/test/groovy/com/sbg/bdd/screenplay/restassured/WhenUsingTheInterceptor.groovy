@@ -39,35 +39,5 @@ class WhenUsingTheInterceptor extends WhenUsingRestAssured {
 
         def value = headers.getValue(HeaderName.ofTheOriginalUrl())
         value == 'http://localhost:'+server.port() +'/base/url'
-        if(RuntimeCorrelationState.ON) {
-            headers.getValue(HeaderName.ofTheSequenceNumber()) == '1'
-            headers.getValues(HeaderName.ofTheServiceInvocationCount()).size() == 1
-            headers.getValues(HeaderName.ofTheServiceInvocationCount()).get(0) == '1|http:null://localhost:' + server.port() + '/base/url|1'
-        }
-
-    }
-
-    def 'it should sync the current correlation state'() {
-        given:
-
-        def server = initWireMockAndBasePerformance()
-        def filter = new CorrelationFilter()
-        def headers = new Headers(new Header(HeaderName.ofTheServiceInvocationCount(), '1|http://localhost:' + server.port() + '/base/urlnull|5'))
-        def response = Mock(Response) {
-            getHeaders() >> headers
-        }
-        def context = Mock(FilterContext) {
-            next(_, _) >> response
-        }
-        OnStage.raiseTheCurtain("Scene 1")
-        when:
-        OnStage.shineSpotlightOn(actorNamed('John'))
-        filter.filter(RestAssured.given().baseUri('http://localhost:' + server.port() + '/base/url'), null, context)
-        then:
-        if(RuntimeCorrelationState.ON) {
-            BaseDependencyInjectorAdaptor.CURRENT_CORRELATION_STATE.getServiceInvocationCounts()[0].endpointIdentifier == 'http://localhost:' + server.port() + '/base/urlnull'
-            BaseDependencyInjectorAdaptor.CURRENT_CORRELATION_STATE.getServiceInvocationCounts()[0].count == 5
-        }
-
     }
 }

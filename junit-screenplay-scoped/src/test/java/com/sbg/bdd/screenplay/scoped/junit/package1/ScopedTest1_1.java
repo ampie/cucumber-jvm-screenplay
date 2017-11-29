@@ -11,10 +11,7 @@ import org.junit.Test;
 public class ScopedTest1_1 {
     @Rule
     public ScopingRule scopingRule = new ScopingRule();
-    @SceneListener
-    public void listenTo(SceneEvent event){
-        System.out.println(event.getSceneEventType() +":" + event.getScene().getSceneIdentifier());
-    }
+
     @Test
     public void testMe() throws Exception {
 

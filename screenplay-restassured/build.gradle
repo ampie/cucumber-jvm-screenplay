@@ -1,5 +1,5 @@
 dependencies {
-    compile(project(':screenplay-scoped'))
+    compile(project(':screenplay-core'))
     compile(project(':screenplay-wiremock'))
     compile("com.sbg.bdd:scoped-wiremock-integration-common:$SCOPED_WIREMOCK_VERSION")
     compile('io.rest-assured:rest-assured:3.0.3'){

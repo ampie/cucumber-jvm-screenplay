@@ -1,6 +1,5 @@
 dependencies {
     compile project (':screenplay-core')
-    compile project (':screenplay-scoped')//Need this for the listener dependency
     compile "com.sbg.bdd:common-resource-api:$SCOPED_WIREMOCK_VERSION"
     compile "com.sbg.bdd:scoped-wiremock-client:$SCOPED_WIREMOCK_VERSION"
     compileOnly "com.github.tomakehurst:wiremock:$WIREMOCK_VERSION"

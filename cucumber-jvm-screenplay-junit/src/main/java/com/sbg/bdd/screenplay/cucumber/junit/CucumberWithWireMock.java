@@ -6,7 +6,12 @@ import com.sbg.bdd.cucumber.screenplay.scoped.plugin.GlobalScopeBuilder;
 import com.sbg.bdd.cucumber.wiremock.annotations.ResourceRoots;
 import com.sbg.bdd.cucumber.wiremock.annotations.ScreenplayWireMockConfig;
 import com.sbg.bdd.cucumber.wiremock.memorizer.CucumberWireMockConfigurator;
+import com.sbg.bdd.resource.ReadableResource;
+import com.sbg.bdd.resource.ResourceContainer;
+import com.sbg.bdd.screenplay.core.actors.OnStage;
+import com.sbg.bdd.screenplay.wiremock.WireMockMemories;
 import com.sbg.bdd.wiremock.scoped.common.Reflection;
+import com.sbg.bdd.wiremock.scoped.resources.WireMockResourceRoot;
 import cucumber.runtime.ClassFinder;
 import cucumber.runtime.Runtime;
 import cucumber.runtime.RuntimeOptions;
@@ -23,10 +28,14 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import cucumber.runtime.io.ResourceLoader;
@@ -39,15 +48,16 @@ public class CucumberWithWireMock extends ParentRunner<FeatureRunner> {
     private final JUnitReporter jUnitReporter;
     private final List<FeatureRunner> children = new ArrayList<FeatureRunner>();
     private final Runtime runtime;
+    private final ScreenplayWireMockConfig screenplayWireMockConfig;
 
     public CucumberWithWireMock(Class clazz) throws InitializationError, IOException {
         super(clazz);
         runInitializers(clazz);
         ClassLoader classLoader = clazz.getClassLoader();
-        if(!clazz.isAnnotationPresent(ScreenplayWireMockConfig.class)){
+        if (!clazz.isAnnotationPresent(ScreenplayWireMockConfig.class)) {
             throw new IllegalStateException("Please annotate your JUnit class with the ScreenplayWireMockConfig annotation");
         }
-        ScreenplayWireMockConfig screenplayWireMockConfig = (ScreenplayWireMockConfig) clazz.getAnnotation(ScreenplayWireMockConfig.class);
+        screenplayWireMockConfig = (ScreenplayWireMockConfig) clazz.getAnnotation(ScreenplayWireMockConfig.class);
         CucumberWireMockConfigurator configurator = new CucumberWireMockConfigurator(screenplayWireMockConfig);
         GlobalScopeBuilder.configureWith(configurator);
         Assertions.assertNoCucumberAnnotatedMethods(clazz);
@@ -57,7 +67,7 @@ public class CucumberWithWireMock extends ParentRunner<FeatureRunner> {
         ensureLifecycleSyncPluginApplied(runtimeOptions);
         ResourceLoader resourceLoader = new GenericResourceMultiLoader(configurator.getFeatureFileRoot(), classLoader);
         runtime = createRuntime(resourceLoader, classLoader, runtimeOptions);
-        if(runtimeOptions.getFeaturePaths().isEmpty() ||  (runtimeOptions.getFeaturePaths().size() == 1 && runtimeOptions.getFeaturePaths().get(0).startsWith("classpath:"))){
+        if (runtimeOptions.getFeaturePaths().isEmpty() || (runtimeOptions.getFeaturePaths().size() == 1 && runtimeOptions.getFeaturePaths().get(0).startsWith("classpath:"))) {
             //No ResourceRoot based dir specified
             runtimeOptions.getFeaturePaths().add("/");
         }
@@ -68,20 +78,19 @@ public class CucumberWithWireMock extends ParentRunner<FeatureRunner> {
     }
 
     private void runInitializers(Class clazz) {
-        try{
-
+        try {
             clazz.newInstance();
         } catch (Exception e) {
 
         }
     }
 
-    private List<CucumberFeature> filterFeaturesAndScenarios(List<CucumberFeature> cucumberFeatures, ScreenplayWireMockConfig screenplayWireMockConfig) {
+    public static List<CucumberFeature> filterFeaturesAndScenarios(List<CucumberFeature> cucumberFeatures, ScreenplayWireMockConfig screenplayWireMockConfig) {
         String[] tags = screenplayWireMockConfig.tags();
-        if(tags!=null && tags.length > 0){
+        if (tags != null && tags.length > 0) {
             Iterator<CucumberFeature> iterator = cucumberFeatures.iterator();
-            while (iterator.hasNext()){
-                if(shouldIgnore(iterator.next(),tags)){
+            while (iterator.hasNext()) {
+                if (shouldIgnore(iterator.next(), tags)) {
                     iterator.remove();
                 }
             }
@@ -89,23 +98,24 @@ public class CucumberWithWireMock extends ParentRunner<FeatureRunner> {
         return cucumberFeatures;
     }
 
-    private boolean shouldIgnore(CucumberFeature next, String[] tags) {
+    private static  boolean shouldIgnore(CucumberFeature next, String[] tags) {
         boolean hasTagMatch = hasTagMatch(tags, next.getGherkinFeature().getTags());
         Iterator<CucumberTagStatement> iterator = next.getFeatureElements().iterator();
-        while (iterator.hasNext()){
-            if(!hasTagMatch(tags,iterator.next().getGherkinModel().getTags())){
+        while (iterator.hasNext()) {
+            if (!hasTagMatch(tags, iterator.next().getGherkinModel().getTags())) {
                 iterator.remove();
             }
         }
-        return hasTagMatch && next.getFeatureElements().size()>0;
+        return hasTagMatch && next.getFeatureElements().size() > 0;
     }
 
-    private boolean hasTagMatch(String[] tags, List<Tag> tags1) {
-        boolean hasTagMatch=false;
-        outer:for (Tag tag : tags1) {
+    private static  boolean hasTagMatch(String[] tags, List<Tag> tags1) {
+        boolean hasTagMatch = false;
+        outer:
+        for (Tag tag : tags1) {
             for (String s : tags) {
-                if(Pattern.compile(s).matcher(tag.getName()).find()){
-                    hasTagMatch=true;
+                if (Pattern.compile(s).matcher(tag.getName()).find()) {
+                    hasTagMatch = true;
                     break outer;
                 }
             }
@@ -114,14 +124,14 @@ public class CucumberWithWireMock extends ParentRunner<FeatureRunner> {
     }
 
     private void ensureLifecycleSyncPluginApplied(RuntimeOptions runtimeOptions) {
-        List<String> plugins = getValue(runtimeOptions,"pluginFormatterNames");
+        List<String> plugins = getValue(runtimeOptions, "pluginFormatterNames");
         boolean found = false;
         for (String plugin : plugins) {
-            if(plugin.equals(CucumberScopeLifecycleSync.class.getName()) || (plugin.equals(CucumberScreenplayLifecycleSync.class.getName()))){
-                found =true;
+            if (plugin.equals(CucumberScopeLifecycleSync.class.getName()) || (plugin.equals(CucumberScreenplayLifecycleSync.class.getName()))) {
+                found = true;
             }
         }
-        if(!found){
+        if (!found) {
             plugins.add(CucumberScopeLifecycleSync.class.getName());
         }
     }
@@ -154,7 +164,24 @@ public class CucumberWithWireMock extends ParentRunner<FeatureRunner> {
         jUnitReporter.done();
         jUnitReporter.close();
         runtime.printSummary();
+        saveCucumberReport();
     }
+
+    private void saveCucumberReport() {
+        try {
+            ResourceContainer outputRoot = WireMockMemories.recallFor(OnStage.performance()).theOutputResourceRoot();
+            ReadableResource report = (ReadableResource) outputRoot.resolveExisting(OnStage.performance().getName() + ".json");
+            File outputFile = new File(this.screenplayWireMockConfig.resultDir(), report.getName());
+            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                fos.write(report.read());
+                fos.flush();
+            }
+        } catch (Exception e) {
+            Logger logger = Logger.getLogger(CucumberWithWireMock.class.getName());
+            logger.log(Level.WARNING,"Could not save report: " + e.toString(),e);
+        }
+    }
+
 
     private void addChildren(List<CucumberFeature> cucumberFeatures) throws InitializationError {
         for (CucumberFeature cucumberFeature : cucumberFeatures) {

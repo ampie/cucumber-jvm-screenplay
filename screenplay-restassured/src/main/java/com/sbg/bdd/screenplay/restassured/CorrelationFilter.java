@@ -34,7 +34,6 @@ public class CorrelationFilter implements Filter {
         String redirectedBaseUri = redirectedBaseUri(requestSpecification, currentCorrelationState);
         Response response = filterContext.next((FilterableRequestSpecification) requestSpecification.baseUri(redirectedBaseUri), responseSpec);
         wm.removeStubMapping(mapping);
-        syncLocalCorrelationState(response);
         return response;
 
     }
@@ -61,9 +60,6 @@ public class CorrelationFilter implements Filter {
             try {
                 URL originalUrl = new URL(requestSpecification.getURI());
                 String key = URLHelper.identifier(originalUrl, requestSpecification.getMethod());
-                String sequenceNumber = currentCorrelationState.getNextSequenceNumberFor(key).toString();
-
-
                 requestSpecification.header(HeaderName.ofTheOriginalUrl(), new URL(URLHelper.identifier(originalUrl)).toExternalForm());
                 if (currentCorrelationState.shouldProxyUnmappedEndpoints()) {
                     requestSpecification.header(HeaderName.toProxyUnmappedEndpoints(), "true");
@@ -72,12 +68,6 @@ public class CorrelationFilter implements Filter {
                     requestSpecification.header(HeaderName.ofTheCorrelationKey(), CorrelationPath.of(theActorInTheSpotlight()));
                 }
                 requestSpecification.header(HeaderName.ofTheThreadContextId(), currentCorrelationState.getCurrentThreadContextId());
-                if (RuntimeCorrelationState.ON) {
-                    for (ServiceInvocationCount entry : currentCorrelationState.getServiceInvocationCounts()) {
-                        requestSpecification.header(HeaderName.ofTheServiceInvocationCount(), entry.toString());
-                    }
-                    requestSpecification.header(HeaderName.ofTheSequenceNumber(), sequenceNumber);
-                }
             } catch (MalformedURLException e) {
                 throw new IllegalStateException(e);
             }
@@ -85,19 +75,4 @@ public class CorrelationFilter implements Filter {
 
     }
 
-
-    private void syncLocalCorrelationState(Response response) {
-        if (RuntimeCorrelationState.ON) {
-            RuntimeCorrelationState currentCorrelationState = DependencyInjectionAdaptorFactory.getAdaptor().getCurrentCorrelationState();
-            if (currentCorrelationState.isSet()) {
-                Headers headers = response.getHeaders();
-                if (headers != null && headers.hasHeaderWithName(HeaderName.ofTheServiceInvocationCount())) {
-                    Iterable<String> o = headers.getValues(HeaderName.ofTheServiceInvocationCount());
-                    for (String s : o) {
-                        currentCorrelationState.initSequenceNumberFor(new ServiceInvocationCount(s));
-                    }
-                }
-            }
-        }
-    }
 }

@@ -15,23 +15,28 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.sbg.bdd.screenplay.core.ScreenplayPhrases.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class ScopedTest1 {
+public class IndividualScopedTest {
     @BeforeClass
     public static void beforeClass(){
         OnStage.present(null);
     }
-    int number1;
-    int number2;
-    int result;
+    public int number1;
+    public int number2;
+    public int result;
+    public static List<SceneEvent> sceneEventList = new ArrayList<>();
     @Rule
     public ScopingRule scopingRule = new ScopingRule();
 
     @SceneListener
     public void listenTo(SceneEvent event) {
+        sceneEventList.add(event);
         System.out.println(event.getSceneEventType() + ":" + event.getScene().getSceneIdentifier());
     }
 

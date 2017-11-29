@@ -24,5 +24,7 @@ public @interface ScreenplayWireMockConfig {
 
     Class<? extends ScreenplayFactories> factories() default DefaultScreenplayFactories.class;
 
+    String resultDir() default "target";
+
     String[] tags() default {};
 }

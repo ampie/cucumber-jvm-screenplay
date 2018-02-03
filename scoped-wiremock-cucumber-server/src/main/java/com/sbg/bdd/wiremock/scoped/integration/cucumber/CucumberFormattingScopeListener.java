@@ -100,8 +100,8 @@ public class CucumberFormattingScopeListener implements ScopeListener {
             //TODO parameterise
             System.setProperty("serenity.public.url", "http://172.99.0.5:8080");
             System.setProperty("serenity.report.show.manual.tests", "false");
-            System.setProperty("serenity.issue.tracker.url", "http://jira.standardbank.co.za:8091/browse/{0}");
-            System.setProperty("jira.url", "http://jira.standardbank.co.za:8091");
+            System.setProperty("serenity.issue.tracker.url", "https://tools.standardbank.co.za/jira/browse/{0}");
+            System.setProperty("jira.url", "https://tools.standardbank.co.za/jira");
             File[] reportFiles = inputDir.listFiles();
             File outputDir = new File("/wiremock/__files");
             FilterChainConfig config = new FilterChainConfig();
@@ -178,13 +178,13 @@ public class CucumberFormattingScopeListener implements ScopeListener {
     }
 
     private String maybeAddJiraUpdatingProcessor(List<ProcessorLinkConfig> processors) {
-        if("true".equals(System.getProperty(SERENITY_JIRA_INTEGRATION_ENABLED))) {
+        if(true || "true".equals(System.getProperty(SERENITY_JIRA_INTEGRATION_ENABLED))) {
             System.setProperty("serenity.jira.workflow", "cli-workflow.groovy");
             System.setProperty("jira.root.issue.type", "\"Technical Issue\"");
             System.setProperty("jira.root.issue.additional.jql", "labels = CSF AND labels = Test");
             System.setProperty("jira.requirement.links", "sub-task");
             System.setProperty("jira.project", "PW");
-            System.setProperty("jira.username", "ampie.barnard");
+            System.setProperty("jira.username", "a230787");
             System.setProperty("jira.password", "ainnikki");
             System.setProperty("serenity.jira.workflow.active", "true");
             System.setProperty("serenity.skip.jira.updates", "false");
@@ -229,7 +229,8 @@ public class CucumberFormattingScopeListener implements ScopeListener {
                     parser.replayStepAndMatch(payload);
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            e.printStackTrace();
             //be proactive
             LOGGER.warning(e.toString());
         }

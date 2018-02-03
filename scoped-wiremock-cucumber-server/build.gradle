@@ -14,12 +14,15 @@ buildscript {
 }
 apply plugin: 'maven'
 apply plugin: 'com.bmuschko.docker-remote-api'
+
+import com.bmuschko.gradle.docker.DockerRegistryCredentials
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import com.bmuschko.gradle.docker.tasks.image.*
 import com.bmuschko.gradle.docker.tasks.container.*
 dependencies {
     compile(project(":serenity-cucumber-adaptor")){
         exclude group: 'org.codehaus.groovy'
+        exclude group: 'org.eclipse.jetty'
     }
     compile(project(":cucumber-jvm-screenplay-core"))
     compile("com.sbg.bdd:scoped-wiremock-server:${SCOPED_WIREMOCK_VERSION}")
@@ -30,6 +33,7 @@ dependencies {
     compile('javax.servlet:javax.servlet-api:3.1.0')
     compile('net.serenity-bdd:serenity-filterchain-core:0.0.5'){
         exclude group: 'org.codehaus.groovy'
+        exclude group: 'org.eclipse.jetty'
         exclude group: 'com.sbg.bdd'//it generally gets an older version in - TODO dependency smell
     }
     compile("org.codehaus.groovy:groovy-all:$GROOVY_VERSION")
@@ -62,7 +66,11 @@ task createDockerfile(type: Dockerfile) {
 
 task buildImage(type: DockerBuildImage) {
     println "docker.registry.standardbank.co.za/com.sbg.bdd/scoped-wiremock:${project.version}"
-
+    registryCredentials =new DockerRegistryCredentials(
+        url : 'docker.registry.standardbank.co.za',
+        username : 'ampie',
+        password : 'ampie123'
+    )
     dependsOn createDockerfile
     inputDir = createDockerfile.destFile.parentFile
     tag = "docker.registry.standardbank.co.za/com.sbg.bdd/scoped-wiremock:${project.version}"
